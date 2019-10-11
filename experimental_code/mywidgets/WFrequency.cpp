@@ -22,6 +22,7 @@ void WFrequency::paintEvent(QPaintEvent *event)
 	int x;
 	unsigned long long freq;
 	QFont font=painter1.font();
+	QLinearGradient linearGradient(0,0, curWidth,curHeight);
 
 	curWidth=this->width();
 	curHeight=this->height();
@@ -30,16 +31,20 @@ void WFrequency::paintEvent(QPaintEvent *event)
 	freq=curFreq;
 
 
-	//	painter1.setPen(QColor(255,0,0,0));
-	//	painter1.drawRect(0,0,curWidth,curHeight);
-	painter1.fillRect(0,0,curWidth,curHeight,QColor(0,0,0,255));
+
+	linearGradient.setColorAt(0.0, QColor(0,0,0,255));
+	linearGradient.setColorAt(0.8, QColor(48,32,48,255));
+	linearGradient.setColorAt(1.0, QColor(64,64,64,255));
+	painter1.fillRect(0,0,curWidth,curHeight,linearGradient);
+
+
 	if (drawPlus!=-1)
 	{
-		painter1.fillRect(drawPlus*curWidth/10,0,curWidth/10,curHeight/2,QColor(0,64,32,255));
+		painter1.fillRect(drawPlus*curWidth/10,0,curWidth/10,curHeight/2,QColor(0,64,32,196));
 	}
 	if (drawMinus!=-1)
 	{
-		painter1.fillRect(drawMinus*curWidth/10,curHeight/2,curWidth/10,curHeight/2,QColor(64,0,32,255));
+		painter1.fillRect(drawMinus*curWidth/10,curHeight/2,curWidth/10,curHeight/2,QColor(64,0,32,196));
 	}
 
 	painter1.setPen(QColor(128,128,255,255));
