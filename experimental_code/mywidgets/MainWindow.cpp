@@ -9,6 +9,7 @@ MainWindow::MainWindow()
 	wFrequency->resize(500,100);
 	wFrequency->move(500,50);
 	wFrequency->show();
+	wFrequency->repaint();
 }
 
 
