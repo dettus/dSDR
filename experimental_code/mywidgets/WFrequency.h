@@ -8,7 +8,7 @@ class WFrequency : public QWidget
 	Q_OBJECT
 
 public:
-	WFrequency();
+	WFrequency(QWidget *parent = nullptr);
 	signed long long getFreq();
 	void setFreq(signed long long freq);
 

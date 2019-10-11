@@ -1,6 +1,6 @@
 #include "WFrequency.h"
 
-WFrequency::WFrequency()
+WFrequency::WFrequency(QWidget* parent) : QWidget(parent)
 {
 	curFreq=0;
 	drawPlus=-1;
