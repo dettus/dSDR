@@ -99,3 +99,32 @@ void WSpectrum::zoomFit()
 {
 	setZoom(0,mFftSize,mMax,0);
 }
+
+void WSpectrum::wheelEvent(QWheelEvent *event)
+{
+	QPoint curPoint = event->pos();
+	double x;
+	double d;
+
+	
+	x=(double)curPoint.x()/(double)mWidth;
+	d=mRight-mLeft;
+	printf("x:%.10f curPoint:%d left:%d right:%d \n",x,curPoint.x(),mLeft,mRight);
+
+	if (event->delta()>0) // mousewheel up
+	{
+		mLeft+=(int)(20*x);
+		mRight-=(int)(20*(1.0-x));
+		printf("up\n");
+	}
+	else if (event->delta()<0) // mousewheel down
+	{
+		mLeft-=10;
+		mRight+=10;
+		printf("down\n");
+	}
+	if (mLeft<0) mLeft=0;
+	if (mRight>mFftSize || mRight<=mLeft) mRight=mFftSize;
+	printf("left:%d right:%d \n",mLeft,mRight);
+	repaint();
+}
