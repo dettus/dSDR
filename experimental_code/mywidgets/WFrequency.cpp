@@ -13,7 +13,9 @@ void WFrequency::closeEvent(QCloseEvent *event)
 }
 void WFrequency::resizeEvent(QResizeEvent *event)
 {
-
+	curWidth=this->width();
+	curHeight=this->height();
+	repaint();
 }
 void WFrequency::paintEvent(QPaintEvent *event)
 {

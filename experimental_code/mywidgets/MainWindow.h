@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "WFrequency.h"
+#include "WSpectrum.h"
+
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -12,5 +14,6 @@ class MainWindow : public QMainWindow
 
 	private:
 		WFrequency *wFrequency;
+		WSpectrum  *wSpectrum;
 };
 #endif
