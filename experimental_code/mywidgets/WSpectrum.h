@@ -11,6 +11,8 @@ public:
 	WSpectrum(QWidget *parent = nullptr);
 	void setFFTsize(int size);
 	void plotSpectrum(double* spectrum,int n);
+	void setZoom(int left,int right,double upper,double lower);
+	void zoomFit();
 
 	
 protected:
@@ -24,6 +26,9 @@ private:
 	int mFftSize;
 	double mSpectrum[65536];
 	double mMin,mMax;
+
+	int mUpper,mLower;
+	int mLeft,mRight;
 };
 
 #endif

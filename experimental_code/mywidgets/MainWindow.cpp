@@ -21,7 +21,7 @@ double fftspec[256]={52395.27408,50617.80270,50628.73158,51349.92093,49454.42528
 	wSpectrum->show();
 	wSpectrum->setFFTsize(256);
 	wSpectrum->plotSpectrum(fftspec,256);
-	wSpectrum->repaint();
+	wSpectrum->zoomFit();
 }
 
 

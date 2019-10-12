@@ -10,6 +10,10 @@ WSpectrum::WSpectrum(QWidget* parent) : QWidget(parent)
 	{
 		mSpectrum[i]=0;	
 	}
+	mUpper=5*65536;
+	mLower=0;
+	mLeft=0;
+	mRight=mFftSize;
 }
 void WSpectrum::resizeEvent(QResizeEvent *event)
 {
@@ -25,24 +29,33 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 	int y;
 	double dx;
 	double dy;
+	int upper,lower,right,left;
 
+	right=mRight;
+	if (right>mFftSize) right=mFftSize;
+	left=mLeft;
+	if (left>(right-32)) left=right-32;
+	if (left<0) left=0;
+	if (lower<0) lower=0;
+	
 	
 
 	x=0;
 	y=mHeight;
-	dx=(double)mWidth/(double)mFftSize;
-	dy=(mMax-mMin)/(double)mHeight;
+	dx=(double)mWidth/(double)(right-left);
+//	dy=(mMax-mMin)/(double)mHeight;
+	dy=(double)(mUpper-mLower)/(double)mHeight;
 
 	painter1.fillRect(0,0,mWidth,mHeight,QColor(32,32,32,255));
 	painter1.setPen(QColor(255,255,255,255));
 
-	for (i=0;i<mFftSize;i++)
+	for (i=left;i<right;i++)
 	{
 		int nx;
 		int ny;
 
-		nx=(int)((double)i*dx);
-		ny=mHeight-(int)((mSpectrum[i]-mMin)/dy);
+		nx=(int)((double)(i-left)*dx);
+		ny=mHeight-(int)((mSpectrum[i]-(double)mLower)/dy);
 		painter1.drawLine(x,y,nx,ny);
 		x=nx;
 		y=ny;
@@ -73,4 +86,16 @@ void WSpectrum::plotSpectrum(double* spectrum, int n)
 		if (mSpectrum[i]>mMax) mMax=mSpectrum[i];
 	}
 	repaint();
+}
+void WSpectrum::setZoom(int left,int right,double upper,double lower)
+{
+	mUpper=upper;
+	mLower=lower;
+	mRight=right;
+	mLeft=left;
+	repaint();
+}
+void WSpectrum::zoomFit()
+{
+	setZoom(0,mFftSize,mMax,0);
 }
