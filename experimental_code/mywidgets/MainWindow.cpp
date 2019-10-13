@@ -14,14 +14,43 @@ double fftspec[256]={52395.27408,50617.80270,50628.73158,51349.92093,49454.42528
 	wFrequency->show();
 	wFrequency->repaint();
 
+	wWaterfall=new WWaterfall(this);
+	wWaterfall->resize(1000,500);
+	wWaterfall->move(500,800);
+	wWaterfall->show();
+	wWaterfall->setFFTsize(256);
+
 
 	wSpectrum=new WSpectrum(this);
-	wSpectrum->resize(500,500);
+	wSpectrum->resize(1000,500);
 	wSpectrum->move(500,200);
 	wSpectrum->show();
+	wSpectrum->resize(1000,500);
 	wSpectrum->setFFTsize(256);
 	wSpectrum->plotSpectrum(fftspec,256);
 	wSpectrum->zoomFit();
+
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	wWaterfall->plotWaterfall(fftspec,256);
+	
 }
 
 

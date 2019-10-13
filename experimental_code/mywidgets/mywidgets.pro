@@ -19,5 +19,5 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS += MainWindow.h WFrequency.h WSpectrum.h
-SOURCES += main.cpp MainWindow.cpp WFrequency.cpp WSpectrum.cpp
+HEADERS += MainWindow.h WFrequency.h WSpectrum.h WWaterfall.h
+SOURCES += main.cpp MainWindow.cpp WFrequency.cpp WSpectrum.cpp WWaterfall.cpp

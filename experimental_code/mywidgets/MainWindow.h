@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "WFrequency.h"
 #include "WSpectrum.h"
+#include "WWaterfall.h"
 
 class MainWindow : public QMainWindow
 {
@@ -15,5 +16,6 @@ class MainWindow : public QMainWindow
 	private:
 		WFrequency *wFrequency;
 		WSpectrum  *wSpectrum;
+		WWaterfall *wWaterfall;
 };
 #endif
