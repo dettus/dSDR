@@ -70,6 +70,7 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 		int i;
 		int x;
 		double dx;
+		double dy;
 
 		printf("paint %d %d\n",mWidth,mHeight);
 
@@ -88,14 +89,18 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 
 		x=0;
 		dx=(double)mWidth/(double)(mRight-mLeft);
+		dy=sqrt(mMax-mMin);
 		for (i=mLeft;i<mRight;i++)
 		{
 			double nx;
 			double r,g,b;
+			double y;
 
-			r=((spectrum[i]-(double)mMin)*255.0)/(double)mMax;
-			g=255-((spectrum[i]-(double)mMin)*255.0)/(double)mMax;
-			b=((spectrum[i]-(double)mMin)*255.0)/(double)mMax;
+			y=sqrt(spectrum[i]-mMin);
+
+			r=(y*255.0)/dy;
+			g=255-(y*255.0)/dy;
+			b=(y*255.0)/dy;
 			nx=dx*i;
 			waterfallPainter.setPen(QColor((int)r,(int)g,(int)b,255));
 			waterfallPainter.drawLine(x,mHeight-1, (int)nx,mHeight-1);

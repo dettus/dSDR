@@ -10,7 +10,7 @@ WSpectrum::WSpectrum(QWidget* parent) : QWidget(parent)
 	{
 		mSpectrum[i]=0;	
 	}
-	mUpper=5*65536;
+	mUpper=65536*5;
 	mLower=0;
 	mLeft=0;
 	mRight=mFftSize;
@@ -65,7 +65,41 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 
 void WSpectrum::mousePressEvent(QMouseEvent *event)
 {
+	if ((event->buttons() & Qt::LeftButton)	)
+	{
+		mLastMoveEvent=event->pos().x();
+	}
+}
+void WSpectrum::mouseReleaseEvent(QMouseEvent *event)
+{
+	mLastMoveEvent=-1;
+}
 
+void WSpectrum::mouseMoveEvent(QMouseEvent *event)
+{
+	int x;
+	double dx;
+	int left,right;
+
+	dx=((double)mRight-(double)mLeft)/(double)mWidth;
+	left=mLeft;
+	right=mRight;
+	if ((event->buttons() & Qt::LeftButton)	)
+	{
+		x=event->pos().x();
+		if (mLastMoveEvent!=-1)
+		{
+			left+=(mLastMoveEvent-x)*dx;
+			right+=(mLastMoveEvent-x)*dx;
+			repaint();
+		}
+		if (left>0&&left<mFftSize && right>0&&right<mFftSize)
+		{
+			mLeft=left;
+			mRight=right;
+		}
+		mLastMoveEvent=x;	
+	}
 }
 
 void WSpectrum::setFFTsize(int size)
@@ -105,26 +139,24 @@ void WSpectrum::wheelEvent(QWheelEvent *event)
 	QPoint curPoint = event->pos();
 	double x;
 	double d;
+	double fact;
 
 	
 	x=(double)curPoint.x()/(double)mWidth;
 	d=mRight-mLeft;
-	printf("x:%.10f curPoint:%d left:%d right:%d \n",x,curPoint.x(),mLeft,mRight);
 
+	fact=(mRight-mLeft)/10;
 	if (event->delta()>0) // mousewheel up
 	{
-		mLeft+=(int)(20*x);
-		mRight-=(int)(20*(1.0-x));
-		printf("up\n");
+		mLeft+=(int)(fact*x);
+		mRight-=(int)(fact*(1.0-x));
 	}
 	else if (event->delta()<0) // mousewheel down
 	{
-		mLeft-=10;
-		mRight+=10;
-		printf("down\n");
+		mLeft-=(int)fact;
+		mRight+=(int)fact;
 	}
 	if (mLeft<0) mLeft=0;
 	if (mRight>mFftSize || mRight<=mLeft) mRight=mFftSize;
-	printf("left:%d right:%d \n",mLeft,mRight);
 	repaint();
 }

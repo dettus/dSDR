@@ -19,6 +19,8 @@ protected:
 	void paintEvent(QPaintEvent *event) override;
 	void resizeEvent(QResizeEvent *event) override;
 	void mousePressEvent(QMouseEvent *event) override;
+	void mouseReleaseEvent(QMouseEvent *event) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
 	void wheelEvent(QWheelEvent *event) override;
 
 private:
@@ -28,8 +30,9 @@ private:
 	double mSpectrum[65536];
 	double mMin,mMax;
 
-	int mUpper,mLower;
+	double mUpper,mLower;
 	int mLeft,mRight;
+	int mLastMoveEvent=-1;
 };
 
 #endif
