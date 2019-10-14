@@ -1,25 +1,28 @@
 #ifndef SIMPLEFFT_H
 #define	SIMPLEFFT_H
 
-class SimpleFFT
+class SimpleFft
 {
 	public:
 		SimpleFft(int fftsize);
 		void process(signed short* input);
-		void getResult(signed short &output,bool flipSpectrum=true);
-		void getResult(double &output,bool flipSpectrum=true);
-		void getSpectrum(double &output,bool flipSpectrum=true);
+		void getResult(signed short *output,bool flipSpectrum=true);
+		void getResult(double *output,bool flipSpectrum=true);
+		void getSpectrum(double *output,bool flipSpectrum=true);
 		int getSize();
 
 	private:
-		double	*twiddle_r;
-		double	*twiddle_i;
+		double	*mTwiddle_r;
+		double	*mTwiddle_i;
 
-		double	*tmp_r;
-		double	*tmp_i;	
+		double	*mTmp_r;
+		double	*mTmp_i;	
 
 		int mFftSize;
 		int mSigmas;
+		int mOmegaMask;
+		int mNotMask;
+		int *mPermute;
 };
 
 

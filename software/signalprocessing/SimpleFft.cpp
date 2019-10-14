@@ -5,30 +5,20 @@ SimpleFft::SimpleFft(int fftsize)
 {
 
 	int i;
-	twiddle_r=new double[fftsize];
-	twiddle_i=new double[fftsize];
-	tmp_r=new double[fftsize];
-	tmp_i=new double[fftsize];
+	mTwiddle_r=new double[fftsize];
+	mTwiddle_i=new double[fftsize];
+	mTmp_r=new double[fftsize];
+	mTmp_i=new double[fftsize];
+	mPermute=new int[fftsize];
+	
 
 	for (i=0;i<fftsize;i++)
 	{
-		twiddle_r= cos(2*M_PI*(double)i/(double)fftsize);
-		twiddle_i=-sin(2*M_PI*(double)i/(double)fftsize);
+		mTwiddle_r[i]= cos(2*M_PI*(double)i/(double)fftsize);
+		mTwiddle_i[i]=-sin(2*M_PI*(double)i/(double)fftsize);
 	}	
 	mFftSize=fftsize;
-	mOmegas=1;
-}
-void SimpeFft::process(signed short* input)
-{
-	int sigmas;
-	int omegamask;
-	int notmask;
-	int betainc;
-	int omegainc;
-	int mask;
-	int sigma;
-	int alpha;
-	int beta;
+	
 
 #define PERMUTE8(i)  (((i & 0x001) << 7) | ((i & 0x002) << 5) | ((i & 0x004) << 3) \
 		| ((i & 0x008) << 1) | ((i & 0x010) >> 1) | ((i & 0x020) >> 3) \
@@ -75,97 +65,91 @@ void SimpeFft::process(signed short* input)
 		| ((i & 0x200) >> 3) | ((i & 0x400) >> 5) | ((i & 0x800) >> 7) \
 		| ((i & 0x1000) >> 9) | ((i&0x2000) >> 11)| ((i &0x4000) >>13) | ((i&0x8000) >>15))
 
-	switch(mFftsize)
+	mSigmas=0;
+	mOmegaMask=1;
+	mNotMask=2;
+
+	switch(mFftSize)
 	{
 		case 256:
-			sigmas=8;
-			omegamask=0x7f;
-			notmask=0x1ff;
+			mSigmas=8;
+			mOmegaMask=0x7f;
+			mNotMask=0x1ff;
+			for (i=0;i<fftsize;i++) mPermute[i]=PERMUTE8(i);
 			break;
 		case 512:
-			sigmas=9;
-			omegamask=0xff;
-			notmask=0x3ff;
+			mSigmas=9;
+			mOmegaMask=0xff;
+			mNotMask=0x3ff;
+			for (i=0;i<fftsize;i++) mPermute[i]=PERMUTE9(i);
 			break;
 		case 1024:
-			sigmas=10;
-			omegamask=0x1ff;
-			notmask=0x7ff;
+			mSigmas=10;
+			mOmegaMask=0x1ff;
+			mNotMask=0x7ff;
+			for (i=0;i<fftsize;i++) mPermute[i]=PERMUTE10(i);
 			break;
 		case 2048:
-			sigmas=11;
-			omegamask=0x3ff;
-			notmask=0xfff;
+			mSigmas=11;
+			mOmegaMask=0x3ff;
+			mNotMask=0xfff;
+			for (i=0;i<fftsize;i++) mPermute[i]=PERMUTE11(i);
 			break;
 		case 4096:
-			sigmas=12;
-			omegamask=0x7ff;
-			notmask=0x1fff;
+			mSigmas=12;
+			mOmegaMask=0x7ff;
+			mNotMask=0x1fff;
+			for (i=0;i<fftsize;i++) mPermute[i]=PERMUTE12(i);
 			break;
 		case 8192:
-			sigmas=13;
-			omegamask=0xfff;
-			notmask=0x3fff;
+			mSigmas=13;
+			mOmegaMask=0xfff;
+			mNotMask=0x3fff;
+			for (i=0;i<fftsize;i++) mPermute[i]=PERMUTE13(i);
 			break;
 		case 16384:
-			sigmas=14;
-			omegamask=0x1fff;
-			notmask=0x7fff;
+			mSigmas=14;
+			mOmegaMask=0x1fff;
+			mNotMask=0x7fff;
+			for (i=0;i<fftsize;i++) mPermute[i]=PERMUTE14(i);
 			break;
 		case 32768:
-			sigmas=15;
-			omegamask=0x3fff;
-			notmask=0xffff;
+			mSigmas=15;
+			mOmegaMask=0x3fff;
+			mNotMask=0xffff;
+			for (i=0;i<fftsize;i++) mPermute[i]=PERMUTE15(i);
 			break;
 		case 65536:
-			sigmas=16;
-			omegamask=0x7fff;
-			notmask=0x1ffff;
+			mSigmas=16;
+			mOmegaMask=0x7fff;
+			mNotMask=0x1ffff;
+			for (i=0;i<fftsize;i++) mPermute[i]=PERMUTE16(i);
 			break;
+
 	}
-	mSigmas=sigmas;
+}
+void SimpleFft::process(signed short* input)
+{
+	int sigmas;
+	int omegamask;
+	int notmask;
+	int betainc;
+	int omegainc;
+	int mask;
+	int sigma;
+	int alpha;
+	int beta;
+	int i;
+	double xr,xi,yr,yi;
+	
+	sigmas=mSigmas;
+	omegamask=mOmegaMask;
+	notmask=mNotMask;	
 	for (i=0;i<mFftSize;i++)
 	{
-		switch(mFftsize)
-		{
-			case 256:
-				tmp_r[i]=input[2*PERMUTE8(i)+0];
-				tmp_i[i]=input[2*PERMUTE8(i)+1];
-				break;
-			case 512:
-				tmp_r[i]=input[2*PERMUTE9(i)+0];
-				tmp_i[i]=input[2*PERMUTE9(i)+1];
-				break;
-			case 1024:
-				tmp_r[i]=input[2*PERMUTE10(i)+0];
-				tmp_i[i]=input[2*PERMUTE10(i)+1];
-				break;
-			case 2048:
-				tmp_r[i]=input[2*PERMUTE11(i)+0];
-				tmp_i[i]=input[2*PERMUTE11(i)+1];
-				break;
-			case 4096:
-				tmp_r[i]=input[2*PERMUTE12(i)+0];
-				tmp_i[i]=input[2*PERMUTE12(i)+1];
-				break;
-			case 8192:
-				tmp_r[i]=input[2*PERMUTE13(i)+0];
-				tmp_i[i]=input[2*PERMUTE13(i)+1];
-				break;
-			case 16384:
-				tmp_r[i]=input[2*PERMUTE14(i)+0];
-				tmp_i[i]=input[2*PERMUTE14(i)+1];
-				break;
-			case 32768:
-				tmp_r[i]=input[2*PERMUTE15(i)+0];
-				tmp_i[i]=input[2*PERMUTE15(i)+1];
-				break;
-			case 65536:
-				tmp_r[i]=input[2*PERMUTE16(i)+0];
-				tmp_i[i]=input[2*PERMUTE16(i)+1];
-				break;
+			mTmp_r[i]=input[2*mPermute[i]+0];
+			mTmp_i[i]=input[2*mPermute[i]+1];
 
-		}
 	}
 	betainc=1;
 	omegainc=mFftSize/2;
@@ -176,11 +160,11 @@ void SimpeFft::process(signed short* input)
                 alpha=(i<<1);
                 beta=alpha | 0x01;
 
-                xr=tmp_r[alpha];xi=tmp_i[alpha];
-                yr=tmp_r[beta]; yi=tmp_i[beta];
+                xr=mTmp_r[alpha];xi=mTmp_i[alpha];
+                yr=mTmp_r[beta]; yi=mTmp_i[beta];
 
-                tmp_r[alpha]=yr+xr;tmp_i[alpha]=yi+xi;
-                tmp_r[beta] =xr-yr;tmp_i[beta] =xi-yi;
+                mTmp_r[alpha]=yr+xr;mTmp_i[alpha]=yi+xi;
+                mTmp_r[beta] =xr-yr;mTmp_i[beta] =xi-yi;
 
         }
 
@@ -190,6 +174,7 @@ void SimpeFft::process(signed short* input)
                 double omegai;
                 double mulr;
                 double muli;
+		int omega;
                 omega=0;
                 betainc<<=1;
                 omegainc>>=1;
@@ -199,79 +184,79 @@ void SimpeFft::process(signed short* input)
                 {
                         alpha=((i&notmask)<<1) | (i&mask);
                         beta=alpha|betainc;
-                        omegar=omega_r[omega];
-                        omegai=omega_i[omega];
-                        xr=tmp_r[alpha];xi=tmp_i[alpha];
-                        yr=tmp_r[beta]; yi=tmp_i[beta];
+                        omegar=mTwiddle_r[omega];
+                        omegai=mTwiddle_i[omega];
+                        xr=mTmp_r[alpha];xi=mTmp_i[alpha];
+                        yr=mTmp_r[beta]; yi=mTmp_i[beta];
 
                         mulr=omegar*yr-omegai*yi;
                         muli=omegar*yi+omegai*yr;
 
-                        tmp_r[alpha]=(xr+mulr);tmp_i[alpha]=(xi+muli);
-                        tmp_r[beta] =(xr-mulr);tmp_i[beta] =(xi-muli);
+                        mTmp_r[alpha]=(xr+mulr);mTmp_i[alpha]=(xi+muli);
+                        mTmp_r[beta] =(xr-mulr);mTmp_i[beta] =(xi-muli);
                         omega += omegainc;
                         omega &= omegamask;
                 }
         }
 }
-void SimpleFft::getResult(signed short &output,bool flipSpectrum)
+void SimpleFft::getResult(signed short *output,bool flipSpectrum)
 {
 	int i;
-	if (flipspectrum)
+	if (flipSpectrum)
 	{
 		for (i=0;i<mFftSize/2;i++)
 		{
-			output[(i+mFftSize/2)*2+0]=(signed short)(tmp_r[i]/(double)mSigmas);
-			output[(i+mFftSize/2)*2+1]=(signed short)(tmp_i[i]/(double)mSigmas);
-			output[i*2+0]=(signed short)(tmp_r[i+mFftSize/2]/(double)mSigmas);
-			output[i*2+1]=(signed short)(tmp_i[i+mFftSize/2]/(double)mSigmas);
+			output[(i+mFftSize/2)*2+0]=(signed short)(mTmp_r[i]/(double)mSigmas);
+			output[(i+mFftSize/2)*2+1]=(signed short)(mTmp_i[i]/(double)mSigmas);
+			output[i*2+0]=(signed short)(mTmp_r[i+mFftSize/2]/(double)mSigmas);
+			output[i*2+1]=(signed short)(mTmp_i[i+mFftSize/2]/(double)mSigmas);
 		}
 	} else {
 		for (i=0;i<mFftSize;i++)
 		{
-			output[i*2+0]=(signed short)(tmp_r[i]/(double)mSigmas);
-			output[i*2+1]=(signed short)(tmp_i[i]/(double)mSigmas);
+			output[i*2+0]=(signed short)(mTmp_r[i]/(double)mSigmas);
+			output[i*2+1]=(signed short)(mTmp_i[i]/(double)mSigmas);
 		}
 	}
 }
-void SimpleFft::getResult(double &output,bool flipSpectrum)
+void SimpleFft::getResult(double *output,bool flipSpectrum)
 {
 	int i;
-	if (flipspectrum)
+	if (flipSpectrum)
 	{
 		for (i=0;i<mFftSize/2;i++)
 		{
-			output[(i+mFftSize/2)*2+0]=(double)(tmp_r[i]/(double)mSigmas);
-			output[(i+mFftSize/2)*2+1]=(double)(tmp_i[i]/(double)mSigmas);
-			output[i*2+0]=(double)(tmp_r[i+mFftSize/2]/(double)mSigmas);
-			output[i*2+1]=(double)(tmp_i[i+mFftSize/2]/(double)mSigmas);
+			output[(i+mFftSize/2)*2+0]=(double)(mTmp_r[i]/(double)mSigmas);
+			output[(i+mFftSize/2)*2+1]=(double)(mTmp_i[i]/(double)mSigmas);
+			output[i*2+0]=(double)(mTmp_r[i+mFftSize/2]/(double)mSigmas);
+			output[i*2+1]=(double)(mTmp_i[i+mFftSize/2]/(double)mSigmas);
 		}
 	} else {
 		for (i=0;i<mFftSize;i++)
 		{
-			output[i*2+0]=(double)(tmp_r[i]/(double)mSigmas);
-			output[i*2+1]=(double)(tmp_i[i]/(double)mSigmas);
+			output[i*2+0]=(double)(mTmp_r[i]/(double)mSigmas);
+			output[i*2+1]=(double)(mTmp_i[i]/(double)mSigmas);
 		}
 	}
 
 }
-void SimpleFft::getSpectrum(double &output,bool flipSpectrum)
+void SimpleFft::getSpectrum(double *output,bool flipSpectrum)
 {
 	int i;
-	if (flipspectrum)
+	if (flipSpectrum)
 	{
 		for (i=0;i<mFftSize/2;i++)
 		{
-			output[i+mFftSize/2] =(double)(tmp_r[i]*tmp_r[i]);
-			output[i+mFftSize/2]+=(double)(tmp_i[i]*tmp_i[i]);
-			output[i] =(double)(tmp_r[i+mFftSize/2]*tmp_r[i+mFftSize/2]);
-			output[i]+=(double)(tmp_i[i+mFftSize/2]*tmp_i[i+mFftSize/2]);
+			output[i+mFftSize/2] =(double)(mTmp_r[i]*mTmp_r[i]);
+			output[i+mFftSize/2]+=(double)(mTmp_i[i]*mTmp_i[i]);
+			output[i] =(double)(mTmp_r[i+mFftSize/2]*mTmp_r[i+mFftSize/2]);
+			output[i]+=(double)(mTmp_i[i+mFftSize/2]*mTmp_i[i+mFftSize/2]);
 		}
 	} else {
 		for (i=0;i<mFftSize;i++)
 		{
-			output[i] =(double)(tmp_r[i]*tmp_r[i]);
-			output[i]+=(double)(tmp_i[i]*tmp_i[i]);
+			output[i] =(double)(mTmp_r[i]*mTmp_r[i]);
+			output[i]+=(double)(mTmp_i[i]*mTmp_i[i]);
 		}
 	}
 }
