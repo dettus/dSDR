@@ -10,7 +10,7 @@ int main(int argc,char** argv)
 	int i;
 	SimpleFft* simpleFft=new SimpleFft(fftsize);
 	
-	for (i=0;i<fftsize;i++)
+	for (i=0;i<fftsize*2;i++)
 	{
 		input[i]=i;
 	}

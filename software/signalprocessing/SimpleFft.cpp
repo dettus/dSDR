@@ -147,8 +147,8 @@ void SimpleFft::process(signed short* input)
 	notmask=mNotMask;	
 	for (i=0;i<mFftSize;i++)
 	{
-			mTmp_r[i]=input[2*mPermute[i]+0];
-			mTmp_i[i]=input[2*mPermute[i]+1];
+		mTmp_r[i]=input[2*mPermute[i]+0];
+		mTmp_i[i]=input[2*mPermute[i]+1];
 
 	}
 	betainc=1;
