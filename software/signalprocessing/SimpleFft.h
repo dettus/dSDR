@@ -9,6 +9,7 @@ class SimpleFft
 		void getResult(signed short *output,bool flipSpectrum=true);
 		void getResult(double *output,bool flipSpectrum=true);
 		void getSpectrum(double *output,bool flipSpectrum=true);
+		void addSpectrum(double *output,bool flipSpectrum=true);
 		int getSize();
 
 	private:

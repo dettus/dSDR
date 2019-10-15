@@ -260,6 +260,26 @@ void SimpleFft::getSpectrum(double *output,bool flipSpectrum)
 		}
 	}
 }
+void SimpleFft::addSpectrum(double *output,bool flipSpectrum)
+{
+	int i;
+	if (flipSpectrum)
+	{
+		for (i=0;i<mFftSize/2;i++)
+		{
+			output[i+mFftSize/2]+=(double)(mTmp_r[i]*mTmp_r[i]);
+			output[i+mFftSize/2]+=(double)(mTmp_i[i]*mTmp_i[i]);
+			output[i]+=(double)(mTmp_r[i+mFftSize/2]*mTmp_r[i+mFftSize/2]);
+			output[i]+=(double)(mTmp_i[i+mFftSize/2]*mTmp_i[i+mFftSize/2]);
+		}
+	} else {
+		for (i=0;i<mFftSize;i++)
+		{
+			output[i]+=(double)(mTmp_r[i]*mTmp_r[i]);
+			output[i]+=(double)(mTmp_i[i]*mTmp_i[i]);
+		}
+	}
+}
 int SimpleFft::getSize()
 {
 	return mFftSize;	
