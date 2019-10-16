@@ -1,6 +1,8 @@
 #ifndef SIMPLESHIFTER_H
 #define	SIMPLESHIFTER_H
 
+
+// the purpose of this module is to provide an easy frequency shifter.
 class SimpleShifter
 {
 	public:

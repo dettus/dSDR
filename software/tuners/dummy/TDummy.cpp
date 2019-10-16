@@ -8,7 +8,7 @@ TDummy::TDummy()
 {
 	mStopped=false;
 	f=fopen("/dev/urandom","rb");
-	mWidget=NULL;
+	mWidget=nullptr;
 	mSamplesBuf=new signed short[2*DUMMY_SAMPLERATE];
 }
 void TDummy::stop()

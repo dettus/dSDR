@@ -4,7 +4,10 @@
 
 TEMPLATE = app
 TARGET = dSDR
-INCLUDEPATH += .
+INCLUDEPATH += . \
+		tuners \
+		tuners/dummy \
+		signalprocessing
 
 # The following define makes your compiler warn you if you use any
 # feature of Qt which has been marked as deprecated (the exact warnings
@@ -20,6 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # Input
 HEADERS += signalprocessing/SimpleFft.h \
            signalprocessing/SimpleShifter.h \
+           tuners/Tuners.h \
            tuners/dummy/TDummy.h
 SOURCES += main.cpp \
            signalprocessing/SimpleFft.cpp \

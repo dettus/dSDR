@@ -3,7 +3,8 @@
 #include <QWidget>
 #include <QThread>
 #include <stdio.h>
-class TDummy : public QThread
+#include "Tuners.h"
+class TDummy : public QThread, public Tuners
 {
 	Q_OBJECT
 

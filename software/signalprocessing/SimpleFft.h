@@ -1,6 +1,14 @@
 #ifndef SIMPLEFFT_H
 #define	SIMPLEFFT_H
 
+
+// the purpose of this class is to provide a first, rudimentary FFT.
+// it can be instantiated with an fftsize of 256,512,1024,2048,4096,8192,16384,32768,65536
+// 
+// a new block of time domain input can be processed.
+// since the output format is flexible, it can be returned as signed short, double.
+// 
+// another output possibility is the spectrum. which can be summed up over time with the addSpectrum() function.
 class SimpleFft
 {
 	public:
