@@ -13,8 +13,11 @@ class TDummy : public QThread
 		QWidget* getWidget();
 		int getFrequency();
 		int getGain();
+		int getSamplerate();
 		bool setFrequency(int freqHz);
 		bool setGain(int gaincB);
+		bool setSamplerate(int sampleRate);
+		
 		void gainUp();
 		void gainDown();
 	

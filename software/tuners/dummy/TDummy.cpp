@@ -8,7 +8,7 @@ TDummy::TDummy()
 {
 	mStopped=false;
 	f=fopen("/dev/urandom","rb");
-	mWidget=nullptr;
+	mWidget=NULL;
 	mSamplesBuf=new signed short[2*DUMMY_SAMPLERATE];
 }
 void TDummy::stop()
@@ -35,9 +35,9 @@ bool TDummy::setFrequency(int freqHz)
 {
 	return (freqHz==DUMMY_FREQUENCY);
 }
-bool TDummy:setGain(int gaincB)
+bool TDummy::setGain(int gaincB)
 {
-	return (gaincB==DUMMY_GAIN);
+	return (gaincB==DUMMY_GAINCB);
 }
 bool TDummy::setSamplerate(int samplerate)
 {
@@ -62,7 +62,7 @@ void TDummy::run()
 		{
 			fseek(f,0,SEEK_SET);
 		}
-		n=fread(iqsamples,sizeof(short),2*DUMMY_SAMPLERATE,f);
+		n=fread(mSamplesBuf,sizeof(short),2*DUMMY_SAMPLERATE,f);
 		
 		
 		//mPSignalSink(iqsamples,n);

@@ -14,7 +14,7 @@ class SimpleShifter
 		double	*mSinLUT;
 		double	*mCosLUT;
 		
-		signed short *mOutput=nullptr;
+		signed short *mOutput;
 		int	mTimeIdx;
 		int	mSampleRate;
 		int	mSampleCnt;

@@ -22,7 +22,7 @@ void SimpleShifter::process(signed short* input,int n)
 	int i;
 	int t;
 	double yr,yi;
-	if (mOutput!=nullptr)
+	if (mOutput!=NULL)
 		delete(mOutput);
 	mOutput=new signed short[2*n];
 	mSampleCnt=n;
@@ -43,7 +43,7 @@ void SimpleShifter::process(signed short* input,int n)
 void SimpleShifter::getResult(signed short* output)
 {
 	int i;
-	if (mOutput!=nullptr)
+	if (mOutput!=NULL)
 	{
 		for (i=0;i<mSampleCnt;i++)
 		{
@@ -61,7 +61,7 @@ void SimpleShifter::process(signed short* input,signed short* output,int n)
 	int i;
 	int t;
 	double yr,yi;
-	if (mOutput!=nullptr)
+	if (mOutput!=NULL)
 		delete(mOutput);
 	mSampleCnt=n;
 
