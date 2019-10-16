@@ -7,6 +7,7 @@ TARGET = dettusSDR
 INCLUDEPATH += . \
 		tuners \
 		tuners/dummy \
+		gui \
 		signalprocessing
 
 # The following define makes your compiler warn you if you use any
@@ -24,10 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS += signalprocessing/SimpleFft.h \
            signalprocessing/SimpleShifter.h \
            tuners/Tuners.h \
-           tuners/dummy/TDummy.h
+           tuners/dummy/TDummy.h	\
+           gui/MainWindow.h
 SOURCES += main.cpp \
            signalprocessing/SimpleFft.cpp \
            signalprocessing/SimpleShifter.cpp \
-           tuners/dummy/TDummy.cpp
+           tuners/dummy/TDummy.cpp	\
+           gui/MainWindow.cpp
 
 QT += multimedia widgets
