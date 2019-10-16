@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = dSDR
+TARGET = dettusSDR
 INCLUDEPATH += . \
 		tuners \
 		tuners/dummy \
