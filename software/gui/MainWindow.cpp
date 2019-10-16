@@ -6,6 +6,16 @@
 MainWindow::MainWindow(QWidget* parent) : QWidget(parent)
 {
 }
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+	double width;
+	double height;
+
+	width=this->width();
+	height=this->height();
+
+//	painter.fillRect((int)(0.00*width),(int)(0.20*height),(int)(0.20*width),(int)(0.75*height),QColor(0,255,0,255));
+}
 
 void MainWindow::paintEvent(QPaintEvent *event)
 {
@@ -23,7 +33,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
 	painter.fillRect((int)(0.20*width),(int)(0.00*height),(int)(0.80*width),(int)(0.20*height),QColor(128,128,0,255));
 
 	// left: the tuner widget
-	painter.fillRect((int)(0.00*width),(int)(0.20*height),(int)(0.20*width),(int)(0.75*height),QColor(0,255,0,255));
+//	painter.fillRect((int)(0.00*width),(int)(0.20*height),(int)(0.20*width),(int)(0.75*height),QColor(0,255,0,255));
 	
 	//below: the "record" button
 	painter.fillRect((int)(0.00*width),(int)(0.95*height),(int)(0.20*width),(int)(0.05*height),QColor(128,128,0,255));
@@ -37,6 +47,21 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
 	// and the big waterfall
 	painter.fillRect((int)(0.20*width),(int)(0.45*height),(int)(0.80*width),(int)(0.55*height),QColor(128,0,255,255));
-	
 
+	if (mWTuner!=nullptr)
+	{	
+		mWTuner->move((int)(0.00*width),(int)(0.20*height));
+		mWTuner->resize((int)(0.20*width),(int)(0.75*height));
+	}
+}
+
+void MainWindow::setWTuner(QWidget* wTuner)
+{
+	mWTuner=wTuner;
+	if (mWTuner!=nullptr) 
+	{
+		mWTuner->setParent(this);
+		mWTuner->show();
+	}
+	
 }

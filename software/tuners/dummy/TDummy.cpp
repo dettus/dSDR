@@ -1,4 +1,5 @@
 #include "TDummy.h"
+#include <QLabel>
 
 #define	DUMMY_SAMPLERATE	2048000
 #define	DUMMY_FREQUENCY		101200000
@@ -8,7 +9,7 @@ TDummy::TDummy()
 {
 	mStopped=false;
 	f=fopen("/dev/urandom","rb");
-	mWidget=nullptr;
+	mLabel=new QLabel("dummy");
 	mSamplesBuf=new signed short[2*DUMMY_SAMPLERATE];
 }
 void TDummy::stop()
@@ -17,7 +18,7 @@ void TDummy::stop()
 }
 QWidget* TDummy::getWidget()
 {
-	return mWidget;
+	return (QWidget*)mLabel;
 }
 int TDummy::getFrequency()
 {
@@ -54,15 +55,23 @@ void TDummy::gainDown()
 
 void TDummy::run()
 {
+	int cnt=0;
 	while (!mStopped)
 	{
 		int n;
+		char tmp[8];
 		QThread::msleep(1000);
 		if (feof(f))
 		{
 			fseek(f,0,SEEK_SET);
 		}
 		n=fread(mSamplesBuf,sizeof(short),2*DUMMY_SAMPLERATE,f);
+		cnt+=n;
+		printf("%d\n",cnt);
+		snprintf(tmp,8,"%d",cnt);
+		mLabel->setText(tmp);
+		
+		
 		
 		
 		//mPSignalSink(iqsamples,n);

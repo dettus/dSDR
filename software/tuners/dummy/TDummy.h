@@ -2,7 +2,9 @@
 #define	TDUMMY_H
 #include <QWidget>
 #include <QThread>
+#include <QLabel>
 #include <stdio.h>
+
 #include "Tuners.h"
 class TDummy : public QThread, public Tuners
 {
@@ -29,7 +31,7 @@ class TDummy : public QThread, public Tuners
 		bool mStopped;
 		// Psignalsink mPSignalSink();
 		FILE *f;
-		QWidget *mWidget;
+		QLabel *mLabel;
 		signed short *mSamplesBuf;
 };
 #endif
