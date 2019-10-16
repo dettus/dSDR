@@ -72,7 +72,10 @@ void TDummy::run()
 		mLabel->setText(tmp);
 		
 		
-		
+		if (mSink!=nullptr)
+		{
+			mSink->onNewSamples(mSamplesBuf,2*DUMMY_SAMPLERATE);
+		}	
 		
 		//mPSignalSink(iqsamples,n);
 	}

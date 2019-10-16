@@ -1,6 +1,7 @@
 #ifndef TUNERS_H
 #define TUNERS_H
 #include <QWidget>
+#include "Sink.h"
 
 
 // this is an abstract tuner class.
@@ -29,7 +30,14 @@ class Tuners
 
 		virtual void stop() = 0;	// tuners will be running in threads. there has to be a mechanism to shut them down.
 
+		void setSink(Sink* pSink)
+		{
+			mSink=pSink;
+		}
+		
+
 	protected:
 		virtual void run() = 0;		// tuners will be running in threads. 
+		Sink *mSink=nullptr;
 };
 #endif

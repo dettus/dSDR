@@ -8,6 +8,7 @@ INCLUDEPATH += . \
 		tuners \
 		tuners/dummy \
 		gui \
+		central	\
 		signalprocessing
 
 # The following define makes your compiler warn you if you use any
@@ -26,11 +27,15 @@ HEADERS += signalprocessing/SimpleFft.h \
            signalprocessing/SimpleShifter.h \
            tuners/Tuners.h \
            tuners/dummy/TDummy.h	\
-           gui/MainWindow.h
+           gui/MainWindow.h	\
+           gui/WSpectrum.h	\
+           central/Sink.h
+
 SOURCES += main.cpp \
            signalprocessing/SimpleFft.cpp \
            signalprocessing/SimpleShifter.cpp \
            tuners/dummy/TDummy.cpp	\
-           gui/MainWindow.cpp
+           gui/MainWindow.cpp		\
+           gui/WSpectrum.cpp
 
 QT += multimedia widgets
