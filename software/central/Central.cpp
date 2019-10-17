@@ -10,6 +10,7 @@ Central::Central()
 	iqBuf.used=0;
 	
 	mStopped=false;
+	mMutex.unlock();
 }
 void Central::onNewSamples(tSComplex* iqSamples,int n)
 {
@@ -17,6 +18,7 @@ void Central::onNewSamples(tSComplex* iqSamples,int n)
 	int j;
 	int mask;
 	// lock here
+	mMutex.lock();
 	
 	j=iqBuf.fillnext;
 	mask=iqBuf.size-1;
@@ -26,6 +28,7 @@ void Central::onNewSamples(tSComplex* iqSamples,int n)
 		j++;
 	}
 	iqBuf.fillnext=j;
+	mMutex.unlock();
 
 	// unlock here
 }
@@ -36,6 +39,7 @@ void Central::run()
 	{
 		QThread::msleep(1);
 		// lock
+		mMutex.lock();
 		if (iqBuf.fillnext!=iqBuf.fillcur)
 		{
 			iqBuf.fillcur=iqBuf.fillnext;
@@ -46,6 +50,7 @@ void Central::run()
 			iqBuf.fillnext-=size;
 			iqBuf.used-=size;
 		}
+		mMutex.unlock();
 		// unlock
 
 

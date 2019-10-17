@@ -1,6 +1,7 @@
 #ifndef	CENTRAL_H
 #define	CENTRAL_H
 #include <QThread>
+#include <QMutex>
 #include "Datatypes.h"
 
 class Central: public Sink,public QThread
@@ -19,7 +20,7 @@ class Central: public Sink,public QThread
 	private:
 		tSComplexBuf	iqBuf;
 		bool mStopped;
-		QMutexLocker locker;
+		QMutex mMutex;
 	
 };
 #endif
