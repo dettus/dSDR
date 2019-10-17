@@ -1,6 +1,7 @@
 #ifndef SIMPLEFFT_H
 #define	SIMPLEFFT_H
 
+#include "DataTypes.h"
 
 // the purpose of this class is to provide a first, rudimentary FFT.
 // it can be instantiated with an fftsize of 256,512,1024,2048,4096,8192,16384,32768,65536
@@ -13,9 +14,9 @@ class SimpleFft
 {
 	public:
 		SimpleFft(int fftsize);
-		void process(signed short* input);
-		void getResult(signed short *output,bool flipSpectrum=true);
-		void getResult(double *output,bool flipSpectrum=true);
+		void process(tSComplex* input);
+		void getResult(tSComplex* output,bool flipSpectrum=true);
+		void getResult(tDComplex *output,bool flipSpectrum=true);
 		void getSpectrum(double *output,bool flipSpectrum=true);
 		void addSpectrum(double *output,bool flipSpectrum=true);
 		int getSize();
