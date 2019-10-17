@@ -1,7 +1,7 @@
 #ifndef SIMPLEFFT_H
 #define	SIMPLEFFT_H
 
-#include "DataTypes.h"
+#include "Datatypes.h"
 
 // the purpose of this class is to provide a first, rudimentary FFT.
 // it can be instantiated with an fftsize of 256,512,1024,2048,4096,8192,16384,32768,65536

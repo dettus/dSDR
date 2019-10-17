@@ -17,30 +17,30 @@ SimpleShifter::SimpleShifter(int samplerate,int freqHz)
 }
 #define	CMPLX_MULR(ar,ai, br,bi)  ((ar)*(br)-(ai)*(bi))
 #define	CMPLX_MULI(ar,ai, br,bi)  ((ar)*(bi)+(ai)*(br))
-void SimpleShifter::process(signed short* input,int n)
+void SimpleShifter::process(tSComplex* input,int n)
 {
 	int i;
 	int t;
 	double yr,yi;
 	if (mOutput!=nullptr)
 		delete(mOutput);
-	mOutput=new signed short[2*n];
+	mOutput=new tSComplex[n];
 	mSampleCnt=n;
 
 
 	t=mTimeIdx;	
 	for (i=0;i<n;i+=2)
 	{
-		yr=CMPLX_MULR(input[i+0],input[i+1],mCosLUT[t],mSinLUT[t]);
-		yi=CMPLX_MULI(input[i+0],input[i+1],mCosLUT[t],mSinLUT[t]);
+		yr=CMPLX_MULR(input[i].real,input[i].imag,mCosLUT[t],mSinLUT[t]);
+		yi=CMPLX_MULI(input[i].real,input[i].imag,mCosLUT[t],mSinLUT[t]);
 		t=(t+1)%mSampleRate;
 
-		mOutput[i+0]=yr;
-		mOutput[i+1]=yi;
+		mOutput[i].real=yr;
+		mOutput[i].imag=yi;
 	}
 	mTimeIdx=t;
 }
-void SimpleShifter::getResult(signed short* output)
+void SimpleShifter::getResult(tSComplex* output)
 {
 	int i;
 	if (mOutput!=nullptr)
@@ -52,11 +52,12 @@ void SimpleShifter::getResult(signed short* output)
 	} else {
 		for (i=0;i<mSampleCnt;i++)
 		{
-			output[i]=0;
+			output[i].real=0;
+			output[i].imag=0;
 		}
 	}	
 }
-void SimpleShifter::process(signed short* input,signed short* output,int n)
+void SimpleShifter::process(tSComplex* input,tSComplex* output,int n)
 {
 	int i;
 	int t;
@@ -69,12 +70,12 @@ void SimpleShifter::process(signed short* input,signed short* output,int n)
 	t=mTimeIdx;	
 	for (i=0;i<n;i+=2)
 	{
-		yr=CMPLX_MULR(input[i+0],input[i+1],mCosLUT[t],mSinLUT[t]);
-		yi=CMPLX_MULI(input[i+0],input[i+1],mCosLUT[t],mSinLUT[t]);
+		yr=CMPLX_MULR(input[i].real,input[i].imag,mCosLUT[t],mSinLUT[t]);
+		yi=CMPLX_MULI(input[i].real,input[i].imag,mCosLUT[t],mSinLUT[t]);
 		t=(t+1)%mSampleRate;
 
-		output[i+0]=yr;
-		output[i+1]=yi;
+		output[i].real=yr;
+		output[i].imag=yi;
 	}
 	mTimeIdx=t;
 

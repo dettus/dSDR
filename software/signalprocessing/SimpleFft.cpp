@@ -128,7 +128,7 @@ SimpleFft::SimpleFft(int fftsize)
 
 	}
 }
-void SimpleFft::process(signed short* input)
+void SimpleFft::process(tSComplex* input)
 {
 	int sigmas;
 	int omegamask;
@@ -147,8 +147,8 @@ void SimpleFft::process(signed short* input)
 	notmask=mNotMask;	
 	for (i=0;i<mFftSize;i++)
 	{
-		mTmp_r[i]=input[2*mPermute[i]+0];
-		mTmp_i[i]=input[2*mPermute[i]+1];
+		mTmp_r[i]=input[mPermute[i]].real;
+		mTmp_i[i]=input[mPermute[i]].imag;
 
 	}
 	betainc=1;
@@ -199,43 +199,43 @@ void SimpleFft::process(signed short* input)
                 }
         }
 }
-void SimpleFft::getResult(signed short *output,bool flipSpectrum)
+void SimpleFft::getResult(tSComplex *output,bool flipSpectrum)
 {
 	int i;
 	if (flipSpectrum)
 	{
 		for (i=0;i<mFftSize/2;i++)
 		{
-			output[(i+mFftSize/2)*2+0]=(signed short)(mTmp_r[i]/(double)mSigmas);
-			output[(i+mFftSize/2)*2+1]=(signed short)(mTmp_i[i]/(double)mSigmas);
-			output[i*2+0]=(signed short)(mTmp_r[i+mFftSize/2]/(double)mSigmas);
-			output[i*2+1]=(signed short)(mTmp_i[i+mFftSize/2]/(double)mSigmas);
+			output[(i+mFftSize/2)].real=(signed short)(mTmp_r[i]/(double)mSigmas);
+			output[(i+mFftSize/2)].imag=(signed short)(mTmp_i[i]/(double)mSigmas);
+			output[i].real=(signed short)(mTmp_r[i+mFftSize/2]/(double)mSigmas);
+			output[i].imag=(signed short)(mTmp_i[i+mFftSize/2]/(double)mSigmas);
 		}
 	} else {
 		for (i=0;i<mFftSize;i++)
 		{
-			output[i*2+0]=(signed short)(mTmp_r[i]/(double)mSigmas);
-			output[i*2+1]=(signed short)(mTmp_i[i]/(double)mSigmas);
+			output[i].real=(signed short)(mTmp_r[i]/(double)mSigmas);
+			output[i].imag=(signed short)(mTmp_i[i]/(double)mSigmas);
 		}
 	}
 }
-void SimpleFft::getResult(double *output,bool flipSpectrum)
+void SimpleFft::getResult(tDComplex *output,bool flipSpectrum)
 {
 	int i;
 	if (flipSpectrum)
 	{
 		for (i=0;i<mFftSize/2;i++)
 		{
-			output[(i+mFftSize/2)*2+0]=(double)(mTmp_r[i]/(double)mSigmas);
-			output[(i+mFftSize/2)*2+1]=(double)(mTmp_i[i]/(double)mSigmas);
-			output[i*2+0]=(double)(mTmp_r[i+mFftSize/2]/(double)mSigmas);
-			output[i*2+1]=(double)(mTmp_i[i+mFftSize/2]/(double)mSigmas);
+			output[(i+mFftSize/2)].real=(double)(mTmp_r[i]/(double)mSigmas);
+			output[(i+mFftSize/2)].imag=(double)(mTmp_i[i]/(double)mSigmas);
+			output[i].real=(double)(mTmp_r[i+mFftSize/2]/(double)mSigmas);
+			output[i].imag=(double)(mTmp_i[i+mFftSize/2]/(double)mSigmas);
 		}
 	} else {
 		for (i=0;i<mFftSize;i++)
 		{
-			output[i*2+0]=(double)(mTmp_r[i]/(double)mSigmas);
-			output[i*2+1]=(double)(mTmp_i[i]/(double)mSigmas);
+			output[i].real=(double)(mTmp_r[i]/(double)mSigmas);
+			output[i].imag=(double)(mTmp_i[i]/(double)mSigmas);
 		}
 	}
 
