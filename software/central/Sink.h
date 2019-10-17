@@ -3,6 +3,6 @@
 class Sink
 {
 	public:
-		virtual void onNewSamples(signed short* iqSamples,int n) = 0;
+		virtual void onNewSamples(tSComplex* iqSamples,int n) = 0;
 };
 #endif

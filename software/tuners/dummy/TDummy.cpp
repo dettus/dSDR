@@ -74,7 +74,7 @@ void TDummy::run()
 		
 		if (mSink!=nullptr)
 		{
-			mSink->onNewSamples(mSamplesBuf,2*DUMMY_SAMPLERATE);
+			mSink->onNewSamples((tSComplex*)mSamplesBuf,2*DUMMY_SAMPLERATE);
 		}	
 		
 		//mPSignalSink(iqsamples,n);
