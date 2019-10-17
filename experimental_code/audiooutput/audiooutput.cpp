@@ -48,6 +48,7 @@
 **
 ****************************************************************************/
 
+#include <stdio.h>
 #include "audiooutput.h"
 
 #include <QAudioDeviceInfo>
@@ -154,7 +155,9 @@ AudioTest::AudioTest()
 	: m_pushTimer(new QTimer(this))
 {
 	initializeWindow();
+
 	initializeAudio(QAudioDeviceInfo::defaultOutputDevice());
+	
 }
 
 AudioTest::~AudioTest()
@@ -216,6 +219,7 @@ void AudioTest::initializeAudio(const QAudioDeviceInfo &deviceInfo)
 	if (!deviceInfo.isFormatSupported(format)) {
 		qWarning() << "Default format not supported - trying to use nearest";
 		format = deviceInfo.nearestFormat(format);
+		
 	}
 
 	const int durationSeconds = 1;
