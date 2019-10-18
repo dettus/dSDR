@@ -14,6 +14,7 @@ class SimpleFft
 {
 	public:
 		SimpleFft(int fftsize);
+		~SimpleFft();
 		void process(tSComplex* input);
 		void getResult(tSComplex* output,bool flipSpectrum=true);
 		void getResult(tDComplex *output,bool flipSpectrum=true);
@@ -22,17 +23,17 @@ class SimpleFft
 		int getSize();
 
 	private:
-		double	*mTwiddle_r;
-		double	*mTwiddle_i;
+		double	*mTwiddle_r=nullptr;
+		double	*mTwiddle_i=nullptr;
 
-		double	*mTmp_r;
-		double	*mTmp_i;	
+		double	*mTmp_r=nullptr;
+		double	*mTmp_i=nullptr;	
 
 		int mFftSize;
 		int mSigmas;
 		int mOmegaMask;
 		int mNotMask;
-		int *mPermute;
+		int *mPermute=nullptr;
 };
 
 

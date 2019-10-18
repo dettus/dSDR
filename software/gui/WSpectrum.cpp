@@ -69,6 +69,10 @@ void WSpectrum::mousePressEvent(QMouseEvent *event)
 	{
 		mLastMoveEvent=event->pos().x();
 	}
+	if ((event->buttons() & Qt::RightButton)	)
+	{
+		zoomFit();
+	}
 }
 void WSpectrum::mouseReleaseEvent(QMouseEvent *event)
 {
@@ -160,3 +164,5 @@ void WSpectrum::wheelEvent(QWheelEvent *event)
 	if (mRight>mFftSize || mRight<=mLeft) mRight=mFftSize;
 	repaint();
 }
+
+

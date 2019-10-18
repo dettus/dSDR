@@ -15,6 +15,12 @@ SimpleShifter::SimpleShifter(int samplerate,int freqHz)
 	}
 	mSampleRate=samplerate;
 }
+SimpleShifter::~SimpleShifter()
+{
+	if (mSinLUT!=nullptr) delete(mSinLUT);
+	if (mCosLUT!=nullptr) delete(mCosLUT);
+	if (mOutput!=nullptr) delete(mOutput);
+}
 #define	CMPLX_MULR(ar,ai, br,bi)  ((ar)*(br)-(ai)*(bi))
 #define	CMPLX_MULI(ar,ai, br,bi)  ((ar)*(bi)+(ai)*(br))
 void SimpleShifter::process(tSComplex* input,int n)

@@ -31,6 +31,7 @@ HEADERS += signalprocessing/SimpleFft.h \
            tuners/dummy/TDummy.h	\
            gui/MainWindow.h	\
            gui/WSpectrum.h	\
+           gui/WWaterfall.h	\
            central/Sink.h	\
            central/Central.h
 
@@ -40,6 +41,7 @@ SOURCES += main.cpp \
            tuners/dummy/TDummy.cpp	\
            gui/MainWindow.cpp		\
            gui/WSpectrum.cpp		\
+           gui/WWaterfall.cpp		\
            central/Central.cpp
 
 QT += multimedia widgets

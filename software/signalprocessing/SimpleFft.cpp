@@ -128,6 +128,14 @@ SimpleFft::SimpleFft(int fftsize)
 
 	}
 }
+SimpleFft::~SimpleFft()
+{
+	if (mTwiddle_r!=nullptr) delete(mTwiddle_r);
+	if (mTwiddle_i!=nullptr) delete(mTwiddle_i);
+	if (mTmp_r!=nullptr) delete(mTmp_r);
+	if (mTmp_i!=nullptr) delete(mTmp_i);
+	if (mPermute!=nullptr) delete(mPermute);
+}
 void SimpleFft::process(tSComplex* input)
 {
 	int sigmas;

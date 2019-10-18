@@ -8,12 +8,13 @@ int main(int argc,char* argv[])
 	QApplication app(argc,argv);
 	MainWindow mainwin(nullptr);
 	TDummy *tdummy=new TDummy();
-	Central *central=new Central();
+	Central *central=new Central(&mainwin,tdummy);
 
 
+	mainwin.showMaximized();
+	central->setTuner(tdummy);
 	central->start();
-	mainwin.show();
-	mainwin.setWTuner(tdummy->getWidget());
+
 	tdummy->setSink(central);
 	tdummy->start();
 	return app.exec();
