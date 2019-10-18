@@ -13,6 +13,7 @@ public:
 	void plotSpectrum(double* spectrum,int n);
 	void setZoom(int left,int right,double upper,double lower);
 	void zoomFit();
+	void getZoom(int *left,int *right);
 
 	
 protected:

@@ -207,5 +207,9 @@ void WSpectrum::wheelEvent(QWheelEvent *event)
 	printf("++++ mUpper:%10.f mLower:%10.f  left:%d right:%d\n",mUpper,mLower,mLeft,mRight);
 	update();
 }
-
+void WSpectrum::getZoom(int *left,int *right)
+{
+	*left=mLeft;
+	*right=mRight;
+}
 

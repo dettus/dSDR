@@ -45,12 +45,43 @@ void WWaterfall::paintEvent(QPaintEvent *event)
 
 void WWaterfall::mousePressEvent(QMouseEvent *event)
 {
+	if ((event->buttons() & Qt::LeftButton)	)
+	{
+		mLastMoveEventX=event->pos().x();
+	}
 	if ((event->buttons() & Qt::RightButton)	)
 	{
 		zoomFit();
 	}
-
 }
+
+void WWaterfall::mouseMoveEvent(QMouseEvent *event)
+{
+	int x,y;
+	double dx;
+	int left,right;
+
+	dx=((double)mRight-(double)mLeft)/(double)mWidth;
+	left=mLeft;
+	right=mRight;
+	if ((event->buttons() & Qt::LeftButton)	)
+	{
+		x=event->pos().x();
+		if (mLastMoveEventX!=-1)
+		{
+			left+=(mLastMoveEventX-x)*dx;
+			right+=(mLastMoveEventX-x)*dx;
+		}
+		if (left>0&&left<mFftSize && right>0&&right<mFftSize)
+		{
+			mLeft=left;
+			mRight=right;
+		}
+		mLastMoveEventX=x;	
+		update();
+	}
+}
+
 
 void WWaterfall::setFFTsize(int size)
 {
@@ -82,11 +113,11 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 		double maxy;
 
 
-		mMin=mMax=sqrt(spectrum[0]);
+		mMin=mMax=sqrt(sqrt(spectrum[0]));
 		for (i=0;i<n;i++)
 		{
 			double s;
-			s=sqrt(spectrum[i]);
+			s=sqrt(sqrt(spectrum[i]));
 			if (s<mMin) mMin=s;
 			if (s>mMax) mMax=s;
 		}
@@ -106,9 +137,9 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 			double nx;
 			double y;
 
-			y=sqrt(spectrum[i])-mMin;
+			y=sqrt(sqrt(spectrum[i]))-mMin;
 
-			nx=dx*i;
+			nx=dx*(i-mLeft);
 			if (y>maxy) maxy=y;
 			if ((int)nx!=x)
 			{
@@ -135,11 +166,48 @@ void WWaterfall::setZoom(int left,int right,double upper,double lower)
 	mLeft=left;
 	update();
 }
+void WWaterfall::setZoom(int left,int right)
+{
+	mRight=right;
+	mLeft=left;
+	update();
+
+}
 void WWaterfall::zoomFit()
 {
 	setZoom(0,mFftSize,mMax,0);
 }
-
 void WWaterfall::wheelEvent(QWheelEvent *event)
 {
+	QPoint curPoint = event->pos();
+	double x;
+	double d;
+	double fact;
+
+	
+	x=(double)curPoint.x()/(double)mWidth;
+	d=mRight-mLeft;
+
+	fact=(mRight-mLeft)/10;
+	if (event->delta()>0) // mousewheel up
+	{
+
+		fact=(mRight-mLeft)/10;
+		mLeft+=(int)(fact*x);
+		mRight-=(int)(fact*(1.0-x));
+	}
+	else if (event->delta()<0) // mousewheel down
+	{
+		fact=(mRight-mLeft)/10;
+		mLeft-=(int)fact;
+		mRight+=(int)fact;
+	}
+	if (mLeft<0) mLeft=0;
+	if (mLeft>mFftSize-32) mLeft=mFftSize-32;
+
+	if (mRight>mFftSize || mRight<=mLeft) mRight=mFftSize;
+
+	update();
 }
+
+

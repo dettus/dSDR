@@ -12,6 +12,7 @@ public:
 	void setFFTsize(int size);
 	void plotWaterfall(double* spectrum,int n);
 	void setZoom(int left,int right,double upper,double lower);
+	void setZoom(int left,int right);
 	void zoomFit();
 
 	
@@ -19,6 +20,7 @@ protected:
 	void paintEvent(QPaintEvent *event) override;
 	void resizeEvent(QResizeEvent *event) override;
 	void mousePressEvent(QMouseEvent *event) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
 	void wheelEvent(QWheelEvent *event) override;
 
 private:
@@ -30,6 +32,7 @@ private:
 
 	int mUpper,mLower;
 	int mLeft,mRight;
+	int mLastMoveEventX=-1;
 };
 
 #endif

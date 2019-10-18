@@ -56,6 +56,7 @@ void Central::run()
 	while (!mStopped)
 	{
 		double spectrum[mFftSize];
+		int left,right;
 		QThread::msleep(1);
 		// lock
 		mMutex.lock();
@@ -75,8 +76,9 @@ void Central::run()
 		mMutex2.lock();
 		while ((iqBuf.fillcur-iqBuf.used)>=mFftSize)
 		{
+			
 			for (i=0;i<mFftSize;i++) spectrum[i]=0.0f;
-			for (i=0;i<10;i++)
+			for (i=0;i<16;i++)
 			{
 				if ((iqBuf.fillcur-iqBuf.used)>=mFftSize)
 				{
@@ -87,8 +89,11 @@ void Central::run()
 			}
 			mWSpectrum->plotSpectrum(spectrum,mFftSize);
 			mWaterfall->plotWaterfall(spectrum,mFftSize);
+			
 //			QThread::usleep(1);
 		}
+//		mWSpectrum->getZoom(&left,&right);
+//		mWaterfall->setZoom(left,right);
 		iqBuf.used=iqBuf.fillcur;
 		mMutex2.unlock();
 	}
