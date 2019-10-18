@@ -11,6 +11,8 @@ INCLUDEPATH += . \
 		central	\
 		signalprocessing
 
+CONFIG += debug
+
 # The following define makes your compiler warn you if you use any
 # feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -29,13 +31,15 @@ HEADERS += signalprocessing/SimpleFft.h \
            tuners/dummy/TDummy.h	\
            gui/MainWindow.h	\
            gui/WSpectrum.h	\
-           central/Sink.h
+           central/Sink.h	\
+           central/Central.h
 
 SOURCES += main.cpp \
            signalprocessing/SimpleFft.cpp \
            signalprocessing/SimpleShifter.cpp \
            tuners/dummy/TDummy.cpp	\
            gui/MainWindow.cpp		\
-           gui/WSpectrum.cpp
+           gui/WSpectrum.cpp		\
+           central/Central.cpp
 
 QT += multimedia widgets

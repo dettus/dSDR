@@ -65,7 +65,7 @@ void TDummy::run()
 		{
 			fseek(f,0,SEEK_SET);
 		}
-		n=fread(mSamplesBuf,sizeof(short),2*DUMMY_SAMPLERATE,f);
+		n=fread(mSamplesBuf,sizeof(tSComplex),DUMMY_SAMPLERATE,f);
 		cnt+=n;
 		printf("%d\n",cnt);
 		snprintf(tmp,8,"%d",cnt);
@@ -74,7 +74,7 @@ void TDummy::run()
 		
 		if (mSink!=nullptr)
 		{
-			mSink->onNewSamples((tSComplex*)mSamplesBuf,2*DUMMY_SAMPLERATE);
+			mSink->onNewSamples((tSComplex*)mSamplesBuf,n);
 		}	
 		
 		//mPSignalSink(iqsamples,n);

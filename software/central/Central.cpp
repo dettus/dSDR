@@ -3,7 +3,7 @@
 
 Central::Central()
 {
-	iqBuf.samples=new tSCOmplex[BUFSIZE];
+	iqBuf.samples=new tSComplex[BUFSIZE];
 	iqBuf.size=BUFSIZE;
 	iqBuf.fillcur=0;
 	iqBuf.fillnext=0;
@@ -46,9 +46,9 @@ void Central::run()
 		}
 		if (iqBuf.fillcur>=iqBuf.size && iqBuf.fillnext>=iqBuf.size && iqBuf.used>=iqBuf.size)
 		{
-			iqBuf.fillcur-=size;
-			iqBuf.fillnext-=size;
-			iqBuf.used-=size;
+			iqBuf.fillcur-=iqBuf.size;
+			iqBuf.fillnext-=iqBuf.size;
+			iqBuf.used-=iqBuf.size;
 		}
 		mMutex.unlock();
 		// unlock

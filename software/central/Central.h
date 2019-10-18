@@ -3,8 +3,9 @@
 #include <QThread>
 #include <QMutex>
 #include "Datatypes.h"
+#include "Sink.h"
 
-class Central: public Sink,public QThread
+class Central: public QThread,public Sink
 {
 
 	Q_OBJECT
