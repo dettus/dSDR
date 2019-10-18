@@ -16,6 +16,7 @@ Central::Central(MainWindow* mainwin,Tuners* tuner)
 	mWaterfall=new WWaterfall(mainwin);
 	mFft=new SimpleFft(mFftSize);
 	mWSpectrum->setFFTsize(mFftSize);
+	mWaterfall->setFFTsize(mFftSize);
 	mTuner=tuner;
 
 	if (mainwin!=nullptr)
@@ -60,6 +61,7 @@ void Central::run()
 		mMutex.lock();
 		if (iqBuf.fillnext!=iqBuf.fillcur)
 		{
+			printf(">>> new samples:%d\n",iqBuf.fillnext-iqBuf.fillcur);
 			iqBuf.fillcur=iqBuf.fillnext;
 		}
 		if (iqBuf.fillcur>=iqBuf.size && iqBuf.fillnext>=iqBuf.size && iqBuf.used>=iqBuf.size)
@@ -71,21 +73,21 @@ void Central::run()
 		mMutex.unlock();
 
 		mMutex2.lock();
-		for (i=0;i<mFftSize;i++) spectrum[i]=0.0f;
-		if (iqBuf.fillcur-iqBuf.used>=mFftSize)
+		while ((iqBuf.fillcur-iqBuf.used)>=mFftSize)
 		{
+			for (i=0;i<mFftSize;i++) spectrum[i]=0.0f;
 			for (i=0;i<10;i++)
 			{
-				if (iqBuf.fillcur-iqBuf.used>=mFftSize)
+				if ((iqBuf.fillcur-iqBuf.used)>=mFftSize)
 				{
 					mFft->process(&iqBuf.samples[iqBuf.used&(iqBuf.size-1)]);
 					mFft->addSpectrum(spectrum);
 					iqBuf.used+=mFftSize;
 				}
-				mWSpectrum->plotSpectrum(spectrum,mFftSize);
-				mWaterfall->plotWaterfall(spectrum,mFftSize);
-				QThread::msleep(1);
 			}
+			mWSpectrum->plotSpectrum(spectrum,mFftSize);
+			mWaterfall->plotWaterfall(spectrum,mFftSize);
+//			QThread::usleep(1);
 		}
 		iqBuf.used=iqBuf.fillcur;
 		mMutex2.unlock();

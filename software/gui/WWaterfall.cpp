@@ -25,7 +25,6 @@ void WWaterfall::resizeEvent(QResizeEvent *event)
 		mHeight=this->height();
 		if (mWaterfallImage!=nullptr) delete(mWaterfallImage);
 		mWaterfallImage=new QImage(mWidth,mHeight,QImage::Format_ARGB32); 
-		printf(">>> %dx%d\n",mWidth,mHeight);
 	}
 }
 void WWaterfall::paintEvent(QPaintEvent *event)
@@ -37,7 +36,6 @@ void WWaterfall::paintEvent(QPaintEvent *event)
 		mHeight=this->height();
 		if (mWaterfallImage!=nullptr) delete(mWaterfallImage);
 		mWaterfallImage=new QImage(mWidth,mHeight,QImage::Format_ARGB32); 
-		printf(">>> %dx%d\n",mWidth,mHeight);
 	}
 	QRectF full(0,0, mWidth,mHeight);
 	painter.drawImage(full,*mWaterfallImage,full);
@@ -59,7 +57,7 @@ void WWaterfall::setFFTsize(int size)
 	mFftSize=size;
 	mLeft=0;
 	mRight=mFftSize;
-	repaint();
+	update();
 }
 
 void WWaterfall::plotWaterfall(double* spectrum, int n)
@@ -81,14 +79,16 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 		int x;
 		double dx;
 		double dy;
+		double maxy;
 
-		printf("paint %d %d\n",mWidth,mHeight);
 
-		mMin=mMax=spectrum[0];
+		mMin=mMax=sqrt(spectrum[0]);
 		for (i=0;i<n;i++)
 		{
-			if (spectrum[i]<mMin) mMin=spectrum[i];
-			if (spectrum[i]>mMax) mMax=spectrum[i];
+			double s;
+			s=sqrt(spectrum[i]);
+			if (s<mMin) mMin=s;
+			if (s>mMax) mMax=s;
 		}
 		// with each new spectrum, the waterfall moves UP. 
 		QRectF target(0,0, mWidth,mHeight-1);
@@ -99,26 +99,32 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 
 		x=0;
 		dx=(double)mWidth/(double)(mRight-mLeft);
-		dy=sqrt(mMax-mMin);
+		dy=(mMax-mMin);
+		maxy=0;
 		for (i=mLeft;i<mRight;i++)
 		{
 			double nx;
-			double r,g,b;
 			double y;
 
-			y=sqrt(spectrum[i]-mMin);
+			y=sqrt(spectrum[i])-mMin;
 
-			r=(y*255.0)/dy;
-			g=255-(y*255.0)/dy;
-			b=(y*255.0)/dy;
 			nx=dx*i;
-			waterfallPainter.setPen(QColor((int)r,(int)g,(int)b,255));
-			waterfallPainter.drawLine(x,mHeight-1, (int)nx,mHeight-1);
-			x=(int)nx;
+			if (y>maxy) maxy=y;
+			if ((int)nx!=x)
+			{
+				double r,g,b;
+				r=(maxy*255.0)/dy;
+				g=64-(maxy*64.0)/dy;
+				b=255-(maxy*255.0)/dy;
+				waterfallPainter.setPen(QColor((int)r,(int)g,(int)b,255));
+				waterfallPainter.drawLine(x,mHeight-1, (int)nx,mHeight-1);
+				x=(int)nx;
+				maxy=0;
+			}
+
 		}
-		repaint();
+		update();
 	} else {
-		printf("width:%d height:%d\n",mWidth,mHeight);
 	}
 }
 void WWaterfall::setZoom(int left,int right,double upper,double lower)
@@ -127,7 +133,7 @@ void WWaterfall::setZoom(int left,int right,double upper,double lower)
 	mLower=lower;
 	mRight=right;
 	mLeft=left;
-	repaint();
+	update();
 }
 void WWaterfall::zoomFit()
 {

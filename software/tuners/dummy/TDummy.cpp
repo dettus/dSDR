@@ -8,7 +8,7 @@
 TDummy::TDummy()
 {
 	mStopped=false;
-	f=fopen("/dev/urandom","rb");
+	f=fopen("/signals/det/7400khz_center.wav","rb");
 	mLabel=new QLabel("dummy");
 	mSamplesBuf=new signed short[2*DUMMY_SAMPLERATE];
 }

@@ -35,7 +35,7 @@ class Central: public QThread,public Sink
 		WSpectrum *mWSpectrum;
 		WWaterfall *mWaterfall;
 		Tuners	*mTuner;
-		int	mFftSize=1024;
+		int	mFftSize=32768;
 		SimpleFft *mFft=nullptr;
 	
 };

@@ -32,7 +32,8 @@ private:
 
 	double mUpper,mLower;
 	int mLeft,mRight;
-	int mLastMoveEvent=-1;
+	int mLastMoveEventX=-1;
+	int mLastMoveEventY=-1;
 };
 
 #endif
