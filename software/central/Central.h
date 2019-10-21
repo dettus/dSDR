@@ -11,7 +11,7 @@
 #include "MainWindow.h"
 #include "Tuners.h"
 
-class Central: public QThread,public Sink
+class Central: public QThread,public Sink,public Zoomback
 {
 
 	Q_OBJECT
@@ -22,6 +22,7 @@ class Central: public QThread,public Sink
 		void stop();
 		void setFftSize(int size);
 		void setTuner(Tuners* tuner);
+		void setZoom(int left,int right);
 	
 	protected:
 		void run();

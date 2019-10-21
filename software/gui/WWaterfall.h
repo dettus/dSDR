@@ -2,8 +2,9 @@
 #define	WWaterfall_H
 
 #include <QtWidgets>
+#include "Zoomback.h"
 
-class WWaterfall : public QWidget
+class WWaterfall : public QWidget,public Zoomback
 {
 	Q_OBJECT
 
@@ -14,6 +15,7 @@ public:
 	void setZoom(int left,int right,double upper,double lower);
 	void setZoom(int left,int right);
 	void zoomFit();
+	void setZoomback(Zoomback* zoomback);
 
 	
 protected:
@@ -33,6 +35,7 @@ private:
 	int mUpper,mLower;
 	int mLeft,mRight;
 	int mLastMoveEventX=-1;
+	Zoomback* mZoomback=nullptr;
 };
 
 #endif

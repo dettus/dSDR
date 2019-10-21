@@ -73,6 +73,7 @@ void WSpectrum::mousePressEvent(QMouseEvent *event)
 	if ((event->buttons() & Qt::RightButton)	)
 	{
 		zoomFit();
+		mZoomback->setZoom(mLeft,mRight);
 	}
 }
 void WSpectrum::mouseReleaseEvent(QMouseEvent *event)
@@ -110,8 +111,13 @@ void WSpectrum::mouseMoveEvent(QMouseEvent *event)
 		}
 		if (left>0&&left<mFftSize && right>0&&right<mFftSize)
 		{
-			mLeft=left;
-			mRight=right;
+			if (mZoomback!=nullptr)
+			{
+				mZoomback->setZoom(left,right);
+			} else {
+				mLeft=left;
+				mRight=right;	
+			}
 		}
 		if (upper>=0 && upper<=1e16 && lower>=0 && lower<=1e16-32)
 		{
@@ -151,6 +157,12 @@ void WSpectrum::setZoom(int left,int right,double upper,double lower)
 	mLeft=left;
 	update();
 }
+void WSpectrum::setZoom(int left,int right)
+{
+	mRight=right;
+	mLeft=left;
+	update();
+}
 void WSpectrum::zoomFit()
 {
 	setZoom(0,mFftSize,mMax,0);
@@ -162,14 +174,16 @@ void WSpectrum::wheelEvent(QWheelEvent *event)
 	double x,y;
 	double d;
 	double fact;
+	int left=mLeft;
+	int right=mRight;
+
 
 	
 	x=(double)curPoint.x()/(double)mWidth;
 	y=(double)curPoint.y()/(double)mHeight;
-	d=mRight-mLeft;
+	d=right-left;
 
-	printf("mUpper:%10.f mLower:%10.f  left:%d right:%d\n",mUpper,mLower,mLeft,mRight);
-	fact=(mRight-mLeft)/10;
+	fact=(right-left)/10;
 	if (event->delta()>0) // mousewheel up
 	{
 		if (event->modifiers() & Qt::ControlModifier)
@@ -178,9 +192,9 @@ void WSpectrum::wheelEvent(QWheelEvent *event)
 //			mLower+=(double)(fact*y);
 			mUpper-=(double)(fact*(1.0-y));
 		} else {
-			fact=(mRight-mLeft)/10;
-			mLeft+=(int)(fact*x);
-			mRight-=(int)(fact*(1.0-x));
+			fact=(right-left)/10;
+			left+=(int)(fact*x);
+			right-=(int)(fact*(1.0-x));
 		}
 	}
 	else if (event->delta()<0) // mousewheel down
@@ -191,20 +205,27 @@ void WSpectrum::wheelEvent(QWheelEvent *event)
 			mLower-=(double)fact;
 			mUpper+=(double)fact;
 		} else {
-			fact=(mRight-mLeft)/10;
-			mLeft-=(int)fact;
-			mRight+=(int)fact;
+			fact=(right-left)/10;
+			left-=(int)fact;
+			right+=(int)fact;
 		}
 	}
-	if (mLeft<0) mLeft=0;
-	if (mLeft>mFftSize-32) mLeft=mFftSize-32;
+	if (left<0) left=0;
+	if (left>mFftSize-32) left=mFftSize-32;
 
-	if (mRight>mFftSize || mRight<=mLeft) mRight=mFftSize;
+	if (right>mFftSize || right<=left) right=mFftSize;
 	if (mLower<0) mLower=0;
 	if (mLower>(1e16-32)) mLower=(1e16-32);
 
 	if (mUpper>1e16 || mUpper<=mLower) mUpper=1e16;
-	printf("++++ mUpper:%10.f mLower:%10.f  left:%d right:%d\n",mUpper,mLower,mLeft,mRight);
+	printf("++++ mUpper:%10.f mLower:%10.f  left:%d right:%d\n",mUpper,mLower,left,right);
+	if (mZoomback!=nullptr)
+	{
+		mZoomback->setZoom(left,right);
+	} else {
+		mLeft=left;
+		mRight=right;	
+	}
 	update();
 }
 void WSpectrum::getZoom(int *left,int *right)
@@ -212,4 +233,7 @@ void WSpectrum::getZoom(int *left,int *right)
 	*left=mLeft;
 	*right=mRight;
 }
-
+void WSpectrum::setZoomback(Zoomback* zoomback)
+{
+	mZoomback=zoomback;
+}

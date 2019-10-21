@@ -2,8 +2,9 @@
 #define	WSPECTRUM_H
 
 #include <QtWidgets>
+#include "Zoomback.h"
 
-class WSpectrum : public QWidget
+class WSpectrum : public QWidget,public Zoomback
 {
 	Q_OBJECT
 
@@ -12,8 +13,10 @@ public:
 	void setFFTsize(int size);
 	void plotSpectrum(double* spectrum,int n);
 	void setZoom(int left,int right,double upper,double lower);
+	void setZoom(int left,int right);
 	void zoomFit();
 	void getZoom(int *left,int *right);
+	void setZoomback(Zoomback* zoomback);
 
 	
 protected:
@@ -35,6 +38,7 @@ private:
 	int mLeft,mRight;
 	int mLastMoveEventX=-1;
 	int mLastMoveEventY=-1;
+	Zoomback* mZoomback=nullptr;
 };
 
 #endif

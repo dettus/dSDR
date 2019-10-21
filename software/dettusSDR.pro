@@ -32,6 +32,7 @@ HEADERS += signalprocessing/SimpleFft.h \
            gui/MainWindow.h	\
            gui/WSpectrum.h	\
            gui/WWaterfall.h	\
+           central/Datatypes.h	\
            central/Sink.h	\
            central/Central.h
 

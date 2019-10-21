@@ -19,6 +19,10 @@ Central::Central(MainWindow* mainwin,Tuners* tuner)
 	mWaterfall->setFFTsize(mFftSize);
 	mTuner=tuner;
 
+	mWSpectrum->setZoomback(this);
+	mWaterfall->setZoomback(this);
+
+
 	if (mainwin!=nullptr)
 	{
 		mainwin->setWSpectrum(mWSpectrum);
@@ -123,4 +127,9 @@ void Central::setTuner(Tuners* tuner)
 {
 	mTuner=tuner;
 	mMainwin->setWTuner(mTuner->getWidget());	
+}
+void Central::setZoom(int left,int right)
+{
+	mWSpectrum->setZoom(left,right);
+	mWaterfall->setZoom(left,right);
 }

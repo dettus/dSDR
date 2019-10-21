@@ -70,6 +70,7 @@ void WWaterfall::mousePressEvent(QMouseEvent *event)
 	if ((event->buttons() & Qt::RightButton)	)
 	{
 		zoomFit();
+		mZoomback->setZoom(mLeft,mRight);
 	}
 }
 
@@ -92,8 +93,13 @@ void WWaterfall::mouseMoveEvent(QMouseEvent *event)
 		}
 		if (left>0&&left<mFftSize && right>0&&right<mFftSize)
 		{
-			mLeft=left;
-			mRight=right;
+			if (mZoomback!=nullptr)
+			{
+				mZoomback->setZoom(left,right);
+			} else {
+				mLeft=left;
+				mRight=right;	
+			}
 		}
 		mLastMoveEventX=x;	
 		update();
@@ -123,11 +129,11 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 		double maxy;
 
 
-		mMin=mMax=sqrt(sqrt(spectrum[0]));
+		mMin=mMax=log((spectrum[0]));
 		for (i=0;i<n;i++)
 		{
 			double s;
-			s=sqrt(sqrt(spectrum[i]));
+			s=log((spectrum[i]));
 			if (s<mMin) mMin=s;
 			if (s>mMax) mMax=s;
 		}
@@ -147,7 +153,8 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 			double nx;
 			double y;
 
-			y=sqrt(sqrt(spectrum[i]))-mMin;
+			y=log((spectrum[i]))-mMin;
+
 
 			nx=dx*(i-0);
 			if (y>maxy) maxy=y;
@@ -157,6 +164,14 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 				r=(maxy*255.0)/dy;
 				g=64-(maxy*64.0)/dy;
 				b=255-(maxy*255.0)/dy;
+
+				r=(maxy* 32.0)/dy;
+				g=(maxy*255.0)/dy;
+				b=(maxy*192.0)/dy;
+
+				r=(maxy*255.0)/dy;
+				g=(maxy*255.0)/dy;
+				b=63+(maxy*192.0)/dy;
 				waterfallPainter.setPen(QColor((int)r,(int)g,(int)b,255));
 				waterfallPainter.drawLine(x,0, (int)nx,0);
 				x=(int)nx;
@@ -192,31 +207,42 @@ void WWaterfall::wheelEvent(QWheelEvent *event)
 	double x;
 	double d;
 	double fact;
+	int right=mRight;
+	int left=mLeft;
 
 	
 	x=(double)(curPoint.x()*WATERFALLWIDTH)/(double)(mFftSize*mWidth);
-	d=mRight-mLeft;
+	d=right-left;
 
-	fact=(mRight-mLeft)/10;
+	fact=(right-left)/10;
 	if (event->delta()>0) // mousewheel up
 	{
 
-		fact=(mRight-mLeft)/10;
-		mLeft+=(int)(fact*x);
-		mRight-=(int)(fact*(1.0-x));
+		fact=(right-left)/10;
+		left+=(int)(fact*x);
+		right-=(int)(fact*(1.0-x));
 	}
 	else if (event->delta()<0) // mousewheel down
 	{
-		fact=(mRight-mLeft)/10;
-		mLeft-=(int)fact;
-		mRight+=(int)fact;
+		fact=(right-left)/10;
+		left-=(int)fact;
+		right+=(int)fact;
 	}
-	if (mLeft<0) mLeft=0;
-	if (mLeft>mFftSize-32) mLeft=mFftSize-32;
+	if (left<0) left=0;
+	if (left>mFftSize-32) left=mFftSize-32;
 
-	if (mRight>mFftSize || mRight<=mLeft) mRight=mFftSize;
-
+	if (right>mFftSize || right<=left) right=mFftSize;
+	if (mZoomback!=nullptr)
+	{
+		mZoomback->setZoom(left,right);
+	} else {
+		mLeft=left;
+		mRight=right;	
+	}
 	update();
 }
-
+void WWaterfall::setZoomback(Zoomback* zoomback)
+{
+	mZoomback=zoomback;
+}
 
