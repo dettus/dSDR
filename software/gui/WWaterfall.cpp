@@ -1,5 +1,7 @@
 #include "WWaterfall.h"
 
+#define	WATERFALLWIDTH	32768
+#define	WATERFALLHEIGHT	256
 WWaterfall::WWaterfall(QWidget* parent) : QWidget(parent)
 {
 	int i;
@@ -12,6 +14,9 @@ WWaterfall::WWaterfall(QWidget* parent) : QWidget(parent)
 	mRight=mFftSize;
 	if (mWaterfallImage!=nullptr) delete(mWaterfallImage);
 	mWaterfallImage=nullptr;
+	mWaterfallImage=new QImage(WATERFALLWIDTH,WATERFALLHEIGHT,QImage::Format_ARGB32); 
+	QPainter waterfallPainter(mWaterfallImage);
+	waterfallPainter.fillRect(0,0,WATERFALLWIDTH,WATERFALLHEIGHT,QColor(0,0,255,255));
 
 }
 void WWaterfall::resizeEvent(QResizeEvent *event)
@@ -23,22 +28,35 @@ void WWaterfall::resizeEvent(QResizeEvent *event)
 	{
 		mWidth=this->width();
 		mHeight=this->height();
-		if (mWaterfallImage!=nullptr) delete(mWaterfallImage);
-		mWaterfallImage=new QImage(mWidth,mHeight,QImage::Format_ARGB32); 
 	}
+
 }
 void WWaterfall::paintEvent(QPaintEvent *event)
 {
+	double delta;
 	QPainter painter(this);
 	if (mWidth!=this->width() || (mHeight!=this->height()))
 	{
 		mWidth=this->width();
 		mHeight=this->height();
-		if (mWaterfallImage!=nullptr) delete(mWaterfallImage);
-		mWaterfallImage=new QImage(mWidth,mHeight,QImage::Format_ARGB32); 
 	}
+	QSize	size(mWidth,mHeight);
 	QRectF full(0,0, mWidth,mHeight);
-	painter.drawImage(full,*mWaterfallImage,full);
+	delta=((double)(mRight-mLeft)*(double)WATERFALLWIDTH)/(double)mFftSize;
+	QImage tmpImage(delta,WATERFALLHEIGHT,QImage::Format_ARGB32);
+	QPainter tmpPainter(&tmpImage);
+	QRectF source(mLeft,0,delta,WATERFALLHEIGHT);
+	QRectF target(0,0,delta,WATERFALLHEIGHT);
+
+	tmpPainter.drawImage(target,*mWaterfallImage,source);
+	
+
+	
+	
+
+		
+//	painter.drawImage(full,mWaterfallImage->scaled(size),full);
+	painter.drawImage(full,tmpImage.scaled(size),full);
 
 }
 
@@ -61,7 +79,7 @@ void WWaterfall::mouseMoveEvent(QMouseEvent *event)
 	double dx;
 	int left,right;
 
-	dx=((double)mRight-(double)mLeft)/(double)mWidth;
+	dx=(((double)mRight-(double)mLeft)*(double)WATERFALLWIDTH)/(double)(mWidth*mFftSize);
 	left=mLeft;
 	right=mRight;
 	if ((event->buttons() & Qt::LeftButton)	)
@@ -93,17 +111,9 @@ void WWaterfall::setFFTsize(int size)
 
 void WWaterfall::plotWaterfall(double* spectrum, int n)
 {
-	int right,left;
-
-	right=mRight;
-	if (right>mFftSize) right=mFftSize;
-	left=mLeft;
-	if (left>(right-32)) left=right-32;
-	if (left<0) left=0;
-
 	if (mWaterfallImage!=nullptr)
 	{
-		QImage tmpImage(mWidth,mHeight,QImage::Format_ARGB32);
+		QImage tmpImage(WATERFALLWIDTH,WATERFALLHEIGHT,QImage::Format_ARGB32);
 		QPainter tmpPainter(&tmpImage);
 		QPainter waterfallPainter(mWaterfallImage);
 		int i;
@@ -121,25 +131,25 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 			if (s<mMin) mMin=s;
 			if (s>mMax) mMax=s;
 		}
-		// with each new spectrum, the waterfall moves UP. 
-		QRectF target(0,0, mWidth,mHeight-1);
-		QRectF source(0,0, mWidth,mHeight);
+		// with each new spectrum, the waterfall moves DOWN
+		QRectF target(0,1, WATERFALLWIDTH,WATERFALLHEIGHT-1);
+		QRectF source(0,0, WATERFALLWIDTH,WATERFALLHEIGHT-1);
 		tmpPainter.drawImage(target, *mWaterfallImage, source);	// move the image 1 pixel up
 		waterfallPainter.drawImage(source, tmpImage, source);
-		// the last line is now free to paint the new spectrum
+		// the upper line is now free to paint the new spectrum
 
 		x=0;
-		dx=(double)mWidth/(double)(mRight-mLeft);
+		dx=(double)WATERFALLWIDTH/(double)(mFftSize);
 		dy=(mMax-mMin);
 		maxy=0;
-		for (i=mLeft;i<mRight;i++)
+		for (i=0;i<mFftSize;i++)
 		{
 			double nx;
 			double y;
 
 			y=sqrt(sqrt(spectrum[i]))-mMin;
 
-			nx=dx*(i-mLeft);
+			nx=dx*(i-0);
 			if (y>maxy) maxy=y;
 			if ((int)nx!=x)
 			{
@@ -148,11 +158,10 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 				g=64-(maxy*64.0)/dy;
 				b=255-(maxy*255.0)/dy;
 				waterfallPainter.setPen(QColor((int)r,(int)g,(int)b,255));
-				waterfallPainter.drawLine(x,mHeight-1, (int)nx,mHeight-1);
+				waterfallPainter.drawLine(x,0, (int)nx,0);
 				x=(int)nx;
 				maxy=0;
 			}
-
 		}
 		update();
 	} else {
@@ -185,7 +194,7 @@ void WWaterfall::wheelEvent(QWheelEvent *event)
 	double fact;
 
 	
-	x=(double)curPoint.x()/(double)mWidth;
+	x=(double)(curPoint.x()*WATERFALLWIDTH)/(double)(mFftSize*mWidth);
 	d=mRight-mLeft;
 
 	fact=(mRight-mLeft)/10;
