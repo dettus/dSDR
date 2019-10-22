@@ -62,13 +62,53 @@ void WWaterfall::paintEvent(QPaintEvent *event)
 	painter.drawImage(full,tmpImage.scaled(size),full);
 	painter.setPen(QColor(255,255,255,255));
 	font.setPointSize(10);
-	for (i=-1000;i<1000;i+=250)
+
+
+	double samplerate=2048000;
+	double nyquist=samplerate/(double)mFftSize;
+	int freqleft=(int)(nyquist*(double)(mLeft-mFftSize/2));
+	int freqright=(int)(nyquist*(double)(mRight-mFftSize/2));
+
+
+	for (i=0;i<5;i++)
+	{
+		int x1,x2;
+		x1=mWidth/2-(mWidth*i/10);
+		x2=mWidth/2+(mWidth*i/10);
+		painter.drawLine(x1,0,x1,mHeight);
+		painter.drawLine(x2,0,x2,mHeight);
+	}
 	{
 		char tmp[64];
-		snprintf(tmp,64,"%d00kHz",i);
-		x=((double)i/1024.0)*mWidth+mWidth/2;
-		painter.drawText(QRectF(x,0,100,25),Qt::AlignCenter,tmp);
-		x+=((double)mWidth*100)/1024;
+		int delta;
+		int x1,x2;
+		int freq1,freq2;
+
+		x1=x2=mWidth/2;
+		delta=(freqright-freqleft)/10;
+		snprintf(tmp,64,"%dHz",freqleft);
+		painter.drawText(QRectF(0,0,100,25),Qt::AlignLeft,tmp);
+		snprintf(tmp,64,"%dHz",freqright);
+		painter.drawText(QRectF(mWidth-100,0,100,25),Qt::AlignRight,tmp);
+	
+		freq1=freq2=(freqright+freqleft)/2;
+		snprintf(tmp,64,"%dHz",freq1);
+		painter.drawText(QRectF(x1-50,0,100,25),Qt::AlignCenter|Qt::AlignTop,tmp);
+		
+		for (i=1;i<5;i++)
+		{
+			int x1,x2;
+			x1=mWidth/2-(mWidth*i/10);
+			x2=mWidth/2+(mWidth*i/10);
+			freq1-=delta;
+			freq2+=delta;
+
+			snprintf(tmp,64,"%dHz",freq1);
+			painter.drawText(QRectF(x1-50,0,100,25),Qt::AlignCenter|Qt::AlignTop,tmp);
+			snprintf(tmp,64,"%dHz",freq2);
+			painter.drawText(QRectF(x2-50,0,100,25),Qt::AlignCenter|Qt::AlignTop,tmp);
+
+		}
 	}	
 
 }
