@@ -1,4 +1,5 @@
 #include "TDummy.h"
+#include <QFileDialog>
 #include <QLabel>
 
 #define	DUMMY_SAMPLERATE	2048000
@@ -8,8 +9,8 @@
 TDummy::TDummy()
 {
 	mStopped=false;
-	f=fopen("/signals/det/7400khz_center.wav","rb");
-//	f=fopen("/signals/det/drmplus_again.iq2048","rb");
+	QString fileName=QFileDialog::getOpenFileName(nullptr,"Open...","Signal Files (*.iq2048);;All Files (*)");
+	f=fopen(fileName.toLocal8Bit().data(),"rb");
 	mLabel=new QLabel("dummy");
 	mSamplesBuf=new signed short[2*DUMMY_SAMPLERATE];
 }
