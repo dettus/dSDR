@@ -34,7 +34,10 @@ void WWaterfall::resizeEvent(QResizeEvent *event)
 void WWaterfall::paintEvent(QPaintEvent *event)
 {
 	double delta;
+	double x;
+	int i;
 	QPainter painter(this);
+	QFont font=painter.font();
 	if (mWidth!=this->width() || (mHeight!=this->height()))
 	{
 		mWidth=this->width();
@@ -57,6 +60,16 @@ void WWaterfall::paintEvent(QPaintEvent *event)
 		
 //	painter.drawImage(full,mWaterfallImage->scaled(size),full);
 	painter.drawImage(full,tmpImage.scaled(size),full);
+	painter.setPen(QColor(255,255,255,255));
+	font.setPointSize(10);
+	for (i=-1000;i<1000;i+=250)
+	{
+		char tmp[64];
+		snprintf(tmp,64,"%d00kHz",i);
+		x=((double)i/1024.0)*mWidth+mWidth/2;
+		painter.drawText(QRectF(x,0,100,25),Qt::AlignCenter,tmp);
+		x+=((double)mWidth*100)/1024;
+	}	
 
 }
 
@@ -129,11 +142,11 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 		double maxy;
 
 
-		mMin=mMax=log((spectrum[0]));
+		mMin=mMax=log((spectrum[0]))/log(10);
 		for (i=0;i<n;i++)
 		{
 			double s;
-			s=log((spectrum[i]));
+			s=log((spectrum[i]))/log(10);
 			if (s<mMin) mMin=s;
 			if (s>mMax) mMax=s;
 		}
@@ -153,7 +166,7 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 			double nx;
 			double y;
 
-			y=log((spectrum[i]))-mMin;
+			y=log((spectrum[i]))/log(10)-mMin;
 
 
 			nx=dx*(i-0);
@@ -161,9 +174,6 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 			if ((int)nx!=x)
 			{
 				double r,g,b;
-				r=(maxy*255.0)/dy;
-				g=64-(maxy*64.0)/dy;
-				b=255-(maxy*255.0)/dy;
 
 				r=(maxy* 32.0)/dy;
 				g=(maxy*255.0)/dy;
@@ -172,6 +182,10 @@ void WWaterfall::plotWaterfall(double* spectrum, int n)
 				r=(maxy*255.0)/dy;
 				g=(maxy*255.0)/dy;
 				b=63+(maxy*192.0)/dy;
+
+				r=(maxy*255.0)/dy;
+				g=64-(maxy*64.0)/dy;
+				b=255-(maxy*255.0)/dy;
 				waterfallPainter.setPen(QColor((int)r,(int)g,(int)b,255));
 				waterfallPainter.drawLine(x,0, (int)nx,0);
 				x=(int)nx;

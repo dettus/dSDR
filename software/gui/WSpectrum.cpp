@@ -140,12 +140,11 @@ void WSpectrum::plotSpectrum(double* spectrum, int n)
 {
 	int i;
 	
-	mMin=mMax=spectrum[0];
 	for (i=0;i<n;i++)
 	{
-		mSpectrum[i]=sqrt(spectrum[i]);
-		if (mSpectrum[i]<mMin) mMin=mSpectrum[i];
-		if (mSpectrum[i]>mMax) mMax=mSpectrum[i];
+		mSpectrum[i]=log(spectrum[i])/log(10);
+		if (i==0 || mSpectrum[i]<mMin) mMin=mSpectrum[i];
+		if (i==0 || mSpectrum[i]>mMax) mMax=mSpectrum[i];
 	}
 	update();
 }

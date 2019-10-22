@@ -9,6 +9,7 @@ TDummy::TDummy()
 {
 	mStopped=false;
 	f=fopen("/signals/det/7400khz_center.wav","rb");
+//	f=fopen("/signals/det/drmplus_again.iq2048","rb");
 	mLabel=new QLabel("dummy");
 	mSamplesBuf=new signed short[2*DUMMY_SAMPLERATE];
 }
