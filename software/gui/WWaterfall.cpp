@@ -34,7 +34,6 @@ void WWaterfall::resizeEvent(QResizeEvent *event)
 void WWaterfall::paintEvent(QPaintEvent *event)
 {
 	double delta;
-	double x;
 	int i;
 	QPainter painter(this);
 	QFont font=painter.font();
@@ -66,50 +65,55 @@ void WWaterfall::paintEvent(QPaintEvent *event)
 
 	double samplerate=2048000;
 	double nyquist=samplerate/(double)mFftSize;
-	int freqleft=(int)(nyquist*(double)(mLeft-mFftSize/2));
-	int freqright=(int)(nyquist*(double)(mRight-mFftSize/2));
-
-
-	for (i=0;i<5;i++)
-	{
-		int x1,x2;
-		x1=mWidth/2-(mWidth*i/10);
-		x2=mWidth/2+(mWidth*i/10);
-		painter.drawLine(x1,0,x1,mHeight);
-		painter.drawLine(x2,0,x2,mHeight);
-	}
-	{
-		char tmp[64];
-		int delta;
-		int x1,x2;
-		int freq1,freq2;
-
-		x1=x2=mWidth/2;
-		delta=(freqright-freqleft)/10;
-		snprintf(tmp,64,"%dHz",freqleft);
-		painter.drawText(QRectF(0,0,100,25),Qt::AlignLeft,tmp);
-		snprintf(tmp,64,"%dHz",freqright);
-		painter.drawText(QRectF(mWidth-100,0,100,25),Qt::AlignRight,tmp);
+	int freqleft=(int)(nyquist*(double)mLeft);
+	int freqright=(int)(nyquist*(double)mRight);
+	signed long long d;
+	signed long long carrierleft,carrierright;
+	freqleft-=samplerate/2;
+	freqright-=samplerate/2;
+	d=freqright-freqleft;
 	
-		freq1=freq2=(freqright+freqleft)/2;
-		snprintf(tmp,64,"%dHz",freq1);
-		painter.drawText(QRectF(x1-50,0,100,25),Qt::AlignCenter|Qt::AlignTop,tmp);
-		
-		for (i=1;i<5;i++)
-		{
-			int x1,x2;
-			x1=mWidth/2-(mWidth*i/10);
-			x2=mWidth/2+(mWidth*i/10);
-			freq1-=delta;
-			freq2+=delta;
+	if (d>=10000000) d=1000000;
+	else if (d>=  250000) d=100000;
+	else if (d>=   25000) d= 10000;
+	else if (d>=    2500) d=  1000;
+	else d=100;
 
-			snprintf(tmp,64,"%dHz",freq1);
-			painter.drawText(QRectF(x1-50,0,100,25),Qt::AlignCenter|Qt::AlignTop,tmp);
-			snprintf(tmp,64,"%dHz",freq2);
-			painter.drawText(QRectF(x2-50,0,100,25),Qt::AlignCenter|Qt::AlignTop,tmp);
+	carrierleft=freqleft/d;
+	carrierright=freqright/d;
+	carrierleft*=d;
+	carrierright*=d;
 
-		}
-	}	
+	
+
+	printf("mLeft:%d->%dHz. mRight:%d->%dHz  ",mLeft,freqleft,mRight,freqright);
+	printf("rounded:%lldHz,%lldHz ",carrierleft,carrierright);
+
+	carrierleft*=mFftSize;
+	carrierright*=mFftSize;
+
+	carrierleft/=samplerate;
+	carrierright/=samplerate;
+
+	printf("d:%lld  ",d);
+	d*=mFftSize;
+	d/=samplerate;
+	printf("carrier:%lld,%lld inc:%lld",carrierleft,carrierright,d);
+
+	carrierleft+=mFftSize/2;
+	carrierright+=mFftSize/2;
+	
+	painter.setPen(QColor(255,255,255,255));
+	for (i=carrierleft;i<carrierright;i+=d)
+	{
+		int x;
+		x=(i-mLeft)*mWidth/(mRight-mLeft);
+		painter.drawLine(x,0,x,mHeight);
+	}
+
+	printf("\n");
+	
+
 
 }
 
