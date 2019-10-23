@@ -67,6 +67,7 @@ void WWaterfall::paintEvent(QPaintEvent *event)
 	double nyquist=samplerate/(double)mFftSize;
 	int freqleft=(int)(nyquist*(double)mLeft);
 	int freqright=(int)(nyquist*(double)mRight);
+	int freq,freqinc;;
 	signed long long d;
 	signed long long carrierleft,carrierright;
 	freqleft-=samplerate/2;
@@ -79,11 +80,13 @@ void WWaterfall::paintEvent(QPaintEvent *event)
 	else if (d>=    2500) d=  1000;
 	else d=100;
 
-	carrierleft=freqleft/d;
-	carrierright=freqright/d;
+	carrierleft=freqleft/d-1;
+	carrierright=freqright/d+2;
 	carrierleft*=d;
 	carrierright*=d;
-
+	
+	freq=carrierleft;
+	freqinc=d;
 	
 
 	printf("mLeft:%d->%dHz. mRight:%d->%dHz  ",mLeft,freqleft,mRight,freqright);
@@ -107,8 +110,18 @@ void WWaterfall::paintEvent(QPaintEvent *event)
 	for (i=carrierleft;i<carrierright;i+=d)
 	{
 		int x;
+		char tmp[64];
 		x=(i-mLeft)*mWidth/(mRight-mLeft);
-		painter.drawLine(x,0,x,mHeight);
+
+		if (x>=0 && x<=mWidth)
+		{
+			painter.drawLine(x,0,x,mHeight);
+
+			snprintf(tmp,64,"%dHz",freq);
+
+			painter.drawText(QRectF((double)x-50,0.0,100,20),Qt::AlignCenter,tmp);
+		}
+		freq+=freqinc;
 	}
 
 	printf("\n");
