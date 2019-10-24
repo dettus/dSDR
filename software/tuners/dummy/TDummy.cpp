@@ -1,4 +1,5 @@
 #include "TDummy.h"
+#include "CBDummy.h"
 #include <QFileDialog>
 #include <QLabel>
 
@@ -9,9 +10,9 @@
 TDummy::TDummy()
 {
 	mStopped=false;
-	QString fileName=QFileDialog::getOpenFileName(nullptr,"Open...","Signal Files (*.iq2048);;All Files (*)");
-	f=fopen(fileName.toLocal8Bit().data(),"rb");
-	mLabel=new QLabel("dummy");
+	f=nullptr;
+	mWDummy=new WDummy();
+	mWDummy->setCallback(this);
 	mSamplesBuf=new signed short[2*DUMMY_SAMPLERATE];
 }
 void TDummy::stop()
@@ -20,7 +21,7 @@ void TDummy::stop()
 }
 QWidget* TDummy::getWidget()
 {
-	return (QWidget*)mLabel;
+	return (QWidget*)mWDummy;
 }
 int TDummy::getFrequency()
 {
@@ -63,23 +64,31 @@ void TDummy::run()
 		int n;
 		char tmp[8];
 		QThread::msleep(1000);
-		if (feof(f))
+		if (f!=nullptr && mStarted)
 		{
-			fseek(f,0,SEEK_SET);
-		}
-		n=fread(mSamplesBuf,sizeof(tSComplex),DUMMY_SAMPLERATE,f);
-		cnt+=n;
-		printf("%d\n",cnt);
-		snprintf(tmp,8,"%d",cnt);
-		mLabel->setText(tmp);
-		
-		
-		if (mSink!=nullptr)
-		{
-			mSink->onNewSamples((tSComplex*)mSamplesBuf,n);
+			if (feof(f))
+			{
+				fseek(f,0,SEEK_SET);
+			}
+			n=fread(mSamplesBuf,sizeof(tSComplex),DUMMY_SAMPLERATE,f);
+			cnt+=n;
+			printf("%d\n",cnt);
+
+
+			if (mSink!=nullptr)
+			{
+				mSink->onNewSamples((tSComplex*)mSamplesBuf,n);
+			}	
 		}	
-		
 		//mPSignalSink(iqsamples,n);
 	}
 }
-
+void TDummy::startStop(bool started)
+{
+	mStarted=started;
+}
+void TDummy::fileOpen(char* filename)
+{
+	if (f!=nullptr) fclose(f);
+	f=fopen(filename,"rb");
+}

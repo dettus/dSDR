@@ -6,7 +6,9 @@
 #include <stdio.h>
 
 #include "Tuners.h"
-class TDummy : public QThread, public Tuners
+#include "CBDummy.h"
+#include "WDummy.h"
+class TDummy : public QThread, public Tuners, public CBDummy
 {
 	Q_OBJECT
 
@@ -23,15 +25,19 @@ class TDummy : public QThread, public Tuners
 		
 		void gainUp();
 		void gainDown();
+
+		void startStop(bool started);
+		void fileOpen(char* filename);
 	
 	protected:
 		void run();
 	
 	private:
 		bool mStopped;
+		bool mStarted;
 		// Psignalsink mPSignalSink();
-		FILE *f;
-		QLabel *mLabel;
+		FILE *f=nullptr;
 		signed short *mSamplesBuf;
+		WDummy *mWDummy;
 };
 #endif

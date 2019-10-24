@@ -29,6 +29,8 @@ HEADERS += signalprocessing/SimpleFft.h \
            signalprocessing/SimpleShifter.h \
            tuners/Tuners.h \
            tuners/dummy/TDummy.h	\
+           tuners/dummy/CBDummy.h	\
+           tuners/dummy/WDummy.h	\
            gui/MainWindow.h	\
            gui/WSpectrum.h	\
            gui/WWaterfall.h	\
@@ -40,6 +42,7 @@ SOURCES += main.cpp \
            signalprocessing/SimpleFft.cpp \
            signalprocessing/SimpleShifter.cpp \
            tuners/dummy/TDummy.cpp	\
+           tuners/dummy/WDummy.cpp	\
            gui/MainWindow.cpp		\
            gui/WSpectrum.cpp		\
            gui/WWaterfall.cpp		\
