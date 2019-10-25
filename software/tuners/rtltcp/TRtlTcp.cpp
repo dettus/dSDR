@@ -1,3 +1,7 @@
+#include "TRtlTcp.h"
+
+#define	NUM_TUNER_GAIN_VALUES	30
+
 #define RTLTCP_CMD_SET_FREQUENCY        0x01
 #define RTLTCP_CMD_SET_SAMPLERATE       0x02
 #define RTLTCP_CMD_SET_GAIN_MODE        0x03    // 0=auto, 1=manual
@@ -30,17 +34,14 @@ const signed short RtlTcpClientLegalGains[7][NUM_TUNER_GAIN_VALUES]={
                 "R820T  ",
                 "R828D  "
         };
-TRtlTcp::RtlTcp()
+TRtlTcp::TRtlTcp()
 {
 	mutex.lock();
 	mBuf=new unsigned char[1<<19];
-	connect(socket, SIGNAL(connected()), this, SLOT(connected()));
-	connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-	connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
-	connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
+	mWidget=new QLabel("rtltcp client");
 	mutex.unlock();
 }
-TRtlTcp::~RtlTcp()
+TRtlTcp::~TRtlTcp()
 {
 	if (mBuf!=nullptr)
 		delete(mBuf);
@@ -51,10 +52,15 @@ bool TRtlTcp::openConnection(char* hostname,int port)
 		mSocket->close();
 	mSocket=new QTcpSocket(this);
 	mSocket->connectToHost(hostname,port);
+	connect(mSocket, SIGNAL(connected()), this, SLOT(connected()));
+	connect(mSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+	connect(mSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+	connect(mSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
 
 	// socket->waitForReadyRead(3000)
 	// socket->bytesAvailable();	
-		
+	
+	
 }
 // taken from https://www.bogotobogo.com/cplusplus/sockets_server_client_QT.php
 bool TRtlTcp::sendCmd(unsigned char cmd,int value)
@@ -62,15 +68,20 @@ bool TRtlTcp::sendCmd(unsigned char cmd,int value)
 	unsigned char buf[5];
 	unsigned int x;
 
-	x=htonl(value);
 	buf[0]=cmd;
-	buf[1]=x&0xff;x>>=8;
-	buf[2]=x&0xff;x>>=8;
-	buf[3]=x&0xff;x>>=8;
+	//x=htonl(value);	 assuming LITTLE ENDIAN HERE
+	//buf[1]=x&0xff;x>>=8;
+	//buf[2]=x&0xff;x>>=8;
+	//buf[3]=x&0xff;x>>=8;
+	//buf[4]=x&0xff;x>>=8;
+	x=value;
 	buf[4]=x&0xff;x>>=8;
+	buf[3]=x&0xff;x>>=8;
+	buf[2]=x&0xff;x>>=8;
+	buf[1]=x&0xff;x>>=8;
 
 	// send(buf);
-	mSocket->write(buf);
+	mSocket->write((const char*)buf);
 
 
 	return true;
@@ -80,6 +91,7 @@ void TRtlTcp::connected()
 }
 void TRtlTcp::disconnected()
 {
+	mTunerType=-1;
 }
 void TRtlTcp::bytesWritten(qint64 bytes)
 {
@@ -89,9 +101,42 @@ void TRtlTcp::readyRead()
 	mutex.lock();
 	
 	QByteArray newbuf=mSocket->readAll();
-	memcpy(&mBuf[mBufLevel],newbuf.data(),newbuf.size());
-	mBufLevel+=newbuf.size();
+
+	if (mTunerType==-1)
+	{
+		int i;
+		unsigned char* ptr;
+		ptr=(unsigned char*)newbuf.data();
+		mTunerType =((unsigned int)ptr[4])&0xff;mTunerType<<=8;
+		mTunerType|=((unsigned int)ptr[5])&0xff;mTunerType<<=8;
+		mTunerType|=((unsigned int)ptr[6])&0xff;mTunerType<<=8;
+		mTunerType|=((unsigned int)ptr[7])&0xff;
+		if (mTunerType<1 || mTunerType>6) 
+		{
+			// ERROR
+		}
+		for (i=0;i<NUM_TUNER_GAIN_VALUES;i++)
+		{
+			if (RtlTcpClientLegalGains[mTunerType][i]!=-1) mGainIdx=RtlTcpClientLegalGains[mTunerType][i];
+		}
+
+		sendCmd(RTLTCP_CMD_SET_FREQUENCY,mFrequency);
+		sendCmd(RTLTCP_CMD_SET_SAMPLERATE,mSamplerate);
+		
+		sendCmd(RTLTCP_CMD_SET_DIRECT_SAMPLING,0);
+		sendCmd(RTLTCP_CMD_SET_OFFSET_TUNING,0);
+	// some rtl tcp sticks have an issue with the gain control. apparently, it works to set it to the lowest and the maximum settings directly afterwards.
+		sendCmd(RTLTCP_CMD_SET_GAIN_MODE,1);	// agc1 
+		sendCmd(RTLTCP_CMD_SET_AGC_MODE,0);	// agc1 
+		sendCmd(RTLTCP_CMD_SET_GAIN_VALUE,RtlTcpClientLegalGains[mTunerType][0]);
+		sendCmd(RTLTCP_CMD_SET_GAIN_VALUE,RtlTcpClientLegalGains[mTunerType][mGainIdx]);
 	
+
+
+	} else {
+		memcpy(&mBuf[mBufLevel],newbuf.data(),newbuf.size());
+		mBufLevel+=newbuf.size();
+	}
 
 	mutex.unlock();
 }
@@ -108,13 +153,14 @@ void TRtlTcp::run()
 		{
 			int i;
 			int n;
-
 			n=mBufLevel/2;
+			tSComplex mSamplesBuf[n];
+
 
 			for (i=0;i<n;i++)
 			{
-				mSamplesBuf[i].re=(signed short)mBuf[i*2+0]-127;
-				mSamplesBuf[i].im=(signed short)mBuf[i*2+1]-127;
+				mSamplesBuf[i].real=(signed short)mBuf[i*2+0]-127;
+				mSamplesBuf[i].imag=(signed short)mBuf[i*2+1]-127;
 			}
 
 			if (mBufLevel%2)
@@ -126,5 +172,81 @@ void TRtlTcp::run()
 			
 		}
 		mutex.unlock();
+	}
+}
+
+void TRtlTcp::stop()
+{
+	mStopped=true;
+}
+QWidget* TRtlTcp::getWidget()
+{
+	return (QWidget*)mWidget;
+}
+int TRtlTcp::getFrequency()
+{
+	return mFrequency;
+}
+int TRtlTcp::getGain()
+{
+	if (mTunerType>=1 && mTunerType<=6)
+		return RtlTcpClientLegalGains[mTunerType][mGainIdx];
+	else
+		return -1;
+}
+bool TRtlTcp::setFrequency(int freqHz)
+{
+	mFrequency=freqHz;
+	return sendCmd(RTLTCP_CMD_SET_FREQUENCY,freqHz);
+}
+int TRtlTcp::getSamplerate()
+{
+	return mSamplerate;
+}
+bool TRtlTcp::setGain(int gaincB)
+{
+	int i;
+	if (mTunerType>=1 && mTunerType<=6)
+	{
+		for (i=0;i<NUM_TUNER_GAIN_VALUES;i++)
+		{
+			int gain;
+			gain=RtlTcpClientLegalGains[mTunerType][i];
+			if (gain==gaincB)
+			{
+				mGainIdx=i;
+				sendCmd(RTLTCP_CMD_SET_GAIN_VALUE,gain);				
+			}
+		}
+	} 
+	return false;
+}
+bool TRtlTcp::setSamplerate(int sampleRate)
+{
+	return (sampleRate==mSamplerate);
+}
+void TRtlTcp::gainUp()
+{
+	if (mTunerType>=1 && mTunerType<=6)
+	{
+		if (mGainIdx<(NUM_TUNER_GAIN_VALUES-1))
+		{
+			if (RtlTcpClientLegalGains[mTunerType][mGainIdx+1]!=-1)
+			{
+				mGainIdx++;
+			}
+		}
+		sendCmd(RTLTCP_CMD_SET_GAIN_VALUE,RtlTcpClientLegalGains[mTunerType][mGainIdx]);
+	}
+}
+void TRtlTcp::gainDown()
+{
+	if (mTunerType>=1 && mTunerType<=6)
+	{
+		if (mGainIdx>0)
+		{
+			mGainIdx--;
+		}
+		sendCmd(RTLTCP_CMD_SET_GAIN_VALUE,RtlTcpClientLegalGains[mTunerType][mGainIdx]);
 	}
 }
