@@ -37,7 +37,8 @@ const signed short RtlTcpClientLegalGains[7][NUM_TUNER_GAIN_VALUES]={
 TRtlTcp::TRtlTcp()
 {
 	mutex.lock();
-	mBuf=new unsigned char[1<<19];
+	mBuf=new unsigned char[SAMPLESBUF];
+	mSamplesBuf=new tSComplex[SAMPLESBUF];
 	mWidget=new QLabel("rtltcp client");
 	mutex.unlock();
 }
@@ -45,6 +46,8 @@ TRtlTcp::~TRtlTcp()
 {
 	if (mBuf!=nullptr)
 		delete(mBuf);
+	if (mSamplesBuf!=nullptr)
+		delete(mSamplesBuf);
 }
 bool TRtlTcp::openConnection(char* hostname,int port)
 {
@@ -81,7 +84,7 @@ bool TRtlTcp::sendCmd(unsigned char cmd,int value)
 	buf[1]=x&0xff;x>>=8;
 
 	// send(buf);
-	mSocket->write((const char*)buf);
+	mSocket->write((const char*)buf,5);
 
 
 	return true;
@@ -102,22 +105,28 @@ void TRtlTcp::readyRead()
 	
 	QByteArray newbuf=mSocket->readAll();
 
-	if (mTunerType==-1)
+	if (mTunerType==-1 && newbuf.size())
 	{
 		int i;
 		unsigned char* ptr;
+		bool done;
 		ptr=(unsigned char*)newbuf.data();
 		mTunerType =((unsigned int)ptr[4])&0xff;mTunerType<<=8;
 		mTunerType|=((unsigned int)ptr[5])&0xff;mTunerType<<=8;
 		mTunerType|=((unsigned int)ptr[6])&0xff;mTunerType<<=8;
 		mTunerType|=((unsigned int)ptr[7])&0xff;
+
 		if (mTunerType<1 || mTunerType>6) 
 		{
 			// ERROR
 		}
-		for (i=0;i<NUM_TUNER_GAIN_VALUES;i++)
+		mGainIdx=0;
+		done=false;
+		for (i=0;i<NUM_TUNER_GAIN_VALUES && !done;i++)
 		{
-			if (RtlTcpClientLegalGains[mTunerType][i]!=-1) mGainIdx=RtlTcpClientLegalGains[mTunerType][i];
+			
+			if (RtlTcpClientLegalGains[mTunerType][i]!=-1) mGainIdx=i;
+			else done=true;
 		}
 
 		sendCmd(RTLTCP_CMD_SET_FREQUENCY,mFrequency);
@@ -134,8 +143,11 @@ void TRtlTcp::readyRead()
 
 
 	} else {
-		memcpy(&mBuf[mBufLevel],newbuf.data(),newbuf.size());
-		mBufLevel+=newbuf.size();
+		if (mBuf!=nullptr)
+		{
+			memcpy(&mBuf[mBufLevel],newbuf.data(),newbuf.size());
+			mBufLevel+=newbuf.size();
+		}
 	}
 
 	mutex.unlock();
@@ -149,13 +161,14 @@ void TRtlTcp::run()
 
 		QThread::msleep(10);
 		mutex.lock();
+		char tmp[64];
+		snprintf(tmp,64,"Samples:%d",mBufLevel);
+		mWidget->setText(tmp);
 		if (mBufLevel)
 		{
 			int i;
 			int n;
 			n=mBufLevel/2;
-			tSComplex mSamplesBuf[n];
-
 
 			for (i=0;i<n;i++)
 			{
@@ -167,7 +180,7 @@ void TRtlTcp::run()
 			{
 				mBuf[0]=mBuf[mBufLevel-1];
 				mBufLevel=1;				
-			}
+			} else mBufLevel=0;
 			mSink->onNewSamples(mSamplesBuf,n);
 			
 		}

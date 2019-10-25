@@ -8,6 +8,8 @@
 #include <stdio.h>
 
 #include "Tuners.h"
+
+#define	SAMPLESBUF	(1<<22)
 class TRtlTcp : public QThread, public Tuners
 {
 	Q_OBJECT
@@ -45,13 +47,13 @@ class TRtlTcp : public QThread, public Tuners
 		bool mStopped=false;
 		QMutex mutex;
 		unsigned char* mBuf=nullptr;
-		tSComplex samplesBuf[1<<19];
+		tSComplex *mSamplesBuf=nullptr;
 		int mBufLevel=0;
-		QTcpSocket *mSocket;
+		QTcpSocket *mSocket=nullptr;
 		bool sendCmd(unsigned char cmd,int value);
 		QLabel *mWidget;
 
-		int mFrequency=101200000;
+		int mFrequency=178352000;//87900000;
 		int mGainIdx=0;
 		int mSamplerate=2048000;
 		int mTunerType=-1;
