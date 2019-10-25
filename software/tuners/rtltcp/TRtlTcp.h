@@ -33,7 +33,7 @@ class TRtlTcp : public QThread, public Tuners, public CBRtlTcp
 		void gainDown();
 
 
-		bool openConnection(char* hostname,int port);
+		bool openConnection(QString hostname,int port);
 
 
 	public slots:

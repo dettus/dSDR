@@ -22,9 +22,13 @@ class WRtlTcp: public QWidget
 		void handleFreqUp();
 		void handleFreqDown();
 		void handleFreqInput();
+		void handleConnect();
 
 	private:
 		QVBoxLayout *mLayout;
+		QLineEdit   *mHostnameInput;
+		QLineEdit   *mPortInput;
+		QPushButton *mConnect;
 		QPushButton *mGainUp;
 		QPushButton *mGainDown;
 		QPushButton *mFreqUp;
@@ -34,7 +38,9 @@ class WRtlTcp: public QWidget
 		bool mStarted=false;
 		CBRtlTcp *mCbRtlTcp=nullptr;
 
-		int mFrequency=2048000;
+		int mFrequency=87900000;
+		QString mHostname="127.0.0.1";
+		int mPort=1234;
 		
 };
 #endif

@@ -51,11 +51,12 @@ TRtlTcp::~TRtlTcp()
 	if (mSamplesBuf!=nullptr)
 		delete(mSamplesBuf);
 }
-bool TRtlTcp::openConnection(char* hostname,int port)
+bool TRtlTcp::openConnection(QString hostname,int port)
 {
 	if (mSocket!=nullptr)
 		mSocket->close();
 	mSocket=new QTcpSocket(this);
+	printf("hostname:%c port:%d\n",hostname.data(),port);
 	mSocket->connectToHost(hostname,port);
 	connect(mSocket, SIGNAL(connected()), this, SLOT(connected()));
 	connect(mSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));

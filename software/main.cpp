@@ -11,7 +11,7 @@ int main(int argc,char* argv[])
 	Tuners *tuner;
 	TRtlTcp *tRtlTcp=new TRtlTcp();
 //	TDummy *tdummy=new TDummy();
-	tRtlTcp->openConnection("127.0.0.1",1234);
+//	tRtlTcp->openConnection("127.0.0.1",1234);
 	tuner=(Tuners*)tRtlTcp;
 	Central *central=new Central(&mainwin,tuner);
 
