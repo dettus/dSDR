@@ -33,6 +33,8 @@ HEADERS += signalprocessing/SimpleFft.h \
            tuners/dummy/CBDummy.h	\
            tuners/dummy/WDummy.h	\
            tuners/rtltcp/TRtlTcp.h	\
+           tuners/rtltcp/WRtlTcp.h	\
+           tuners/rtltcp/CBRtlTcp.h	\
            gui/MainWindow.h	\
            gui/WSpectrum.h	\
            gui/WWaterfall.h	\
@@ -46,6 +48,7 @@ SOURCES += main.cpp \
            tuners/dummy/TDummy.cpp	\
            tuners/dummy/WDummy.cpp	\
            tuners/rtltcp/TRtlTcp.cpp	\
+           tuners/rtltcp/WRtlTcp.cpp	\
            gui/MainWindow.cpp		\
            gui/WSpectrum.cpp		\
            gui/WWaterfall.cpp		\

@@ -8,9 +8,11 @@
 #include <stdio.h>
 
 #include "Tuners.h"
+#include "WRtlTcp.h"
+#include "CBRtlTcp.h"
 
 #define	SAMPLESBUF	(1<<22)
-class TRtlTcp : public QThread, public Tuners
+class TRtlTcp : public QThread, public Tuners, public CBRtlTcp
 {
 	Q_OBJECT
 
@@ -51,9 +53,10 @@ class TRtlTcp : public QThread, public Tuners
 		int mBufLevel=0;
 		QTcpSocket *mSocket=nullptr;
 		bool sendCmd(unsigned char cmd,int value);
-		QLabel *mWidget;
+		WRtlTcp *mWidget;
 
-		int mFrequency=178352000;//87900000;
+//		int mFrequency=178352000;//87900000;
+		int mFrequency=87900000;
 		int mGainIdx=0;
 		int mSamplerate=2048000;
 		int mTunerType=-1;

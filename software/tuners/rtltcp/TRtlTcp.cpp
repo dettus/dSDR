@@ -39,7 +39,9 @@ TRtlTcp::TRtlTcp()
 	mutex.lock();
 	mBuf=new unsigned char[SAMPLESBUF];
 	mSamplesBuf=new tSComplex[SAMPLESBUF];
-	mWidget=new QLabel("rtltcp client");
+	mWidget=new WRtlTcp();
+	mWidget->setFrequency(mFrequency,false);
+	mWidget->setCallback(this);
 	mutex.unlock();
 }
 TRtlTcp::~TRtlTcp()
@@ -161,9 +163,6 @@ void TRtlTcp::run()
 
 		QThread::msleep(10);
 		mutex.lock();
-		char tmp[64];
-		snprintf(tmp,64,"Samples:%d",mBufLevel);
-		mWidget->setText(tmp);
 		if (mBufLevel)
 		{
 			int i;
