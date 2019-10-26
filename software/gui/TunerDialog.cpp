@@ -41,8 +41,10 @@ void TunerDialog::buttonReleased()
 	eTunerId retval;
 	QPushButton* buttonSender = qobject_cast<QPushButton*>(sender());
 	retval=mTunerIdReturnvalue;
+	printf("RELEASED [%s]\n",buttonSender->text().data());
 	for (i=0;i<NUMBUTTONS;i++)
 	{
 		if (buttonSender->text()==mButton[i]->text()) retval=cTunerButtons[i].id;
 	}
+	mTunerIdReturnvalue=retval;
 }

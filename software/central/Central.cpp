@@ -1,4 +1,7 @@
 #include "Central.h"
+#include "TunerDialog.h"
+#include "TDummy.h"
+#include "TRtlTcp.h"
 #define	BUFSIZE	(1<<23)
 
 Central::Central(MainWindow* mainwin,Tuners* tuner)
@@ -27,7 +30,6 @@ Central::Central(MainWindow* mainwin,Tuners* tuner)
 	{
 		mainwin->setWSpectrum(mWSpectrum);
 		mainwin->setWWaterfall(mWaterfall);
-		mainwin->setWTuner(mTuner->getWidget());	
 	}
 	mMainwin=mainwin;
 	mMutex.unlock();
@@ -57,6 +59,49 @@ void Central::onNewSamples(tSComplex* iqSamples,int n)
 void Central::run()
 {
 	int i;
+	eTunerId tunerId=TUNER_UNDEF;
+	TunerDialog *tunerDialog=new TunerDialog();
+
+	// INITIALIZE
+	mMainwin->hide();
+	while (!mStopped && mTuner==nullptr && tunerId==TUNER_UNDEF)
+	{
+		QThread::msleep(1000);
+		tunerId=tunerDialog->getTunerValue();
+		printf("hello. tunerid:%d\n",(int)tunerId);
+		switch (tunerId)
+		{
+			case TUNER_QUIT:
+				mStopped=true;
+				break;
+			case TUNER_DUMMY:
+				mTuner=(Tuners*)new TDummy();
+				mTuner->setSink(this);
+				((TDummy*)mTuner)->start();
+				break;
+			case TUNER_RTLTCP:
+				mTuner=(Tuners*)new TRtlTcp();
+				mTuner->setSink(this);
+				((TRtlTcp*)mTuner)->start();
+				break;
+			default:
+				break;
+		}
+	}
+	if (tunerDialog!=nullptr) 	
+	{
+		delete(tunerDialog);
+		tunerDialog=nullptr;
+		
+	}
+	if (!mStopped)
+	{
+		mMainwin->hide();
+	}
+	mMainwin->setWTuner(mTuner->getWidget());	
+	mMainwin->showMaximized();	
+
+	// main window is shown. run the main loop
 	while (!mStopped)
 	{
 		double spectrum[mFftSize];
