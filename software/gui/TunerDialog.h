@@ -3,28 +3,34 @@
 #include <QtWidgets>
 #include <QVBoxLayout>
 #include <QPushButton>
+	enum eTunerId {TUNER_UNDEF=-1,TUNER_QUIT=0,
+		TUNER_DUMMY	=1,
+		TUNER_RTLTCP	=2
+	};
 
-class TunerDialog
+class TunerDialog: public QObject
 {
+
 	Q_OBJECT
 
+	public: 
 	typedef	 struct _tSelectedTuner
 	{
-		int id;
+		eTunerId id;
 		QString text;
 	} tSelectedTuner;
 	#define	NUMBUTTONS		3
 
 	const tSelectedTuner cTunerButtons[NUMBUTTONS]=
 	{
-		{1,"Dummy Tuner"},
-		{2,"RTL TCP Client"},
-		{0,"Quit!"}
+		{TUNER_DUMMY ,"Dummy Tuner"},
+		{TUNER_RTLTCP,"RTL TCP Client"},
+		{TUNER_QUIT  ,"Quit!"}
 	};
 	public:
 		TunerDialog();
 		~TunerDialog();
-		int askForTuner();
+		enum eTunerId getTunerValue();
 	public slots:
 		void buttonReleased();
 
@@ -32,6 +38,6 @@ class TunerDialog
 		QWidget *mWindow=nullptr;
 		QVBoxLayout *mLayout=nullptr;
 		QPushButton *mButton[NUMBUTTONS]={nullptr};
-		int mTunerIdReturnvalue=-1;
+		enum eTunerId mTunerIdReturnvalue=TUNER_UNDEF;
 };
 #endif
