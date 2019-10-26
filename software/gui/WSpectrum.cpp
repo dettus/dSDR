@@ -142,8 +142,8 @@ void WSpectrum::plotSpectrum(double* spectrum, int n)
 	
 	for (i=0;i<n;i++)
 	{
-//		mSpectrum[i]=10*log(spectrum[i])/log(10);// power
-		mSpectrum[i]=10*log(sqrt(spectrum[i]))/log(10);// amplitude
+		mSpectrum[i]=10*log(spectrum[i])/log(10);// power
+//		mSpectrum[i]=10*log(sqrt(spectrum[i]))/log(10);// amplitude
 		if (i==0 || mSpectrum[i]<mMin) mMin=mSpectrum[i];
 		if (i==0 || mSpectrum[i]>mMax) mMax=mSpectrum[i];
 	}
