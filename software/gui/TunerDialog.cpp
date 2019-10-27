@@ -24,11 +24,11 @@ TunerDialog::TunerDialog()
 TunerDialog::~TunerDialog()
 {
 	int i;
-	if (mWindow!=nullptr) delete(mWindow);
 	for (i=0;i<NUMBUTTONS;i++)
 	{
 		if (mButton[i]!=nullptr) delete(mButton[i]);
 	}
+	if (mWindow!=nullptr) delete(mWindow);
 }
 enum eTunerId TunerDialog::getTunerValue()
 {
@@ -47,4 +47,8 @@ void TunerDialog::buttonReleased()
 		if (buttonSender->text()==mButton[i]->text()) retval=cTunerButtons[i].id;
 	}
 	mTunerIdReturnvalue=retval;
+	if (retval!=TUNER_UNDEF)
+	{
+		mWindow->hide();
+	}
 }

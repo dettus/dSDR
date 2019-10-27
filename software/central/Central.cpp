@@ -1,5 +1,4 @@
 #include "Central.h"
-#include "TunerDialog.h"
 #include "TDummy.h"
 #include "TRtlTcp.h"
 #define	BUFSIZE	(1<<23)
@@ -21,6 +20,7 @@ Central::Central(MainWindow* mainwin,Tuners* tuner)
 	mWSpectrum->setFFTsize(mFftSize);
 	mWaterfall->setFFTsize(mFftSize);
 	mTuner=tuner;
+	mTuner->setSink(this);
 
 	mWSpectrum->setZoomback(this);
 	mWaterfall->setZoomback(this);
@@ -59,8 +59,10 @@ void Central::onNewSamples(tSComplex* iqSamples,int n)
 void Central::run()
 {
 	int i;
+#if 0
 	eTunerId tunerId=TUNER_UNDEF;
-	TunerDialog *tunerDialog=new TunerDialog();
+	TunerDialog *tunerDialog=mTunerDialog;
+	//TunerDialog *tunerDialog=new TunerDialog();
 
 	// INITIALIZE
 	mMainwin->hide();
@@ -77,27 +79,22 @@ void Central::run()
 			case TUNER_DUMMY:
 				mTuner=(Tuners*)new TDummy();
 				mTuner->setSink(this);
-				((TDummy*)mTuner)->start();
+				//((TDummy*)mTuner)->start();
+				((TDummy*)mTuner)->moveToThread(mTunerThread);
 				break;
 			case TUNER_RTLTCP:
 				mTuner=(Tuners*)new TRtlTcp();
 				mTuner->setSink(this);
-				((TRtlTcp*)mTuner)->start();
+				//((TRtlTcp*)mTuner)->start();
+				((TRtlTcp*)mTuner)->moveToThread(mTunerThread);
+//https://mayaposch.wordpress.com/2011/11/01/how-to-really-truly-use-qthreads-the-full-explanation/
 				break;
 			default:
 				break;
 		}
 	}
-	if (tunerDialog!=nullptr) 	
-	{
-		delete(tunerDialog);
-		tunerDialog=nullptr;
-		
-	}
-	if (!mStopped)
-	{
-		mMainwin->hide();
-	}
+//	tunerDialog->hide();
+#endif	
 	mMainwin->setWTuner(mTuner->getWidget());	
 	mMainwin->showMaximized();	
 
