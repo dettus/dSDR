@@ -5,10 +5,7 @@
 TEMPLATE = app
 TARGET = dettusSDR
 INCLUDEPATH += . \
-		tuners	\
-		central	\
-		demod	\
-		audio
+		threads/	
 
 CONFIG += debug
 
@@ -24,16 +21,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS +=	tuners/TunerMain.h	\
-		central/CentralMain.h	\
-		demod/DemodMain.h	\
-		audio/AudioMain.h
+HEADERS +=	threads/TunerMain.h	\
+		threads/CentralMain.h	\
+		threads/DemodMain.h	\
+		threads/AudioMain.h
 
 SOURCES +=	main.cpp \
-		tuners/TunerMain.cpp	\
-		central/CentralMain.cpp	\
-		demod/DemodMain.cpp	\
-		audio/AudioMain.cpp
+		threads/TunerMain.cpp	\
+		threads/CentralMain.cpp	\
+		threads/DemodMain.cpp	\
+		threads/AudioMain.cpp
          
            
 QT += multimedia widgets
