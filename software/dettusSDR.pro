@@ -5,7 +5,9 @@
 TEMPLATE = app
 TARGET = dettusSDR
 INCLUDEPATH += . \
-		threads/	
+		threads/	\
+		gui/		\
+		shared
 
 CONFIG += debug
 
@@ -24,13 +26,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS +=	threads/TunerMain.h	\
 		threads/CentralMain.h	\
 		threads/DemodMain.h	\
-		threads/AudioMain.h
+		threads/AudioMain.h	\
+		gui/StartupDialog.h	\
+		shared/DataTypes.h
 
 SOURCES +=	main.cpp \
 		threads/TunerMain.cpp	\
 		threads/CentralMain.cpp	\
 		threads/DemodMain.cpp	\
-		threads/AudioMain.cpp
+		threads/AudioMain.cpp	\
+		gui/StartupDialog.cpp
          
            
 QT += multimedia widgets
