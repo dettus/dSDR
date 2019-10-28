@@ -23,7 +23,8 @@ void CentralMain::startup()
 	do
 	{
 		//QThread::wait(10);
-		requestInterruption();
+		//requestInterruption();
+		msleep(10);
 		tunerType=mStartupDialog->getSelectedTunerType();
 	}
 	while (!mStopped && tunerType==TUNER_UNDEF);
