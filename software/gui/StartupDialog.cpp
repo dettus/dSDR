@@ -35,6 +35,8 @@ void StartupDialog::buttonReleased()
 	int i;
 	eTunerType retval;
 
+	printf("RELEASED\n");
+
 	retval=mTunerType;
 	// when one of the buttons has been pressed, find out which one it was.
 	// the next time, the getSelectedTunerType() is being called, it will return

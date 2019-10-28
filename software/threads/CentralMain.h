@@ -2,6 +2,7 @@
 #define	CENTRALMAIN_H
 #include <QThread>
 #include <QMutex>
+#include "StartupDialog.h"
 class CentralMain: public QThread
 {
 	Q_OBJECT
@@ -14,7 +15,9 @@ class CentralMain: public QThread
 		void run();
 	
 	private:
+		void startup();
 		bool mStopped=false;
 		QMutex mMutex;
+		StartupDialog *mStartupDialog;
 };
 #endif

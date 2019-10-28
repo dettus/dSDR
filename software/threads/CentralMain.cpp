@@ -1,7 +1,9 @@
 #include "CentralMain.h"
+#include "StartupDialog.h"
 CentralMain::CentralMain()
 {
 	mMutex.unlock();	
+	mStartupDialog=new StartupDialog(nullptr);
 }
 void CentralMain::stop()
 {
@@ -9,8 +11,27 @@ void CentralMain::stop()
 }
 void CentralMain::run()
 {
+	startup();
 	while (!mStopped)
 	{
 		QThread::msleep(1000);
 	}
+}
+void CentralMain::startup()
+{
+	eTunerType tunerType=TUNER_UNDEF;
+	do
+	{
+		//QThread::wait(10);
+		requestInterruption();
+		tunerType=mStartupDialog->getSelectedTunerType();
+	}
+	while (!mStopped && tunerType==TUNER_UNDEF);
+	mStartupDialog->hide();
+	if (tunerType==TUNER_QUIT)
+	{
+		printf("tunertype:%d\n",(int)tunerType);
+		quit();
+	}
+
 }
