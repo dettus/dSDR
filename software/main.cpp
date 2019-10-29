@@ -8,7 +8,7 @@ int main(int argc,char** argv)
 {
 	QApplication app(argc,argv);
 	TunerMain	*tunerMain=new TunerMain();
-	CentralMain	*centralMain=new CentralMain();
+	CentralMain	*centralMain=new CentralMain(tunerMain);
 	DemodMain	*demodMain=new DemodMain();
 	AudioMain	*audioMain=new AudioMain();
 

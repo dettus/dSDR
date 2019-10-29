@@ -11,6 +11,7 @@ class TunerMain: public QThread
 	public:
 		TunerMain();
 		void stop();
+		Tuners* getTuner();
 		
 	protected:
 		void run();

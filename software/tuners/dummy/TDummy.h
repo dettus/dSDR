@@ -32,6 +32,8 @@ class TDummy: public Tuners
 		bool setGain(int gainCB);
 		bool gainUp();
 		bool gainDown();
+		int minValue();
+		int maxValue();
 
 	public slots:
 		void handleStartStop();

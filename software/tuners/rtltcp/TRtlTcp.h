@@ -26,6 +26,8 @@ class TRtlTcp: public Tuners
 		bool setGain(int gainCB);
 		bool gainUp();
 		bool gainDown();
+		int minValue();
+		int maxValue();
 
 	private:
 		int mSampleRate=2048000;

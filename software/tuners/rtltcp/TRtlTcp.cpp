@@ -53,4 +53,11 @@ bool TRtlTcp::gainDown()
 {
 	return false;
 }
-
+int TRtlTcp::minValue()
+{
+	return -127;
+}
+int TRtlTcp::maxValue()
+{
+	return 127;
+}

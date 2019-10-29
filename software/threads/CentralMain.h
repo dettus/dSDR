@@ -2,12 +2,14 @@
 #define	CENTRALMAIN_H
 #include <QThread>
 #include <QMutex>
+#include "TunerMain.h"
+#include <QHBoxLayout>
 class CentralMain: public QThread
 {
 	Q_OBJECT
 
 	public:
-		CentralMain();
+		CentralMain(TunerMain *tunerMain);
 		void stop();
 		
 	protected:
@@ -16,5 +18,9 @@ class CentralMain: public QThread
 	private:
 		bool mStopped=false;
 		QMutex mMutex;
+
+		TunerMain *mTunerMain;
+		QHBoxLayout *mLayout;
+		QWidget *mainWin=nullptr;
 };
 #endif

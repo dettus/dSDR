@@ -111,3 +111,11 @@ void TDummy::handleStartStop()
 		mRunning=true;
 	}
 }
+int TDummy::minValue()
+{
+	return -32767;
+}
+int TDummy::maxValue()
+{
+	return 32768;
+}

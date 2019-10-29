@@ -28,8 +28,9 @@ class Tuners: public QWidget
 		virtual int timeToWait()=0;		// how long should the thread wait before calling it?
 	
 
-
-	
+		// a little information about the tuner itself.
+		virtual int minValue()=0;
+		virtual int maxValue()=0;	
 		// this function is called from the signal processing
 		virtual void getSamples(tIQSamplesBlock *pIQSamplesBlock)=0;	// this function is used to poll the samples
 

@@ -39,3 +39,7 @@ void TunerMain::startup()
 	mTuner=mTunerDialog->getTuner();
 	mTunerDialog->hide();
 }
+Tuners* TunerMain::getTuner()
+{
+	return mTuner;
+}
