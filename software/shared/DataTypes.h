@@ -20,4 +20,12 @@ typedef struct _tSComplex
 	signed short real;
 	signed short imag;
 } tSComplex;
+typedef struct _tIQSamplesBlock
+{
+	tSComplex* pData;
+	int sampleNum;
+	int sampleRate;
+	int centerFreq;
+} tIQSamplesBlock;
+
 #endif

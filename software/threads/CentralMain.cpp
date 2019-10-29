@@ -16,6 +16,7 @@ void CentralMain::run()
 	{
 		QThread::msleep(1000);
 	}
+	QApplication::quit();
 }
 void CentralMain::startup()
 {
@@ -31,8 +32,7 @@ void CentralMain::startup()
 	mStartupDialog->hide();
 	if (tunerType==TUNER_QUIT)
 	{
-		printf("tunertype:%d\n",(int)tunerType);
-		quit();
+		mStopped=true;
 	}
 
 }

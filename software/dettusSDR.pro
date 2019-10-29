@@ -7,6 +7,9 @@ TARGET = dettusSDR
 INCLUDEPATH += . \
 		threads/	\
 		gui/		\
+		tuners/		\
+		tuners/dummy	\
+		tuners/rtltcp	\
 		shared
 
 CONFIG += debug
@@ -27,6 +30,9 @@ HEADERS +=	threads/TunerMain.h	\
 		threads/CentralMain.h	\
 		threads/DemodMain.h	\
 		threads/AudioMain.h	\
+		tuners/Tuners.h		\
+		tuners/dummy/TDummy.h	\
+		tuners/rtltcp/TRtlTcp.h	\
 		gui/StartupDialog.h	\
 		shared/DataTypes.h
 
@@ -35,6 +41,8 @@ SOURCES +=	main.cpp \
 		threads/CentralMain.cpp	\
 		threads/DemodMain.cpp	\
 		threads/AudioMain.cpp	\
+		tuners/dummy/TDummy.cpp	\
+		tuners/rtltcp/TRtlTcp.cpp	\
 		gui/StartupDialog.cpp
          
            
