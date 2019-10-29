@@ -2,6 +2,8 @@
 #define	TUNERMAIN_H
 #include <QThread>
 #include <QMutex>
+#include "TunerDialog.h"
+#include "Tuners.h"
 class TunerMain: public QThread
 {
 	Q_OBJECT
@@ -14,7 +16,10 @@ class TunerMain: public QThread
 		void run();
 	
 	private:
+		void startup();
 		bool mStopped=false;
 		QMutex mMutex;
+		Tuners* mTuner=nullptr;
+		TunerDialog *mTunerDialog=nullptr;
 };
 #endif

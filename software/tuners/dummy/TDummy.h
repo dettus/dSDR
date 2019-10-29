@@ -15,6 +15,7 @@ class TDummy: public Tuners
 	
 	public:
 		TDummy(QWidget* parent=nullptr);
+		void initialize();
 		void process();
 		int timeToWait();
 

@@ -4,10 +4,14 @@ TDummy::TDummy(QWidget* parent): Tuners(parent)
 {
 	
 }
+void TDummy::initialize()
+{
 
+}
 void TDummy::process()
 {
 	// read 1 second of samples from the file
+	printf("Dummy process\n");
 }
 
 int TDummy::timeToWait()

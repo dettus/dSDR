@@ -14,6 +14,7 @@ class TRtlTcp: public Tuners
 	
 	public:
 		TRtlTcp(QWidget* parent=nullptr);
+		void initialize();
 		void process();
 		int timeToWait();
 

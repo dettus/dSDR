@@ -21,6 +21,9 @@ class Tuners: public QWidget
 		Tuners(QWidget* parent): QWidget(parent){};
 		// this function is called from the tuner thread.
 		// it handles the hardware access in the background
+
+		virtual void initialize()=0;		// this function is supposed to be called AFTER the constructor. it contains mallocs().
+							// the difference is that the constructor is supposed to set up the GUI widgets.
 		virtual void process()=0;		// is called periodically
 		virtual int timeToWait()=0;		// how long should the thread wait before calling it?
 	

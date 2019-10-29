@@ -31,9 +31,9 @@ HEADERS +=	threads/TunerMain.h	\
 		threads/DemodMain.h	\
 		threads/AudioMain.h	\
 		tuners/Tuners.h		\
+		tuners/TunerDialog.h	\
 		tuners/dummy/TDummy.h	\
 		tuners/rtltcp/TRtlTcp.h	\
-		gui/StartupDialog.h	\
 		shared/DataTypes.h
 
 SOURCES +=	main.cpp \
@@ -41,9 +41,9 @@ SOURCES +=	main.cpp \
 		threads/CentralMain.cpp	\
 		threads/DemodMain.cpp	\
 		threads/AudioMain.cpp	\
+		tuners/TunerDialog.cpp	\
 		tuners/dummy/TDummy.cpp	\
-		tuners/rtltcp/TRtlTcp.cpp	\
-		gui/StartupDialog.cpp
+		tuners/rtltcp/TRtlTcp.cpp	
          
            
 QT += multimedia widgets

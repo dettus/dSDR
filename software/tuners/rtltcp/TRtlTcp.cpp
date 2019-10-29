@@ -4,10 +4,15 @@ TRtlTcp::TRtlTcp(QWidget* parent): Tuners(parent)
 {
 	
 }
+void TRtlTcp::initialize()
+{
+
+}
 
 void TRtlTcp::process()
 {
 	// read 1 second of samples from the file
+	printf("rtltcp process\n");
 }
 
 int TRtlTcp::timeToWait()
