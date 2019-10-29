@@ -135,11 +135,13 @@ int TRtlTcp::getFrequency()
 bool TRtlTcp::setFrequency(int freqHz)
 {
 	char tmp[32];
+	if (freqHz<mSampleRate/2) return false;
 	sendCmd(RTLTCP_CMD_SET_FREQUENCY,freqHz);
 	mFrequency=freqHz;
 	snprintf(tmp,32,"%d",mFrequency);
 	mFreqInput->setText(tmp);
-
+	
+	return true;
 }
 bool TRtlTcp::setGain(int gainCB)
 {

@@ -53,7 +53,6 @@ void TunerDialog::buttonReleased()
 	int i;
 	eTunerType retval;
 
-	printf("RELEASED\n");
 
 	retval=TUNER_UNDEF;
 	// when one of the buttons has been pressed, find out which one it was.

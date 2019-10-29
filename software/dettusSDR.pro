@@ -34,6 +34,8 @@ HEADERS +=	threads/TunerMain.h	\
 		tuners/TunerDialog.h	\
 		tuners/dummy/TDummy.h	\
 		tuners/rtltcp/TRtlTcp.h	\
+		signalprocessing/SimpleFft.h	\
+		signalprocessing/SimpleShifter.h	\
 		shared/DataTypes.h
 
 SOURCES +=	main.cpp \
@@ -43,7 +45,9 @@ SOURCES +=	main.cpp \
 		threads/AudioMain.cpp	\
 		tuners/TunerDialog.cpp	\
 		tuners/dummy/TDummy.cpp	\
-		tuners/rtltcp/TRtlTcp.cpp	
+		tuners/rtltcp/TRtlTcp.cpp	\
+		signalprocessing/SimpleFft.cpp	\
+		signalprocessing/SimpleShifter.cpp
          
            
 QT += multimedia widgets
