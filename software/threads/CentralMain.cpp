@@ -1,5 +1,7 @@
 #include "CentralMain.h"
 #include "StartupDialog.h"
+
+
 CentralMain::CentralMain()
 {
 	mMutex.unlock();	

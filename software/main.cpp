@@ -12,6 +12,9 @@ int main(int argc,char** argv)
 	DemodMain	*demodMain=new DemodMain();
 	AudioMain	*audioMain=new AudioMain();
 
+
+
+
 	tunerMain->start();
 	centralMain->start();
 	demodMain->start();
