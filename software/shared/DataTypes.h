@@ -26,6 +26,7 @@ typedef struct _tIQSamplesBlock
 	int sampleNum;
 	int sampleRate;
 	int centerFreq;
+	int gain;
 } tIQSamplesBlock;
 
 #endif
