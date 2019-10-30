@@ -11,6 +11,7 @@ CentralMain::CentralMain(TunerMain* tunerMain)
 	mHLayout=new QHBoxLayout;
 	mVLayout=new QVBoxLayout;
 	mainWin=new QWidget(nullptr);
+	mWSpectrum=new WSpectrum(nullptr);
 	mRecordButton=new QPushButton("Record");
 	connect(mRecordButton,SIGNAL(released()),this,SLOT(handleRecord()));
 	mainWin->hide();
@@ -33,6 +34,7 @@ void CentralMain::run()
 	mVLayout->addWidget(tuner);
 	mVLayout->addWidget(mRecordButton);
 	mHLayout->addLayout(mVLayout);
+	mHLayout->addWidget(mWSpectrum);
 	mainWin->setLayout(mHLayout);
 	mainWin->showMaximized();
 	while (!mStopped)
@@ -40,7 +42,9 @@ void CentralMain::run()
 		QThread::msleep(10);
 		tuner->getSamples(&iqSamples);
 		if (iqSamples.sampleNum)
-			printf("sampleNum:%d\n",iqSamples.sampleNum);
+		{
+			mWSpectrum->onNewSamples(&iqSamples);
+		}
 		mLock.lock();
 		if (mRecord && mFptr!=nullptr)
 		{

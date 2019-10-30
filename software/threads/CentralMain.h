@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QMutex>
+#include "WSpectrum.h"
 class CentralMain: public QThread
 {
 	Q_OBJECT
@@ -31,6 +32,8 @@ class CentralMain: public QThread
 		QMutex	mLock;
 		FILE *mFptr=nullptr;
 		bool mRecord=false;
+
+		WSpectrum *mWSpectrum;
 
 	public slots:
 		void handleRecord();

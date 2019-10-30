@@ -8,7 +8,7 @@
 #include <QtWidgets>
 #include "SimpleFft.h"
 #include "DataTypes.h"
-class WSpectrum: class QWidget
+class WSpectrum: public QWidget
 {
 	Q_OBJECT
 	
@@ -35,7 +35,7 @@ class WSpectrum: class QWidget
 		tSComplex *mSampleBuf;
 		double *mSpectrum;
 		SimpleFft *mFft=nullptr;
-		int mFftAvgLen=10;
+		int mFftAvgLen=100;
 		int mFftCallcnt=mFftAvgLen;
 
 		int mSampleRate=2048000;

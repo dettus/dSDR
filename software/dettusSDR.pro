@@ -7,6 +7,7 @@ TARGET = dettusSDR
 INCLUDEPATH += . \
 		threads/	\
 		gui/		\
+		signalprocessing/	\
 		tuners/		\
 		tuners/dummy	\
 		tuners/rtltcp	\
@@ -36,6 +37,7 @@ HEADERS +=	threads/TunerMain.h	\
 		tuners/rtltcp/TRtlTcp.h	\
 		signalprocessing/SimpleFft.h	\
 		signalprocessing/SimpleShifter.h	\
+		gui/WSpectrum.h		\
 		shared/DataTypes.h
 
 SOURCES +=	main.cpp \
@@ -46,6 +48,7 @@ SOURCES +=	main.cpp \
 		tuners/TunerDialog.cpp	\
 		tuners/dummy/TDummy.cpp	\
 		tuners/rtltcp/TRtlTcp.cpp	\
+		gui/WSpectrum.cpp		\
 		signalprocessing/SimpleFft.cpp	\
 		signalprocessing/SimpleShifter.cpp
          
