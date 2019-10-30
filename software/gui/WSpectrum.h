@@ -16,6 +16,7 @@ class WSpectrum: public QWidget
 		WSpectrum(QWidget* parent=nullptr);
 		void setFFTsize(int fftsize);
 		void onNewSamples(tIQSamplesBlock *pIqSamples);
+		QSize sizeHint() const;
 
 	protected:
 		void paintEvent(QPaintEvent *event) override;

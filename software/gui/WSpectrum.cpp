@@ -8,6 +8,10 @@ WSpectrum::WSpectrum(QWidget* parent):QWidget(parent)
 	mSpectrum=new double[mFftSize];
 	for (i=0;i<mFftSize;i++) mSpectrum[i]=0;
 }
+QSize WSpectrum::sizeHint() const
+{
+	return QSize(100, 110);
+}
 void WSpectrum::setFFTsize(int fftsize)
 {
 	int i;

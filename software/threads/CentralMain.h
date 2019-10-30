@@ -37,5 +37,6 @@ class CentralMain: public QThread
 
 	public slots:
 		void handleRecord();
+
 };
 #endif

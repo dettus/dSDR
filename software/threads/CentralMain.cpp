@@ -15,6 +15,8 @@ CentralMain::CentralMain(TunerMain* tunerMain)
 	mRecordButton=new QPushButton("Record");
 	connect(mRecordButton,SIGNAL(released()),this,SLOT(handleRecord()));
 	mainWin->hide();
+
+
 	mLock.unlock();
 }
 void CentralMain::stop()
@@ -31,12 +33,17 @@ void CentralMain::run()
 		tuner=mTunerMain->getTuner();
 	}
 	tuner->initialize();
+	printf("%d X %d  >>> ",mWSpectrum->width(),mWSpectrum->height());
+	printf("%d X %d\n",mainWin->width(),mainWin->height());
 	mVLayout->addWidget(tuner);
 	mVLayout->addWidget(mRecordButton);
 	mHLayout->addLayout(mVLayout);
 	mHLayout->addWidget(mWSpectrum);
+	mHLayout->setStretch(0,10);
+	mHLayout->setStretch(1,30);
 	mainWin->setLayout(mHLayout);
 	mainWin->showMaximized();
+
 	while (!mStopped)
 	{
 		QThread::msleep(10);
@@ -82,5 +89,5 @@ void CentralMain::handleRecord()
 		mRecordButton->setText("Record");
 		mLock.unlock();
 	}
-	
 }
+

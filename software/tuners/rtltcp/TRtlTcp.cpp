@@ -53,6 +53,13 @@ TRtlTcp::TRtlTcp(QWidget* parent): Tuners(parent)
 	mFreqInput=new QLineEdit(tmp);
 	mFreqDown=new QPushButton("Frequency down");
 
+	setAutoFillBackground(true);
+	QPalette pal = palette();
+	pal.setColor(QPalette::Background, QColor(255,255,255,255));
+	setPalette(pal);
+
+	mLayout->setAlignment(Qt::AlignTop);
+	mLayout->addWidget(new QLabel("RTL TCP Settings"));
 	mLayout->addWidget(mHostnameInput);
 	mLayout->addWidget(mPortInput);
 	mLayout->addWidget(mConnect);

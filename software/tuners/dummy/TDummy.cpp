@@ -81,8 +81,16 @@ TDummy::TDummy(QWidget* parent): Tuners(parent)
 	mLayout=new QVBoxLayout;
 	
 	mOpen=new QPushButton("Open Signal File...");
+
+	setAutoFillBackground(true);
+	QPalette pal = palette();
+	pal.setColor(QPalette::Background, QColor(255,255,255,255));
+	setPalette(pal);
+
+
 	mStartStop=new QPushButton("Start");
-	
+	mLayout->setAlignment(Qt::AlignTop);
+	mLayout->addWidget(new QLabel("Dummy Settings"));
 	mLayout->addWidget(mOpen);
 	mLayout->addWidget(mStartStop);
 	setLayout(mLayout);
