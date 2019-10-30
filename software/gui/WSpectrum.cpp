@@ -6,6 +6,7 @@ WSpectrum::WSpectrum(QWidget* parent):QWidget(parent)
 	mFft=new SimpleFft(mFftSize);
 	mSampleBuf=new tSComplex[mFftSize];
 	mSpectrum=new double[mFftSize];
+	mSpectrumPlot=new double[mFftSize];
 	for (i=0;i<mFftSize;i++) mSpectrum[i]=0;
 }
 QSize WSpectrum::sizeHint() const
@@ -56,12 +57,15 @@ void WSpectrum::onNewSamples(tIQSamplesBlock *pIqSamples)
 			mFftCallcnt--;
 			if (mFftCallcnt<=0)
 			{
-				// plot	
+				for (i=0;i<mFftSize;i++)
+				{
+					mSpectrumPlot[i]=mSpectrum[i];
+					mSpectrum[i]=0;	
+				}
 				mFftCallcnt=mFftAvgLen;
+				update();
 			}
-			printf("update\n");
 			mSampleBufLevel=0;
-			update();
 		}
 	}	
 }
@@ -105,17 +109,19 @@ void WSpectrum::drawSpectrum(QPainter *painter,int yupper,int ylower)
 	min=max=mSpectrum[0];
 	for (i=1;i<mFftSize;i++)
 	{
-		if (mSpectrum[i]<min) min=mSpectrum[i];
-		if (mSpectrum[i]>max) max=mSpectrum[i];
+		if (mSpectrumPlot[i]<min) min=mSpectrumPlot[i];
+		if (mSpectrumPlot[i]>max) max=mSpectrumPlot[i];
 	}
+	max=min+max/10;
+	printf("min:%f max:%f\n",min,max);
 	oldx=0;
-	oldy=mSpectrum[i];
+	oldy=mSpectrumPlot[i];
 
 	painter->setPen(QColor(255,255,255,255));	
 	for (i=0;i<mFftSize;i++)
 	{
 		x=(double)i*(double)mWidth/(double)mFftSize;
-		y=(mSpectrum[i]-min);
+		y=(mSpectrumPlot[i]-min);
 		y*=(ylower-yupper);
 		y/=(max-min);
 		y=ylower-y;

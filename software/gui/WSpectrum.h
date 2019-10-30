@@ -35,8 +35,9 @@ class WSpectrum: public QWidget
 		int mSampleBufLevel=0;
 		tSComplex *mSampleBuf;
 		double *mSpectrum;
+		double *mSpectrumPlot;
 		SimpleFft *mFft=nullptr;
-		int mFftAvgLen=100;
+		int mFftAvgLen=10;
 		int mFftCallcnt=mFftAvgLen;
 
 		int mSampleRate=2048000;

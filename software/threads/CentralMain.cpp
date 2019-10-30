@@ -46,7 +46,7 @@ void CentralMain::run()
 
 	while (!mStopped)
 	{
-		QThread::msleep(10);
+		QThread::msleep(100);
 		tuner->getSamples(&iqSamples);
 		if (iqSamples.sampleNum)
 		{
