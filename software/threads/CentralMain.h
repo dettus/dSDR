@@ -1,9 +1,13 @@
 #ifndef	CENTRALMAIN_H
 #define	CENTRALMAIN_H
+#include <stdio.h>
 #include <QThread>
 #include <QMutex>
 #include "TunerMain.h"
+#include <QPushButton>
+#include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QMutex>
 class CentralMain: public QThread
 {
 	Q_OBJECT
@@ -20,7 +24,15 @@ class CentralMain: public QThread
 		QMutex mMutex;
 
 		TunerMain *mTunerMain;
-		QHBoxLayout *mLayout;
+		QHBoxLayout *mHLayout;
+		QVBoxLayout *mVLayout;
 		QWidget *mainWin=nullptr;
+		QPushButton *mRecordButton=nullptr;
+		QMutex	mLock;
+		FILE *mFptr=nullptr;
+		bool mRecord=false;
+
+	public slots:
+		void handleRecord();
 };
 #endif
