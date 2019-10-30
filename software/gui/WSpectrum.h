@@ -8,6 +8,12 @@
 #include <QtWidgets>
 #include "SimpleFft.h"
 #include "DataTypes.h"
+#include <QImage>
+
+#define WATERFALLWIDTH  32768
+#define WATERFALLHEIGHT 256
+#define	WATERFALLNUANCES	256
+
 class WSpectrum: public QWidget
 {
 	Q_OBJECT
@@ -27,8 +33,8 @@ class WSpectrum: public QWidget
 		void wheelEvent(QWheelEvent *event) override;
 
 	private:
-		void drawSpectrum(QPainter *painter,int yupper,int ylower);
-		void drawWaterfall(QPainter *painter,int yupper,int ylower);
+		void drawSpectrum(QPainter *painter,int yupper,int ylower,double min,double max);
+		void drawWaterfall(QPainter *painter,int yupper,int ylower,double min,double max);
 		int mWidth=0;
 		int mHeight=0;
 		int mFftSize=1024;
@@ -43,5 +49,13 @@ class WSpectrum: public QWidget
 		int mSampleRate=2048000;
 		int mCenterFreq=0;
 		int mGain=0;
+
+		int mLeft=0;
+		int mRight=mFftSize;
+		int mUpper=400000000;
+		int mLower=0;
+
+		QImage *mWaterfallImage=nullptr;
+		QColor mRgbPalette[WATERFALLNUANCES];
 };
 #endif

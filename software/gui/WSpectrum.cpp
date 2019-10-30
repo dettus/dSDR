@@ -8,6 +8,15 @@ WSpectrum::WSpectrum(QWidget* parent):QWidget(parent)
 	mSpectrum=new double[mFftSize];
 	mSpectrumPlot=new double[mFftSize];
 	for (i=0;i<mFftSize;i++) mSpectrum[i]=0;
+
+	mWaterfallImage=new QImage(WATERFALLWIDTH,WATERFALLHEIGHT,QImage::Format_ARGB32);
+	QPainter waterfallPainter(mWaterfallImage);
+	for (i=0;i<WATERFALLNUANCES;i++)
+	{
+		mRgbPalette[i]=QColor(i,0,255-i,255);
+	}
+	waterfallPainter.fillRect(0,0,WATERFALLWIDTH,WATERFALLHEIGHT,mRgbPalette[0]);
+
 }
 QSize WSpectrum::sizeHint() const
 {
@@ -31,24 +40,31 @@ void WSpectrum::setFFTsize(int fftsize)
 		if (mFft!=nullptr) delete(mFft);
 		if (mSampleBuf!=nullptr) delete(mSampleBuf);
 		if (mSpectrum!=nullptr) delete(mSpectrum);
+		if (mSpectrumPlot!=nullptr) delete(mSpectrumPlot);
 		mFftSize=fftsize;
 		mFft=new SimpleFft(mFftSize);
 		mSampleBufLevel=0;
 		mSampleBuf=new tSComplex[mFftSize];
 		mSpectrum=new double[mFftSize];
+		mSpectrumPlot=new double[mFftSize];
 		for (i=0;i<mFftSize;i++) mSpectrum[i]=0;
+
+		mLeft=0;
+		mRight=mFftSize;
+		mUpper=400000000;
+		mLower=0;
 	}
 }
 void WSpectrum::onNewSamples(tIQSamplesBlock *pIqSamples)
 {
-	int i;
-
+	int i,j;
+	int samplenum=pIqSamples->sampleNum;
 	mSampleRate=pIqSamples->sampleRate;
 	mCenterFreq=pIqSamples->centerFreq;
 	mGain=pIqSamples->gain;
-	for (i=0;i<pIqSamples->sampleNum;i++)
+	for (i=0;i<samplenum;i++)
 	{
-		mSampleBuf[mSampleBufLevel]=pIqSamples->pData[i];	
+		mSampleBuf[mSampleBufLevel]=pIqSamples->pData[i];
 		mSampleBufLevel++;
 		if (mSampleBufLevel==mFftSize)
 		{
@@ -57,10 +73,10 @@ void WSpectrum::onNewSamples(tIQSamplesBlock *pIqSamples)
 			mFftCallcnt--;
 			if (mFftCallcnt<=0)
 			{
-				for (i=0;i<mFftSize;i++)
+				for (j=0;j<mFftSize;j++)
 				{
-					mSpectrumPlot[i]=mSpectrum[i];
-					mSpectrum[i]=0;	
+					mSpectrumPlot[j]=100*log(sqrt(mSpectrum[j]))/log(10);
+					mSpectrum[j]=0;	
 				}
 				mFftCallcnt=mFftAvgLen;
 				update();
@@ -72,11 +88,20 @@ void WSpectrum::onNewSamples(tIQSamplesBlock *pIqSamples)
 
 void WSpectrum::paintEvent(QPaintEvent *event)
 {
+	int i;
+	double min,max;
 	QPainter painter(this);
 	mHeight=this->height();
 	mWidth=this->width();
-	drawSpectrum(&painter,0,mHeight*0.3);
-	drawWaterfall(&painter,0.3*mHeight,mHeight*1.0);
+	min=max=0;
+	for (i=0;i<mFftSize;i++)
+	{
+		if (i==0 || min<mSpectrumPlot[i]) min=mSpectrumPlot[i];
+		if (i==0 || max>mSpectrumPlot[i]) max=mSpectrumPlot[i];
+	}
+	drawSpectrum(&painter,0,mHeight*0.3,min,max);
+	drawWaterfall(&painter,0.3*mHeight,mHeight*1.0,min,max);
+
 }
 void WSpectrum::resizeEvent(QResizeEvent *event)
 {
@@ -99,41 +124,101 @@ void WSpectrum::wheelEvent(QWheelEvent *event)
 {
 
 }
-void WSpectrum::drawSpectrum(QPainter *painter,int yupper,int ylower)
+void WSpectrum::drawSpectrum(QPainter *painter,int yupper,int ylower,double min,double max)
 {
 	int i;
-	double max,min;
-	double x,y;
-	int oldx,oldy;
+	int x,y;
+
+	int upper,lower,right,left;
+	double dx,dy;
+
+	right=mRight;
+	if (right>mFftSize) right=mFftSize;
+	left=mLeft;
+	upper=mUpper;
+	lower=mLower;
+	if (left>(right-32)) left=right-32;
+	if (left<0) left=0;
+	if (lower<0) lower=0;
+
 	painter->fillRect(0,yupper,mWidth,(ylower-yupper),QColor(32,32,32,255));
-	min=max=mSpectrum[0];
-	for (i=1;i<mFftSize;i++)
-	{
-		if (mSpectrumPlot[i]<min) min=mSpectrumPlot[i];
-		if (mSpectrumPlot[i]>max) max=mSpectrumPlot[i];
-	}
-	max=min+max/10;
-	printf("min:%f max:%f\n",min,max);
-	oldx=0;
-	oldy=mSpectrumPlot[i];
+	upper=max;
+	lower=min;
+	printf("%f max   %f min\n",max,min);
+	dx=(double)mWidth/(double)(right-left);
+	dy=(double)(upper-lower)/(double)(ylower-yupper);
+
 
 	painter->setPen(QColor(255,255,255,255));	
-	for (i=0;i<mFftSize;i++)
+	x=0;
+	y=0;
+	for (i=left;i<right;i++)
 	{
-		x=(double)i*(double)mWidth/(double)mFftSize;
-		y=(mSpectrumPlot[i]-min);
-		y*=(ylower-yupper);
-		y/=(max-min);
-		y=ylower-y;
+		int nx,ny;
 
-		painter->drawLine(oldx,oldy,x,y);
+		nx=(int)((double)(i-left)*dx);
+		ny=yupper+(int)((mSpectrumPlot[i]-(double)lower)/dy);
+		if (i==left) 
+		{
+			x=nx;
+			y=ny;
+		}	
 	
-		oldx=(int)x;
-		oldy=(int)y;
-	}	
+		painter->drawLine(x,y, nx,ny);
+	
+		x=nx;
+		y=ny;
+	}
+	
 }
-void WSpectrum::drawWaterfall(QPainter *painter,int yupper,int ylower)
+void WSpectrum::drawWaterfall(QPainter *painter,int yupper,int ylower,double min,double max)
 {
+	#if 1
+	int i;
+	QImage tmpImage1(WATERFALLWIDTH,WATERFALLHEIGHT,QImage::Format_ARGB32);
+	QPainter tmpPainter1(&tmpImage1);
+	QPainter waterfallPainter(mWaterfallImage);
 
+	double delta;
+
+		
+	if (max!=min)
+	{
+
+		// with each new spectrum, the waterfall moves DOWN
+		QRectF target1(0,1, WATERFALLWIDTH,WATERFALLHEIGHT-1);
+		QRectF source1(0,0, WATERFALLWIDTH,WATERFALLHEIGHT-1);
+		tmpPainter1.drawImage(target1, *mWaterfallImage, source1); // move the image 1 pixel up
+		waterfallPainter.drawImage(source1, tmpImage1, source1);
+		// the upper line is now free to paint the new spectrum
+
+
+		for (i=0;i<WATERFALLWIDTH;i++)
+		{
+			double y;
+
+			y=((mSpectrumPlot[i]-min)*WATERFALLNUANCES)/(max-min);
+			waterfallPainter.setPen(mRgbPalette[(int)y]);
+			waterfallPainter.drawPoint(i,WATERFALLHEIGHT-1);
+		}
+
+
+		// 
+		delta=((double)(mRight-mLeft)*WATERFALLWIDTH)/(double)mFftSize;
+		QImage tmpImage2((int)delta,WATERFALLHEIGHT,QImage::Format_ARGB32);
+		QPainter tmpPainter2(&tmpImage2);
+		QRectF source2(mLeft,0,delta,WATERFALLHEIGHT);
+		QRectF target2(0,0,delta,WATERFALLHEIGHT);
+		QRectF full(0,ylower,mWidth,(ylower-yupper));
+		QSize size(mWidth,ylower-yupper);
+
+		tmpPainter2.drawImage(target2,*mWaterfallImage,source2);
+		painter->drawImage(full,tmpImage2.scaled(size),full);
+
+	}
+#else
+	painter->fillRect(0,yupper,mWidth,(ylower-yupper),QColor(255,0,0,255));
+	#endif
+		
 }
 
