@@ -13,7 +13,17 @@ WSpectrum::WSpectrum(QWidget* parent):QWidget(parent)
 	QPainter waterfallPainter(mWaterfallImage);
 	for (i=0;i<WATERFALLNUANCES;i++)
 	{
-		mRgbPalette[i]=QColor(i,0,255-i,255);
+#if 1
+		if (i<256)
+		{
+			mRgbPalette[i]=QColor(i,0,255-i,255);
+
+		} else {
+			mRgbPalette[i]=QColor(255,i-256,i-256,255);
+		}
+#else
+		mRgbPalette[i]=QColor(i/2,i/2,i/2,255);
+#endif
 	}
 	waterfallPainter.fillRect(0,0,WATERFALLWIDTH,WATERFALLHEIGHT,mRgbPalette[0]);
 
@@ -173,7 +183,6 @@ void WSpectrum::drawSpectrum(QPainter *painter,int yupper,int ylower,double min,
 }
 void WSpectrum::drawWaterfall(QPainter *painter,int yupper,int ylower,double min,double max)
 {
-	#if 1
 	int i;
 	QImage tmpImage1(WATERFALLWIDTH,WATERFALLHEIGHT,QImage::Format_ARGB32);
 	QPainter tmpPainter1(&tmpImage1);
@@ -190,6 +199,8 @@ void WSpectrum::drawWaterfall(QPainter *painter,int yupper,int ylower,double min
 		QRectF source1(0,0, WATERFALLWIDTH,WATERFALLHEIGHT-1);
 		tmpPainter1.drawImage(target1, *mWaterfallImage, source1); // move the image 1 pixel up
 		waterfallPainter.drawImage(source1, tmpImage1, source1);
+		waterfallPainter.setPen(QColor(0,255,0,255));
+		
 		// the upper line is now free to paint the new spectrum
 
 
@@ -198,10 +209,9 @@ void WSpectrum::drawWaterfall(QPainter *painter,int yupper,int ylower,double min
 			double y;
 
 			y=((mSpectrumPlot[i]-min)*WATERFALLNUANCES)/(max-min);
-			waterfallPainter.setPen(mRgbPalette[(int)y]);
-			waterfallPainter.drawPoint(i,WATERFALLHEIGHT-1);
+			waterfallPainter.setPen(mRgbPalette[WATERFALLNUANCES-1-(int)y]);
+			waterfallPainter.drawPoint(i,0);
 		}
-
 
 		// 
 		delta=((double)(mRight-mLeft)*WATERFALLWIDTH)/(double)mFftSize;
@@ -209,16 +219,13 @@ void WSpectrum::drawWaterfall(QPainter *painter,int yupper,int ylower,double min
 		QPainter tmpPainter2(&tmpImage2);
 		QRectF source2(mLeft,0,delta,WATERFALLHEIGHT);
 		QRectF target2(0,0,delta,WATERFALLHEIGHT);
-		QRectF full(0,ylower,mWidth,(ylower-yupper));
+		QRectF source3(0,0,mWidth,(ylower-yupper));
+		QRectF target3(0,yupper,mWidth,(ylower-yupper));
 		QSize size(mWidth,ylower-yupper);
-
 		tmpPainter2.drawImage(target2,*mWaterfallImage,source2);
-		painter->drawImage(full,tmpImage2.scaled(size),full);
+
+		painter->drawImage(target3,tmpImage2.scaled(size),source3);
 
 	}
-#else
-	painter->fillRect(0,yupper,mWidth,(ylower-yupper),QColor(255,0,0,255));
-	#endif
-		
 }
 

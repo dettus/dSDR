@@ -12,7 +12,7 @@
 
 #define WATERFALLWIDTH  32768
 #define WATERFALLHEIGHT 256
-#define	WATERFALLNUANCES	256
+#define	WATERFALLNUANCES	512
 
 class WSpectrum: public QWidget
 {
