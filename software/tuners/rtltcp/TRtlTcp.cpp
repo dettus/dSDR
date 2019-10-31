@@ -90,12 +90,13 @@ void TRtlTcp::initialize()
 void TRtlTcp::process()
 {
 	// read 1 second of samples from the file
-	printf("rtltcp process\n");
+	// readyRead() is being called implicitly.
+	// so nothing to do here.
 }
 
 int TRtlTcp::timeToWait()
 {
-	return 1000;	// wait for 1000 milliseconds between process calls
+	return 50;	// wait for 50 milliseconds between process calls
 }
 
 void TRtlTcp::getSamples(tIQSamplesBlock *pIQSamplesBlock)
@@ -115,7 +116,7 @@ void TRtlTcp::getSamples(tIQSamplesBlock *pIQSamplesBlock)
 		for (i=0;i<n;i++)
 		{
 			mSamples[i].real=mBuf[2*i+0]-127;
-			mSamples[i].imag=mBuf[2*i+0]-127;
+			mSamples[i].imag=mBuf[2*i+1]-127;
 		}
 		if (mBufLevel%2==1)
 		{
@@ -265,7 +266,7 @@ void TRtlTcp::handleConnect()
 		{
 			delete(mSamples);
 		}
-		mBuf=new signed char[mSampleRate];
+		mBuf=new signed char[mSampleRate*2];
 		mSamples=new tSComplex[mSampleRate];
 
 		mBufLevel=0;
