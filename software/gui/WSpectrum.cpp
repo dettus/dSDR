@@ -113,6 +113,61 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 	drawSpectrum(&painter,0,mHeight*0.3,min,max);
 	drawWaterfall(&painter,0.3*mHeight,mHeight*1.0,min,max);
 
+	int samplerate=mSampleRate;
+	double nyquist=samplerate/(double)mFftSize;
+	int freqleft=(int)(nyquist*(double)mLeft);
+	int freqright=(int)(nyquist*(double)mRight);
+	int freq,freqinc;;
+	signed long long d;
+	signed long long carrierleft,carrierright;
+	freqleft-=samplerate/2;
+	freqright-=samplerate/2;
+	d=freqright-freqleft;
+	
+	if (d>=10000000) d=1000000;
+	else if (d>=  250000) d=100000;
+	else if (d>=   25000) d= 10000;
+	else if (d>=    2500) d=  1000;
+	else d=100;
+
+	carrierleft=freqleft/d-1;
+	carrierright=freqright/d+2;
+	carrierleft*=d;
+	carrierright*=d;
+	
+	freq=carrierleft;
+	freqinc=d;
+
+	carrierleft*=mFftSize;
+	carrierright*=mFftSize;
+
+	carrierleft/=samplerate;
+	carrierright/=samplerate;
+			
+	d*=mFftSize;
+	d/=samplerate;
+
+	carrierleft+=mFftSize/2;
+	carrierright+=mFftSize/2;
+	
+	painter.setPen(QColor(255,255,255,255));
+	for (i=carrierleft;i<carrierright;i+=d)
+	{
+		int x;
+		char tmp[64];
+		x=(i-mLeft)*mWidth/(mRight-mLeft);
+
+		if (x>=0 && x<=mWidth)
+		{
+			painter.drawLine(x,0,x,mHeight);
+
+			snprintf(tmp,64,"%dHz",freq+mCenterFreq);
+
+			painter.drawText(QRectF((double)x-50,0.0,100,20),Qt::AlignCenter,tmp);
+		}
+		freq+=freqinc;
+	}
+
 }
 void WSpectrum::resizeEvent(QResizeEvent *event)
 {
