@@ -12,7 +12,7 @@
 
 #define WATERFALLWIDTH  32768
 #define WATERFALLHEIGHT 256
-#define	WATERFALLNUANCES	512
+#define	WATERFALLNUANCES	384
 
 class WSpectrum: public QWidget
 {
@@ -57,5 +57,8 @@ class WSpectrum: public QWidget
 
 		QImage *mWaterfallImage=nullptr;
 		QColor mRgbPalette[WATERFALLNUANCES];
+
+		int mLastMoveEventX=-1;
+		int mLastMoveEventY=-1;
 };
 #endif

@@ -85,7 +85,8 @@ void WSpectrum::onNewSamples(tIQSamplesBlock *pIqSamples)
 			{
 				for (j=0;j<mFftSize;j++)
 				{
-					mSpectrumPlot[j]=100*log(sqrt(mSpectrum[j]))/log(10);
+//					mSpectrumPlot[j]=1000*log(sqrt(mSpectrum[j]))/log(10);
+					mSpectrumPlot[j]=1000*log((mSpectrum[j]))/log(10);
 					mSpectrum[j]=0;	
 				}
 				mFftCallcnt=mFftAvgLen;
@@ -120,18 +121,116 @@ void WSpectrum::resizeEvent(QResizeEvent *event)
 }
 void WSpectrum::mousePressEvent(QMouseEvent *event)
 {
+	if ((event->buttons() & Qt::LeftButton)	)
+	{
+		mLastMoveEventX=event->pos().x();
+		mLastMoveEventY=event->pos().y();
+	}
 
 }
 void WSpectrum::mouseReleaseEvent(QMouseEvent *event)
 {
+	mLastMoveEventX=-1;
+	mLastMoveEventY=-1;
 
 }
 void WSpectrum::mouseMoveEvent(QMouseEvent *event)
 {
+	int x,y;
+	double dx,dy;
+	int left,right;
+	double upper,lower;
+
+	dx=((double)mRight-(double)mLeft)/(double)mWidth;
+	dy=((double)mUpper-(double)mLower)/(double)mHeight;
+	left=mLeft;
+	right=mRight;
+	upper=mUpper;
+	lower=mLower;
+	if ((event->buttons() & Qt::LeftButton)	)
+	{
+		x=event->pos().x();
+		if (mLastMoveEventX!=-1)
+		{
+			left+=(mLastMoveEventX-x)*dx;
+			right+=(mLastMoveEventX-x)*dx;
+		}
+		y=event->pos().y();
+		if (mLastMoveEventY!=-1)
+		{
+			upper+=(y-mLastMoveEventY)*dy;
+			lower+=(y-mLastMoveEventY)*dy;
+		}
+		if (left>0&&left<mFftSize && right>0&&right<mFftSize)
+		{
+			mLeft=left;
+			mRight=right;	
+		}
+		if (upper>=0 && upper<=1e16 && lower>=0 && lower<=1e16-32)
+		{
+			mLower=lower;
+			mUpper=upper;
+		}
+		mLastMoveEventX=x;	
+		mLastMoveEventY=y;
+		update();
+	}
 
 }
 void WSpectrum::wheelEvent(QWheelEvent *event)
 {
+	QPoint curPoint = event->pos();
+	double x,y;
+	double d;
+	double fact;
+	int left=mLeft;
+	int right=mRight;
+
+
+
+	x=(double)curPoint.x()/(double)mWidth;
+	y=(double)curPoint.y()/(double)mHeight;
+	d=right-left;
+
+	fact=(right-left)/10;
+	if (event->delta()>0) // mousewheel up
+	{
+		if (event->modifiers() & Qt::ControlModifier)
+		{
+			fact=(mUpper-mLower);
+			//			mLower+=(double)(fact*y);
+			mUpper-=(double)(fact*(1.0-y));
+		} else {
+			fact=(right-left)/10;
+			left+=(int)(fact*x);
+			right-=(int)(fact*(1.0-x));
+		}
+	}
+	else if (event->delta()<0) // mousewheel down
+	{
+		if (event->modifiers() & Qt::ControlModifier)
+		{
+			fact=(mUpper-mLower)/10;
+			mLower-=(double)fact;
+			mUpper+=(double)fact;
+		} else {
+			fact=(right-left)/10;
+			left-=(int)fact;
+			right+=(int)fact;
+		}
+	}
+	if (left<0) left=0;
+	if (left>mFftSize-32) left=mFftSize-32;
+
+	if (right>mFftSize || right<=left) right=mFftSize;
+	if (mLower<0) mLower=0;
+	if (mLower>(1e16-32)) mLower=(1e16-32);
+
+	if (mUpper>1e16 || mUpper<=mLower) mUpper=1e16;
+	printf("++++ mUpper:%10.f mLower:%10.f  left:%d right:%d\n",mUpper,mLower,left,right);
+	mLeft=left;
+	mRight=right;	
+	update();
 
 }
 void WSpectrum::drawSpectrum(QPainter *painter,int yupper,int ylower,double min,double max)
@@ -139,7 +238,8 @@ void WSpectrum::drawSpectrum(QPainter *painter,int yupper,int ylower,double min,
 	int i;
 	int x,y;
 
-	int upper,lower,right,left;
+	int right,left;
+	double upper,lower;
 	double dx,dy;
 
 	right=mRight;
