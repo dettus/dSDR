@@ -1,6 +1,9 @@
 \documentclass{article}
 \usepackage{amssymb}
 \begin{document}
+\section{Filters}
+Source: Daniel Ch. von Grueningen, "Digitale Signalverarbeitung", Carl Hanser Verlag 2014, page 251.\\
+
 Apparently, the filter coefficients can be calculted like so
 \begin{eqnarray*}
 h_{lowpass}[n]&=& \frac{\Omega_u}{\pi}sinc \left(\frac{n\Omega_u}{pi}\right)\\
@@ -15,6 +18,9 @@ h_{highpass}[0]&=&1-\frac{\Omega_u}{\pi}\\
 h_{bandpass}[0]&=&\frac{\Omega_u-\Omega_l}{\pi}\\
 h_{bandstop}[0]&=&1-\frac{\Omega_u-\Omega_l}{\pi}\\
 \end{eqnarray*}
-
+\section{Windows}
+\begin{tabular}{l|c}
+Hamming&$w_{Hamm}[n]=\left\{\begin{array}{l@{:}l}c\cdot\left( 0.54+0.46\cos\left(\frac{2\pi n}{N+1}\right)\right)&|n|\leqslant N/2\\0&otherwise\\\end{array}\right.$\\\hline  %% }
+\end{tabular}
 \end{document}
 

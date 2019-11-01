@@ -2,18 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-// sinc(x)=\frac{sin(x)}{x}
-//
-// lowpass:    h[n]= \frac{\Omega_u}{\pi}\sinc \left(\frac{n\Omega_u}{pi}
-// highpass:   h[n]=-\frac{\Omega_l}{\pi}\sinc \left(\frac{n\Omega_l}{pi} 
-// bandpass:   h[n]= \frac{\Omega_u}{\pi}\sinc \left(\frac{n\Omega_u}{pi}-\frac{\Omega_l}{\pi}\sinc \left(\frac{n\Omega_l}{pi} 
-// bandstop:   h[n]= \frac{\Omega_l}{\pi}\sinc \left(\frac{n\Omega_l}{pi}-\frac{\Omega_u}{\pi}\sinc \left(\frac{n\Omega_u}{pi} 
-
-// h_lowpass[0]&=&\frac{\Omega_u}{\pi}
-// h_highpass[0]&=&1-\frac{\Omega_u}{\pi}
-// h_bandpass[0]&=&\frac{\Omega_u-\Omega_l}{\pi}
-// h_bandstop[0]&=&1-\frac{\Omega_u-\Omega_l}{\pi}
-
 
 int generatefiltercoeffs(double* pTaps,int num,  int samplerate,int lowerfreq,int upperfreq)
 {
@@ -21,16 +9,15 @@ int generatefiltercoeffs(double* pTaps,int num,  int samplerate,int lowerfreq,in
 	double omegau;
 	double omegal;
 	double x;
-	for (n=0;i<num;n++) pTaps[n]=0;
-	pTaps[num/2]=1;
+	for (n=0;n<num;n++) pTaps[n]=0;
 
-	omegau=(double)upper/(double)samplerate;
-	omegal=(double)lower/(double)samplerate;
+	omegau=(double)upperfreq/(double)samplerate;
+	omegal=(double)lowerfreq/(double)samplerate;
 
 	if (lowerfreq==0)	// low pass filter
 	{
 		pTaps[0]=omegau/M_PI;
-		for (n=1;n<num/2;n++)
+		for (n=1;n<num;n++)
 		{
 			x=n*omegau/M_PI;
 			pTaps[n]=omegau/M_PI*sin(x)/x;	
@@ -39,7 +26,7 @@ int generatefiltercoeffs(double* pTaps,int num,  int samplerate,int lowerfreq,in
 	else if (upperfreq==samplerate)	// high pass filter
 	{
 		pTaps[0]=1-omegal/M_PI;
-		for (n=1;n<num/2;n++)
+		for (n=1;n<num;n++)
 		{
 			x=n*omegal/M_PI;
 			pTaps[n]=-omegal/M_PI*sin(x)/x;	
@@ -48,7 +35,7 @@ int generatefiltercoeffs(double* pTaps,int num,  int samplerate,int lowerfreq,in
 	else if (upperfreq>lowerfreq)	// band pass filter
 	{
 		pTaps[0]=(omegau-omegal)/M_PI;
-		for (n=1;n<num/2;n++)
+		for (n=1;n<num;n++)
 		{
 			x=n*omegal/M_PI;
 			pTaps[n]=-omegal/M_PI*sin(x)/x;	
@@ -60,28 +47,23 @@ int generatefiltercoeffs(double* pTaps,int num,  int samplerate,int lowerfreq,in
 	{
 		pTaps[0]=1-(omegau-omegal)/M_PI;
 
-		for (n=1;n<num/2;n++)
+		for (n=1;n<num;n++)
 		{
 			x=n*omegal/M_PI;
 			pTaps[n]=omegal/M_PI*sin(x)/x;	
 			x=n*omegau/M_PI;
 			pTaps[n]-=omegau/M_PI*sin(x)/x;	
 		}
-	}
-	// mirroring the filter taps along the middle
-	for (i=num/2+1;i<num;i++)
-	{
-		pTaps[i]=pTaps[i-num/2];	
-	}
-	for (i=0;i<num/2+1;i++)
-	{
-		pTaps[i]=pTaps[num-i];	
-	}
+	} else return 0;
+	return 1;
 }
 
 int main(int argc,char** argv)
 {
 
+	double pTaps[501];
+	generatefiltercoeffs(pTaps,250,2048000,0,96000);	
+	return 0;
 }
 
 
