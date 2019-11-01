@@ -1,0 +1,20 @@
+\documentclass{article}
+\usepackage{amssymb}
+\begin{document}
+Apparently, the filter coefficients can be calculted like so
+\begin{eqnarray*}
+h_{lowpass}[n]&=& \frac{\Omega_u}{\pi}sinc \left(\frac{n\Omega_u}{pi}\right)\\
+h_{highpass}[n]&=&-\frac{\Omega_l}{\pi}sinc \left(\frac{n\Omega_l}{pi}\right) \\
+h_{bandpass}[n]&=& \frac{\Omega_u}{\pi}sinc \left(\frac{n\Omega_u}{pi}\right)-\frac{\Omega_l}{\pi}sinc \left(\frac{n\Omega_l}{\pi}\right){pi}\\
+h_{bandstop}[n]&=& \frac{\Omega_l}{\pi}sinc \left(\frac{n\Omega_l}{pi}\right)-\frac{\Omega_u}{\pi}sinc \left(\frac{n\Omega_u}{\pi}\right){pi}\\
+\end{eqnarray*}
+With
+\begin{eqnarray*}
+h_{lowpass}[0]&=&\frac{\Omega_u}{\pi}\\
+h_{highpass}[0]&=&1-\frac{\Omega_u}{\pi}\\
+h_{bandpass}[0]&=&\frac{\Omega_u-\Omega_l}{\pi}\\
+h_{bandstop}[0]&=&1-\frac{\Omega_u-\Omega_l}{\pi}\\
+\end{eqnarray*}
+
+\end{document}
+
