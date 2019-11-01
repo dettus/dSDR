@@ -3,7 +3,7 @@
 
 
 #define	INRATE	2048000
-#define	OUTRATE 192000
+#define	OUTRATE  192000
 int main(int argc,char** argv)
 {
 	FILE *f;
