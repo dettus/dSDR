@@ -13,6 +13,7 @@
 #include <QLineEdit>
 #include <QTcpSocket>
 #include <QMutex>
+#include <QCheckBox>
 class TRtlTcp: public Tuners
 {
 	Q_OBJECT
@@ -59,12 +60,22 @@ class TRtlTcp: public Tuners
 		QPushButton	*mFreqUp;
 		QLineEdit	*mFreqInput;
 		QPushButton	*mFreqDown;
+
+		QCheckBox	*mGainBox;
+		QCheckBox	*mAgcBox;	
+		QCheckBox	*mDirectSamplingBox;
+		QCheckBox	*mOffsetTuningBox;
+
 		QMutex		mLock;
 		signed char	*mBuf=nullptr;
 		tSComplex	*mSamples=nullptr;
 		int		mBufLevel=0;
 		QMutex		mLock2;
 
+		bool mGainMode=true;
+		bool mAgcMode=false;
+		bool mDirectSampling=false;
+		bool mOffsetTuning=false;
 	public slots:
 		// GUI slots
 		void handleConnect();
@@ -73,6 +84,11 @@ class TRtlTcp: public Tuners
 		void handleFreqUp();
 		void handleFreqInput();
 		void handleFreqDown();
+		
+		void handleGainBox();
+		void handleAgcBox();
+		void handleDirectSamplingBox();
+		void handleOffsetTuningBox();
 
 		// network slots
 		void readyRead();

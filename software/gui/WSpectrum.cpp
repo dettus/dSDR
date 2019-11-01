@@ -13,7 +13,8 @@ WSpectrum::WSpectrum(QWidget* parent):QWidget(parent)
 	QPainter waterfallPainter(mWaterfallImage);
 	for (i=0;i<WATERFALLNUANCES;i++)
 	{
-#if 1
+#if 0	
+		// BLUE/RED
 		if (i<256)
 		{
 			mRgbPalette[i]=QColor(i,0,255-i,255);
@@ -21,8 +22,17 @@ WSpectrum::WSpectrum(QWidget* parent):QWidget(parent)
 		} else {
 			mRgbPalette[i]=QColor(255,i-256,i-256,255);
 		}
-#else
-		mRgbPalette[i]=QColor(i/2,i/2,i/2,255);
+#elif 1			// Green/Cyan
+		if (i<256)
+		{
+			mRgbPalette[i]=QColor(0,i,0,255);
+
+		} else {
+			mRgbPalette[i]=QColor(0,255,i-256,255);
+		}
+#elif 0
+		// GREYSCALES
+		mRgbPalette[i]=QColor(i*256/WATERFALLNUANCES,i*256/WATERFALLNUANCES,i*256/WATERFALLNUANCES,255);
 #endif
 	}
 	waterfallPainter.fillRect(0,0,WATERFALLWIDTH,WATERFALLHEIGHT,mRgbPalette[0]);

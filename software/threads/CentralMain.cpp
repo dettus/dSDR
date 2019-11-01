@@ -34,6 +34,7 @@ void CentralMain::run()
 	}
 	tuner->initialize();
 	mWSpectrum->setFFTsize(32768);
+	//mWSpectrum->setFFTsize(8192);
 	mVLayout->addWidget(tuner);
 	mVLayout->addWidget(mRecordButton);
 	mHLayout->addLayout(mVLayout);

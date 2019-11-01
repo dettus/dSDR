@@ -52,6 +52,11 @@ TRtlTcp::TRtlTcp(QWidget* parent): Tuners(parent)
 	snprintf(tmp,32,"%d",mFrequency);
 	mFreqInput=new QLineEdit(tmp);
 	mFreqDown=new QPushButton("Frequency down");
+	
+	mGainBox=new QCheckBox("Manual Gain");mGainBox->setTristate(false);mGainBox->setCheckState(mGainMode?Qt::Checked:Qt::Unchecked);
+	mAgcBox=new QCheckBox("AGC on");mAgcBox->setTristate(false);mAgcBox->setCheckState(mAgcMode?Qt::Checked:Qt::Unchecked);
+	mDirectSamplingBox=new QCheckBox("Direct Sampling");mDirectSamplingBox->setTristate(false);mDirectSamplingBox->setCheckState(mDirectSampling?Qt::Checked:Qt::Unchecked);
+	mOffsetTuningBox=new QCheckBox("Offset Tuning");mOffsetTuningBox->setTristate(false);mOffsetTuningBox->setCheckState(mOffsetTuning?Qt::Checked:Qt::Unchecked);
 
 	setAutoFillBackground(true);
 	QPalette pal = palette();
@@ -68,6 +73,11 @@ TRtlTcp::TRtlTcp(QWidget* parent): Tuners(parent)
 	mLayout->addWidget(mFreqUp);
 	mLayout->addWidget(mFreqInput);
 	mLayout->addWidget(mFreqDown);
+	mLayout->addWidget(mGainBox);
+	mLayout->addWidget(mAgcBox);
+	mLayout->addWidget(mDirectSamplingBox);
+	mLayout->addWidget(mOffsetTuningBox);
+
 	setLayout(mLayout);
 
 
@@ -77,6 +87,13 @@ TRtlTcp::TRtlTcp(QWidget* parent): Tuners(parent)
 	connect(mFreqUp,SIGNAL(released()),this,SLOT(handleFreqUp()));
 	connect(mFreqInput,SIGNAL(returnPressed()),this,SLOT(handleFreqInput()));
 	connect(mFreqDown,SIGNAL(released()),this,SLOT(handleFreqDown()));
+
+//	connect(mGainBox,SIGNAL(stateChanged(int state)),this,handleGainBox());
+//	connect(mAgcBox,SIGNAL(stateChanged(int state)),this,handleAgcBox());
+	connect(mGainBox, SIGNAL(toggled(bool)), this, SLOT(handleGainBox()));
+	connect(mAgcBox, SIGNAL(toggled(bool)), this, SLOT(handleAgcBox()));
+	connect(mDirectSamplingBox, SIGNAL(toggled(bool)), this, SLOT(handleDirectSamplingBox()));
+	connect(mOffsetTuningBox, SIGNAL(toggled(bool)), this, SLOT(handleOffsetTuningBox()));
 
 
 
@@ -337,11 +354,11 @@ void TRtlTcp::readyRead()
 		sendCmd(RTLTCP_CMD_SET_FREQUENCY,mFrequency);
 		sendCmd(RTLTCP_CMD_SET_SAMPLERATE,mSampleRate);
 
-		sendCmd(RTLTCP_CMD_SET_DIRECT_SAMPLING,0);
-		sendCmd(RTLTCP_CMD_SET_OFFSET_TUNING,0);
+		sendCmd(RTLTCP_CMD_SET_DIRECT_SAMPLING,mDirectSampling?1:0);
+		sendCmd(RTLTCP_CMD_SET_OFFSET_TUNING,mOffsetTuning?1:0);
 		// some rtl tcp sticks have an issue with the gain control. apparently, it works to set it to the lowest and the maximum settings directly afterwards.
-		sendCmd(RTLTCP_CMD_SET_GAIN_MODE,1);    // manual gain
-		sendCmd(RTLTCP_CMD_SET_AGC_MODE,0);     // manual gain, agc off
+		sendCmd(RTLTCP_CMD_SET_GAIN_MODE,mGainMode?1:0);    // manual gain
+		sendCmd(RTLTCP_CMD_SET_AGC_MODE,mAgcMode?1:0);     // manual gain, agc off
 		sendCmd(RTLTCP_CMD_SET_GAIN_VALUE,RtlTcpClientLegalGains[mTunerType][0]);
 		sendCmd(RTLTCP_CMD_SET_GAIN_VALUE,RtlTcpClientLegalGains[mTunerType][mGainIdx]);
 
@@ -361,3 +378,25 @@ void TRtlTcp::readyRead()
 
 	mLock.unlock();
 }
+
+void TRtlTcp::handleGainBox()
+{
+	mGainMode=mGainBox->isChecked();
+	sendCmd(RTLTCP_CMD_SET_GAIN_MODE,mGainMode?1:0);    // manual gain
+}
+void TRtlTcp::handleAgcBox()
+{
+	mAgcMode=mAgcBox->isChecked();
+	sendCmd(RTLTCP_CMD_SET_AGC_MODE,mAgcMode?1:0);     // manual gain, agc off
+}
+void TRtlTcp::handleDirectSamplingBox()
+{
+	mDirectSampling=mDirectSamplingBox->isChecked();
+	sendCmd(RTLTCP_CMD_SET_DIRECT_SAMPLING,mDirectSampling?1:0);    
+}
+void TRtlTcp::handleOffsetTuningBox()
+{
+	mOffsetTuning=mOffsetTuningBox->isChecked();
+	sendCmd(RTLTCP_CMD_SET_OFFSET_TUNING,mOffsetTuning?1:0);  
+}
+
