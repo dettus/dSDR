@@ -57,12 +57,27 @@ int generatefiltercoeffs(double* pTaps,int num,  int samplerate,int lowerfreq,in
 	} else return 0;
 	return 1;
 }
-
+void hammingwindow(double* pTaps,double c,int num)
+{
+	int n;
+	for (n=0;n<num/2;n++)
+	{
+		pTaps[num/2+n]=pTaps[n]*c*(0.54+0.46*cos(2*M_PI*n/(num+1)));
+	}
+	for (n=0;n<num/2;n++)
+	{
+		pTaps[n]=pTaps[num-1-n];
+	}
+}
 int main(int argc,char** argv)
 {
 
 	double pTaps[501];
-	generatefiltercoeffs(pTaps,250,2048000,0,96000);	
+	int i;
+	generatefiltercoeffs(pTaps,250,2048000,0,96000);
+	hammingwindow(pTaps,1.0,501);
+	for (i=0;i<501;i++) printf("%f ",pTaps[i]);
+	printf("\n");
 	return 0;
 }
 
