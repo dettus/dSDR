@@ -38,6 +38,7 @@ HEADERS +=	threads/TunerMain.h	\
 		tuners/rtltcp/TRtlTcp.h	\
 		signalprocessing/SimpleFft.h	\
 		signalprocessing/SimpleShifter.h	\
+		signalprocessing/Filter.h	\
 		gui/WSpectrum.h		\
 		shared/DataTypes.h
 
@@ -50,6 +51,7 @@ SOURCES +=	main.cpp \
 		tuners/dummy/TDummy.cpp	\
 		tuners/rtltcp/TRtlTcp.cpp	\
 		gui/WSpectrum.cpp		\
+		signalprocessing/Filter.cpp	\
 		signalprocessing/SimpleFft.cpp	\
 		signalprocessing/SimpleShifter.cpp
          
