@@ -3,6 +3,13 @@
 WSpectrum::WSpectrum(QWidget* parent):QWidget(parent)
 {
 	int i;
+#if 0
+	double red,green,blue;
+	double curr_red,curr_green,curr_blue;
+	double next_red,next_green,next_blue;
+	int span,step;
+#endif
+
 	mFft=new SimpleFft(mFftSize);
 	mSampleBuf=new tSComplex[mFftSize];
 	mSpectrum=new double[mFftSize];
@@ -22,7 +29,7 @@ WSpectrum::WSpectrum(QWidget* parent):QWidget(parent)
 		} else {
 			mRgbPalette[i]=QColor(255,i-256,i-256,255);
 		}
-#elif 1			// Green/Cyan
+#elif 0			// Green/Cyan
 		if (i<256)
 		{
 			mRgbPalette[i]=QColor(0,i,0,255);
@@ -30,6 +37,50 @@ WSpectrum::WSpectrum(QWidget* parent):QWidget(parent)
 		} else {
 			mRgbPalette[i]=QColor(0,255,i-256,255);
 		}
+#elif 1			// Green/Cyan
+		if (i<64)
+		{
+			mRgbPalette[i]=QColor(i,i,i,255);
+
+		} else {
+			mRgbPalette[i]=QColor((int)((double)i*0.2),(int)((double)i*0.8),128,255);
+		}
+#elif 0			// rainbow
+		if (i==0*64)
+		{
+			curr_red=0xff;curr_green=0x00;curr_blue=0x00;	// red
+			next_red=0xff;curr_green=0x85;curr_blue=0x00;	// orange
+			span=64;step=0;	
+		} else if (i==1*64) {
+			curr_red=next_red;curr_green=next_green;curr_blue=next_blue;
+			next_red=0xff;curr_green=0xff;curr_blue=0x00;	// yellow
+			span=64;step=0;	
+		} else if (i==2*64) {
+			curr_red=next_red;curr_green=next_green;curr_blue=next_blue;
+			next_red=0x00;curr_green=0xff;curr_blue=0x00;	// green
+			span=64;step=0;	
+		} else if (i==3*64) {
+			curr_red=next_red;curr_green=next_green;curr_blue=next_blue;
+			next_red=0x00;curr_green=0xff;curr_blue=0xff;	// cyan
+			span=64;step=0;	
+		} else if (i==4*64) {
+			curr_red=next_red;curr_green=next_green;curr_blue=next_blue;
+			next_red=0x00;curr_green=0x00;curr_blue=0xff;	// blue
+			span=64;step=0;	
+		} else if (i==5*64) {
+			curr_red=next_red;curr_green=next_green;curr_blue=next_blue;
+			next_red=0xff;curr_green=0x00;curr_blue=0xff;	// purple
+			span=64;step=0;	
+		}
+		red=curr_red+((next_red-curr_red)*step)/span;
+		green=curr_green+((next_green-curr_green)*step)/span;
+		blue=curr_blue+((next_blue-curr_blue)*step)/span;
+		step++;
+	
+		
+		mRgbPalette[i]=QColor((int)red,(int)green,(int)blue,255);
+		
+			
 #elif 0
 		// GREYSCALES
 		mRgbPalette[i]=QColor(i*256/WATERFALLNUANCES,i*256/WATERFALLNUANCES,i*256/WATERFALLNUANCES,255);
