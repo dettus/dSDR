@@ -1,6 +1,6 @@
 #include "SimpleFft.h"
 #include "math.h"
-
+#include <stdio.h>
 SimpleFft::SimpleFft(int fftsize)
 {
 
@@ -18,6 +18,7 @@ SimpleFft::SimpleFft(int fftsize)
 		mTwiddle_i[i]=-sin(2*M_PI*(double)i/(double)fftsize);
 	}	
 	mFftSize=fftsize;
+	printf("fftsize:%d\n",mFftSize);
 	
 
 #define PERMUTE8(i)  (((i & 0x001) << 7) | ((i & 0x002) << 5) | ((i & 0x004) << 3) \

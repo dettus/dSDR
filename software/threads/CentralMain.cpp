@@ -33,8 +33,8 @@ void CentralMain::run()
 		tuner=mTunerMain->getTuner();
 	}
 	tuner->initialize();
-	mWSpectrum->setFFTsize(32768);
-	//mWSpectrum->setFFTsize(8192);
+	//mWSpectrum->setFFTsize(32768);
+	mWSpectrum->setFFTsize(4096);
 	mVLayout->addWidget(tuner);
 	mVLayout->addWidget(mRecordButton);
 	mHLayout->addLayout(mVLayout);
@@ -46,7 +46,7 @@ void CentralMain::run()
 
 	while (!mStopped)
 	{
-		QThread::msleep(10);
+		QThread::msleep(100);
 		tuner->getSamples(&iqSamples);
 		if (iqSamples.sampleNum)
 		{

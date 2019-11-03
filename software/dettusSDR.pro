@@ -39,7 +39,7 @@ HEADERS +=	threads/TunerMain.h	\
 		signalprocessing/SimpleFft.h	\
 		signalprocessing/SimpleShifter.h	\
 		signalprocessing/Filter.h	\
-		gui/WSpectrum.h		\
+		gui/WSpectrum2.h		\
 		shared/DataTypes.h
 
 SOURCES +=	main.cpp \
@@ -50,7 +50,7 @@ SOURCES +=	main.cpp \
 		tuners/TunerDialog.cpp	\
 		tuners/dummy/TDummy.cpp	\
 		tuners/rtltcp/TRtlTcp.cpp	\
-		gui/WSpectrum.cpp		\
+		gui/WSpectrum2.cpp		\
 		signalprocessing/Filter.cpp	\
 		signalprocessing/SimpleFft.cpp	\
 		signalprocessing/SimpleShifter.cpp

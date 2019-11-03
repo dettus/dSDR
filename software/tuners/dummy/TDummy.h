@@ -41,7 +41,7 @@ class TDummy: public Tuners
 
 	private:
 		int mSampleRate=2048000;
-		int mFrequency=87900000;
+		int mFrequency=0;
 		int mGain=0;
 
 		tSComplex *mSampleBuf;
