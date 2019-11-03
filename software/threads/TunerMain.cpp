@@ -3,7 +3,6 @@
 
 TunerMain::TunerMain()
 {
-	mMutex.unlock();
 	mTunerDialog=new TunerDialog();
 }
 void TunerMain::stop()

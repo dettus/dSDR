@@ -26,7 +26,6 @@ TunerDialog::TunerDialog(QWidget* parent): QWidget(parent)
 	this->move(QPoint(	screenRect.width() /2 - dialogSize.width() /2,
 				screenRect.height()/2 - dialogSize.height()/2));
 
-	mLock.unlock();	
 }
 TunerDialog::~TunerDialog()
 {

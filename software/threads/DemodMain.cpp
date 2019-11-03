@@ -1,7 +1,6 @@
 #include "DemodMain.h"
 DemodMain::DemodMain()
 {
-	mMutex.unlock();	
 }
 void DemodMain::stop()
 {

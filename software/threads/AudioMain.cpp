@@ -1,7 +1,6 @@
 #include "AudioMain.h"
 AudioMain::AudioMain()
 {
-	mMutex.unlock();	
 }
 void AudioMain::stop()
 {

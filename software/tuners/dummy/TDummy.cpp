@@ -77,7 +77,7 @@ bool TDummy::gainDown()
 //////// the GUI is being set up in here
 TDummy::TDummy(QWidget* parent): Tuners(parent)
 {
-	mLock.lock();
+//	mLock.lock();
 	mLayout=new QVBoxLayout;
 	
 	mOpen=new QPushButton("Open Signal File...");
@@ -97,7 +97,7 @@ TDummy::TDummy(QWidget* parent): Tuners(parent)
 
 	connect(mOpen,SIGNAL(released()),this,SLOT(handleOpen()));
 	connect(mStartStop,SIGNAL(released()),this,SLOT(handleStartStop()));
-	mLock.unlock();
+//	mLock.unlock();
 }
 // pushing the "open" button should reveal the "file io" dialog
 void TDummy::handleOpen()

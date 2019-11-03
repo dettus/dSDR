@@ -6,7 +6,6 @@
 
 CentralMain::CentralMain(TunerMain* tunerMain)
 {
-	mMutex.unlock();
 	mTunerMain=tunerMain;
 	mHLayout=new QHBoxLayout;
 	mVLayout=new QVBoxLayout;
@@ -17,7 +16,6 @@ CentralMain::CentralMain(TunerMain* tunerMain)
 	mainWin->hide();
 
 
-	mLock.unlock();
 }
 void CentralMain::stop()
 {
