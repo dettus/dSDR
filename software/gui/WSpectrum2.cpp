@@ -9,10 +9,23 @@ WSpectrum::WSpectrum(QWidget* parent): QWidget(parent)
 	mFft=new SimpleFft(mFftSize);
 	mFftCnt=mFftAvg;
 
+#if 1			// grey scale to greenish cyan
+	for (i=0;i<WATERFALLNUANCES;i++)
+	{
+		if (i<64)
+		{
+			mPalette[i]=QColor(i,i,i,255);
+
+		} else {
+			mPalette[i]=QColor((int)((double)i*0.2),(int)((double)i*0.8),128,255);
+		}
+	}
+#else		// blue/red
 	for (i=0;i<WATERFALLNUANCES;i++)
 	{
 		mPalette[i]=QColor((i*255)/WATERFALLNUANCES,0,255-((i*255)/WATERFALLNUANCES),255);
 	}
+#endif
 	mSampleBufLevel=0;
 	mSampleBuf=new tSComplex[mFftSize];
 	mSpectrum=new double[mFftSize];
@@ -20,8 +33,8 @@ WSpectrum::WSpectrum(QWidget* parent): QWidget(parent)
 	QPainter waterfallPainter1(mWaterfallImage1);
 	QPainter waterfallPainter2(mWaterfallImage2);
 
-	waterfallPainter1.fillRect(0,0,mFftSize,WATERFALLHEIGHT,QColor(255,0,0,255));
-	waterfallPainter2.fillRect(0,0,mFftSize,WATERFALLHEIGHT,QColor(0,255,0,255));
+	waterfallPainter1.fillRect(0,0,mFftSize,WATERFALLHEIGHT,mPalette[0]);
+	waterfallPainter2.fillRect(0,0,mFftSize,WATERFALLHEIGHT,mPalette[0]);
 }
 void WSpectrum::setFFTsize(int fftSize)
 {
@@ -206,7 +219,7 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 		dx=(double)(this->width())/(double)(mRight-mLeft);
 		dy=(double)(max-min)/(double)(ylower_spectrum-yupper_spectrum);
 
-		painter.setPen(QColor(255,255,255,255));
+		painter.setPen(QColor(0,255,255,255));
 		for (i=mLeft;i<mRight;i++)
 		{
 			int nx,ny;
@@ -225,6 +238,72 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 	}	
 
 	// the finishing touch: draw the scale
+
+	if (mSampleRate)
+	{
+	        QFont font=painter.font();
+
+		int samplerate=mSampleRate;
+		double nyquist=samplerate/(double)mFftSize;
+		int freqleft=(int)(nyquist*(double)mLeft);
+		int freqright=(int)(nyquist*(double)mRight);
+		int freq,freqinc;;
+		signed long long d;
+		signed long long carrierleft,carrierright;
+		int i;
+		int w;
+		w=this->width()/10;
+		font.setPointSize(w/10);
+		freqleft-=samplerate/2;
+		freqright-=samplerate/2;
+		d=freqright-freqleft;
+
+		if (d>=10000000) d=1000000;
+		else if (d>=  250000) d=100000;
+		else if (d>=   25000) d= 10000;
+		else if (d>=    2500) d=  1000;
+		else d=100;
+
+		carrierleft=freqleft/d-1;
+		carrierright=freqright/d+2;
+		carrierleft*=d;
+		carrierright*=d;
+
+		freq=carrierleft;
+		freqinc=d;
+
+		carrierleft*=mFftSize;
+		carrierright*=mFftSize;
+
+		carrierleft/=samplerate;
+		carrierright/=samplerate;
+
+		d*=mFftSize;
+		d/=samplerate;
+
+		carrierleft+=mFftSize/2;
+		carrierright+=mFftSize/2;
+
+		painter.setPen(QColor(255,255,255,255));
+		for (i=carrierleft;i<carrierright;i+=d)
+		{
+			int x;
+			char tmp[64];
+			x=(i-mLeft)*this->width()/(mRight-mLeft);
+
+			if (x>=0 && x<=this->width())
+			{
+				painter.drawLine(x,0,x,this->height());
+
+				snprintf(tmp,64,"%dHz",freq+mCenterFreq);
+
+				painter.drawText(QRectF((double)x-w/2,0.0,w,20),Qt::AlignCenter,tmp);
+			}
+			freq+=freqinc;
+		}
+
+
+	}	
 }
 QSize WSpectrum::sizeHint() const
 {
