@@ -40,7 +40,7 @@ Filter::~Filter()
 
 
 // The filter generation was described by Gerhard Krucker.
-static void Filter::generate_bandpass(double *pTaps,int tapum,double u,double l)
+void Filter::generate_bandpass(double *pTaps,int tapnum,double u,double l)
 {
 	int i,m;
 	for (i=0;i<tapnum;i++)
@@ -128,7 +128,8 @@ double Filter::apply_bartlett()
 	{
 		double a;
 		m=i-(mTapnum-1)/2;
-		a=1-2*(abs(m))/(mTapnum-1);
+		if (m<0) m=-m;	// ABS
+		a=1-2*(m)/(mTapnum-1);
 		mTaps[i]*=a;
 		s+=mTaps[i];
 	}
