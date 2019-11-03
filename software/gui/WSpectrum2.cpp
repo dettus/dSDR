@@ -161,17 +161,17 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 		{
 			// mWaterfallLine is between 0... and WATERFALLHEIGHT-1
 			QRectF	source1(mLeft,WATERFALLHEIGHT-mWaterfallLine,delta,mWaterfallLine);	// select the bottom lines
-			QRectF	target1(mLeft,0,delta,mWaterfallLine);					// are being painted to the top
+			QRectF	target1(0,0,delta,mWaterfallLine);					// are being painted to the top
 			QRectF	source2(mLeft,0,delta,WATERFALLHEIGHT-mWaterfallLine);			// the highest lines from the older image
-			QRectF	target2(mLeft,mWaterfallLine,delta,WATERFALLHEIGHT-mWaterfallLine-1);	// are being painted on the bottom
+			QRectF	target2(0,mWaterfallLine,delta,WATERFALLHEIGHT-mWaterfallLine-1);	// are being painted on the bottom
 			tmpPainter.drawImage(target1,*mWaterfallImage1,source1);
 			tmpPainter.drawImage(target2,*mWaterfallImage2,source2);
 		} else {	// case 2: draw image2 on top, and image 1 below it.
 			// mWaterfallLine is between WATERFALLHEIGHT and 2*WATERFALLHEIGHT-1
 			QRectF	source2(mLeft,2*WATERFALLHEIGHT-mWaterfallLine,delta,mWaterfallLine-WATERFALLHEIGHT);	// select the bottom lines
-			QRectF	target2(mLeft,0,delta,mWaterfallLine-WATERFALLHEIGHT);					// are being painted to the top
+			QRectF	target2(0,0,delta,mWaterfallLine-WATERFALLHEIGHT);					// are being painted to the top
 			QRectF	source1(mLeft,0,delta,2*WATERFALLHEIGHT-mWaterfallLine);			// the highest lines from the older image
-			QRectF	target1(mLeft,mWaterfallLine-WATERFALLHEIGHT,delta,2*WATERFALLHEIGHT-mWaterfallLine-1);	// are being painted on the bottom
+			QRectF	target1(0,mWaterfallLine-WATERFALLHEIGHT,delta,2*WATERFALLHEIGHT-mWaterfallLine-1);	// are being painted on the bottom
 			tmpPainter.drawImage(target1,*mWaterfallImage1,source1);
 			tmpPainter.drawImage(target2,*mWaterfallImage2,source2);
 		}
@@ -235,5 +235,65 @@ void WSpectrum::resizeEvent(QResizeEvent *event) {}
 void WSpectrum::mousePressEvent(QMouseEvent *event) {}
 void WSpectrum::mouseReleaseEvent(QMouseEvent *event) {}
 void WSpectrum::mouseMoveEvent(QMouseEvent *event) {}
-void WSpectrum::wheelEvent(QWheelEvent *event) {}
+void WSpectrum::wheelEvent(QWheelEvent *event) 
+{
+	QPoint curPoint = event->pos();
+	double x,y;
+	double cy;
+	double d;
+	double fact;
+	int width=this->width();
+	int height=this->height();
+	int left=mLeft;
+	int right=mRight;
+
+
+
+	cy=curPoint.y();
+	x=(double)curPoint.x()/(double)width;
+	y=(double)cy/(0.3*(double)height);
+	d=right-left;
+
+	fact=(right-left)/10;
+	if (event->delta()>0) // mousewheel up
+	{
+		if (event->modifiers() & Qt::ControlModifier && cy<(0.3*(double)height))
+		{
+			//fact=(mUpper-mLower);
+			//			mLower+=(double)(fact*y);
+			//mUpper-=(double)(fact*(1.0-y));
+		} else {
+			fact=(right-left)/10;
+			left+=(int)(fact*x);
+			right-=(int)(fact*(1.0-x));
+		}
+	}
+	else if (event->delta()<0) // mousewheel down
+	{
+		if (event->modifiers() & Qt::ControlModifier)
+		{
+			//fact=(mUpper-mLower)/10;
+			//mLower-=(double)fact;
+			//mUpper+=(double)fact;
+		} else {
+			fact=(right-left)/10;
+			left-=(int)fact;
+			right+=(int)fact;
+		}
+	}
+	if (left<0) left=0;
+	if (left>mFftSize-32) left=mFftSize-32;
+
+	if (right>mFftSize || right<=left) right=mFftSize;
+	//if (mLower<0) mLower=0;
+	//if (mLower>(1e16-32)) mLower=(1e16-32);
+
+	//if (mUpper>1e16 || mUpper<=mLower) mUpper=1e16;
+	//printf("++++ mUpper:%10.f mLower:%10.f  left:%d right:%d\n",mUpper,mLower,left,right);
+	mLeft=left;
+	mRight=right;	
+	update();
+
+	
+}
 
