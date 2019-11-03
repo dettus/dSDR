@@ -11,17 +11,24 @@ class Filter
 		Filter(int samplerate,int tapnum,int upper,int lower);
 		~Filter();
 		static void generate_bandpass(double* pTaps,int tapnum,double u,double l);
+		static void generate_bandstop(double *pTaps,int tapnum,double u,double l);
+		static void generate_lowpass(double *pTaps,int tapnum,double u);
+		static void generate_highpass(double *pTaps,int tapnum,double l);
+		static void generate_hilbert(double *pTaps,int tapnum);
+		static double apply_blackman(double *pTaps,int tapnum);
+		static double apply_bartlett(double *pTaps,int tapnum);
+		static double apply_hamming(double *pTaps,int tapnum);
+		static double apply_hanning(double *pTaps,int tapnum);
+		static double apply_kaiser(double *pTaps,int tapnum,double gamma);
+		static double convertFreq(int samplerate,int freq);
+
+		double apply_blackman()	{return apply_blackman(mTaps,mTapnum);};
+		double apply_bartlett()	{return apply_bartlett(mTaps,mTapnum);};
+		double apply_hamming()	{return apply_hamming(mTaps,mTapnum);};
+		double apply_hanning()	{return apply_hanning(mTaps,mTapnum);};
+		double apply_kaiser(double gamma)	{return apply_kaiser(mTaps,mTapnum,gamma);};
 
 	private:
-		void generate_bandstop(double u,double l);
-		void generate_lowpass(double u);
-		void generate_highpass(double l);
-		void generate_hilbert();
-		double apply_blackman();
-		double apply_bartlett();
-		double apply_hamming();
-		double apply_hanning();
-		double apply_kaiser(double gamma);
 
 		int mTapnum=0;
 		int mUpperFreq=0;

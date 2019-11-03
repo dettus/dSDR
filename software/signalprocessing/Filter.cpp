@@ -13,23 +13,23 @@ Filter::Filter(int samplerate,int tapnum,int upper, int lower)
 	mTaps=new double[tapnum];
 
 
-	u=(double)upper*2*M_PI/(double)samplerate;	
-	l=(double)lower*2*M_PI/(double)samplerate;	
+	u=convertFreq(samplerate,upper);
+	l=convertFreq(samplerate,lower);
 	if (upper==samplerate)
 	{
-		generate_highpass(l);
+		generate_highpass(mTaps,mTapnum,l);
 	} else if (lower==0 && upper!=0)
 	{
-		generate_lowpass(u);
+		generate_lowpass(mTaps,mTapnum,u);
 	} else if (lower<upper)
 	{
 		Filter::generate_bandpass(mTaps,mTapnum,u,l);
 	} else if (lower>upper) 
 	{
-		generate_bandstop(l,u);
-	} else generate_hilbert();
+		generate_bandstop(mTaps,mTapnum,l,u);
+	} else generate_hilbert(mTaps,mTapnum);
 
-	apply_hamming();
+	apply_hamming(mTaps,mTapnum);
 
 }
 
@@ -52,136 +52,141 @@ void Filter::generate_bandpass(double *pTaps,int tapnum,double u,double l)
 			pTaps[i]=(sin(m*u)-sin(m*l))/(m*M_PI);
 	}
 }
-void Filter::generate_bandstop(double u,double l)
+void Filter::generate_bandstop(double *pTaps,int tapnum,double u,double l)
 {
 	int i,m;
-	for (i=0;i<mTapnum;i++)
+	for (i=0;i<tapnum;i++)
 	{
-		m=i-(mTapnum-1)/2;
+		m=i-(tapnum-1)/2;
 		if (m==0) 
-			mTaps[i]=(M_PI-u+1)/M_PI;
+			pTaps[i]=(M_PI-u+1)/M_PI;
 		else
-			mTaps[i]=(sin(m*M_PI)-sin(m*u)+sin(m*l))/(m*M_PI);
+			pTaps[i]=(sin(m*M_PI)-sin(m*u)+sin(m*l))/(m*M_PI);
 	}
 }
-void Filter::generate_lowpass(double u)
+void Filter::generate_lowpass(double *pTaps,int tapnum,double u)
 {
 	int i,m;
-	for (i=0;i<mTapnum;i++)
+	for (i=0;i<tapnum;i++)
 	{
-		m=i-(mTapnum-1)/2;
+		m=i-(tapnum-1)/2;
 		if (m==0) 
-			mTaps[i]=u/M_PI;
+			pTaps[i]=u/M_PI;
 		else
-			mTaps[i]=sin(m*u)/(m*M_PI);
-	}
-
-}
-
-void Filter::generate_highpass(double l)
-{
-	int i,m;
-	for (i=0;i<mTapnum;i++)
-	{
-		m=i-(mTapnum-1)/2;
-		if (m==0) 
-			mTaps[i]=1-1/M_PI;
-		else
-			mTaps[i]=sin(m*l)/(m*M_PI);
+			pTaps[i]=sin(m*u)/(m*M_PI);
 	}
 
 }
-void Filter::generate_hilbert()
+
+void Filter::generate_highpass(double *pTaps,int tapnum,double l)
 {
 	int i,m;
-	for (i=0;i<mTapnum;i++)
+	for (i=0;i<tapnum;i++)
 	{
-		m=i-(mTapnum-1)/2;
+		m=i-(tapnum-1)/2;
+		if (m==0) 
+			pTaps[i]=1-1/M_PI;
+		else
+			pTaps[i]=sin(m*l)/(m*M_PI);
+	}
+
+}
+void Filter::generate_hilbert(double *pTaps,int tapnum)
+{
+	int i,m;
+	for (i=0;i<tapnum;i++)
+	{
+		m=i-(tapnum-1)/2;
 		if (i&1)
-			mTaps[i]=2/(m*M_PI);
+			pTaps[i]=2/(m*M_PI);
 		else
-			mTaps[i]=0;
+			pTaps[i]=0;
 	}
 
 }
-double Filter::apply_blackman()
+double Filter::apply_blackman(double *pTaps,int tapnum)
 {
 	int i,m;
 	double s;
 	s=0;
-	for (i=0;i<mTapnum;i++)
+	for (i=0;i<tapnum;i++)
 	{
 		double a;
-		m=i-(mTapnum-1)/2;
-		a=0.42+0.5*cos((2*M_PI*m)/(mTapnum-1))+0.08*cos((4*M_PI*m)/(mTapnum-1));   
-		mTaps[i]*=a;
-		s+=mTaps[i];
+		m=i-(tapnum-1)/2;
+		a=0.42+0.5*cos((2*M_PI*m)/(tapnum-1))+0.08*cos((4*M_PI*m)/(tapnum-1));   
+		pTaps[i]*=a;
+		s+=pTaps[i];
 	}
 	return s;
 }
-double Filter::apply_bartlett()
+
+double Filter::apply_bartlett(double *pTaps,int tapnum)
 {
 	int i,m;
 	double s;
 	s=0;
-	for (i=0;i<mTapnum;i++)
+	for (i=0;i<tapnum;i++)
 	{
 		double a;
-		m=i-(mTapnum-1)/2;
+		m=i-(tapnum-1)/2;
 		if (m<0) m=-m;	// ABS
-		a=1-2*(m)/(mTapnum-1);
-		mTaps[i]*=a;
-		s+=mTaps[i];
+		a=1-2*(m)/(tapnum-1);
+		pTaps[i]*=a;
+		s+=pTaps[i];
 	}
 	return s;
 }
 
 
-double Filter::apply_hamming()
+double Filter::apply_hamming(double *pTaps,int tapnum)
 {
 	int i,m;
 	double s;
 	s=0;
-	for (i=0;i<mTapnum;i++)
+	for (i=0;i<tapnum;i++)
 	{
 		double a;
-		m=i-(mTapnum-1)/2;
-		a=0.54+0.46*cos((2*M_PI*m)/(mTapnum-1));
-		mTaps[i]*=a;
-		s+=mTaps[i];
+		m=i-(tapnum-1)/2;
+		a=0.54+0.46*cos((2*M_PI*m)/(tapnum-1));
+		pTaps[i]*=a;
+		s+=pTaps[i];
 	}
 	return s;
 
 }
 
-double Filter::apply_hanning()
+double Filter::apply_hanning(double *pTaps,int tapnum)
 {
 	int i,m;
 	double s;
 	s=0;
-	for (i=0;i<mTapnum;i++)
+	for (i=0;i<tapnum;i++)
 	{
 		double a;
-		m=i-(mTapnum-1)/2;
-		a=0.5+0.5*cos((2*M_PI*m)/(mTapnum-1));
-		mTaps[i]*=a;
-		s+=mTaps[i];
+		m=i-(tapnum-1)/2;
+		a=0.5+0.5*cos((2*M_PI*m)/(tapnum-1));
+		pTaps[i]*=a;
+		s+=pTaps[i];
 	}
 	return s;
 }
-double Filter::apply_kaiser(double gamma)
+double Filter::apply_kaiser(double *pTaps,int tapnum,double gamma)
 {
 	int i;
 	double s;
 	s=0;
-	for (i=0;i<mTapnum;i++)
+	for (i=0;i<tapnum;i++)
 	{
 		double a;
-		//m=i-(mTapnum-1)/2;
-		a=(10*gamma*sqrt(i*(mTapnum-i-1))/(mTapnum-1))/(10*gamma);
-		mTaps[i]*=a;
-		s+=mTaps[i];
+		//m=i-(tapnum-1)/2;
+		a=(10*gamma*sqrt(i*(tapnum-i-1))/(tapnum-1))/(10*gamma);
+		pTaps[i]*=a;
+		s+=pTaps[i];
 	}
 	return s;
 }
 
+double Filter::convertFreq(int samplerate,int freq)
+{
+	return (double)freq*2*M_PI/(double)samplerate;	
+}
