@@ -5,6 +5,9 @@
 #include "DataTypes.h"
 #include <QImage>
 
+// the purpose of this class is to draw the nice spectrum
+// and waterfall diagram people are used to from other SDR
+// software packages.
 #define WATERFALLWIDTH  32768
 #define WATERFALLHEIGHT 256
 #define	WATERFALLNUANCES	384
@@ -29,6 +32,7 @@ class WSpectrum: public QWidget
 	private:
 		tSComplex *mSampleBuf=nullptr;
 		double	*mSpectrum=nullptr;
+		double	*mSpectrumPlot=nullptr;
 		int mSampleBufLevel=0;
 		void updateWaterfall();
 		int mFftSize=32768;
