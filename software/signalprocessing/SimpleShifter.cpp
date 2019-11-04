@@ -35,7 +35,7 @@ void SimpleShifter::process(tSComplex* input,int n)
 
 
 	t=mTimeIdx;	
-	for (i=0;i<n;i+=2)
+	for (i=0;i<n;i++)
 	{
 		yr=CMPLX_MULR(input[i].real,input[i].imag,mCosLUT[t],mSinLUT[t]);
 		yi=CMPLX_MULI(input[i].real,input[i].imag,mCosLUT[t],mSinLUT[t]);
@@ -67,15 +67,18 @@ void SimpleShifter::process(tSComplex* input,tSComplex* output,int n)
 {
 	int i;
 	int t;
+	double xr,xi;
 	double yr,yi;
 	mSampleCnt=n;
 
 
 	t=mTimeIdx;	
-	for (i=0;i<n;i+=2)
+	for (i=0;i<n;i++)
 	{
-		yr=CMPLX_MULR(input[i].real,input[i].imag,mCosLUT[t],mSinLUT[t]);
-		yi=CMPLX_MULI(input[i].real,input[i].imag,mCosLUT[t],mSinLUT[t]);
+		xr=input[i].real;
+		xi=input[i].imag;
+		yr=CMPLX_MULR(xr,xi,mCosLUT[t],mSinLUT[t]);
+		yi=CMPLX_MULI(xr,xi,mCosLUT[t],mSinLUT[t]);
 		t=(t+1)%mSampleRate;
 
 		output[i].real=yr;

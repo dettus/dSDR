@@ -1,6 +1,6 @@
 #include "Downsampler.h"
 #include "Filter.h"
-
+#include <stdio.h>
 Downsampler::Downsampler(int inSamplerate,int outSamplerate,int bandwidth)
 {
 	int tapNum=251;
@@ -50,7 +50,7 @@ Downsampler::Downsampler(int inSamplerate,int outSamplerate,int bandwidth)
 }
 int Downsampler::process(tIQSamplesBlock* pInput,tIQSamplesBlock* pOutput)
 {
-	int i;
+	int i,j;
 	int outidx;
 
 
@@ -58,10 +58,10 @@ int Downsampler::process(tIQSamplesBlock* pInput,tIQSamplesBlock* pOutput)
 	for (i=0;i<pInput->sampleNum;i++)
 	{
 		mBuf[mBufIdx]=pInput->pData[i];
-		mBufIdx++;
-		mAccu+=mInSamplerate;
+		mBufIdx=(mBufIdx+1)%mBufLen;
+		mAccu+=mOutSamplerate;
 		mCnt++;
-		if (mAccu>=mOutSamplerate)
+		if (mAccu>=mInSamplerate)
 		{
 			double *pTaps;
 			int len;
@@ -83,13 +83,13 @@ int Downsampler::process(tIQSamplesBlock* pInput,tIQSamplesBlock* pOutput)
 			}
 			
 			ridx=mBufIdx;
-			for (i=0;i<len;i++)
+			for (j=0;j<len;j++)
 			{
 				if (ridx==0) ridx=mBufLen;
 				ridx--;
 
-				sumre+=pTaps[i]*mBuf[ridx].real;	
-				sumim+=pTaps[i]*mBuf[ridx].imag;	
+				sumre+=pTaps[j]*mBuf[ridx].real;	
+				sumim+=pTaps[j]*mBuf[ridx].imag;	
 			}
 			sumre/=(sum*mCnt);
 			sumim/=(sum*mCnt);
@@ -99,10 +99,11 @@ int Downsampler::process(tIQSamplesBlock* pInput,tIQSamplesBlock* pOutput)
 			outidx++;
 				
 			
-			mAccu-=mOutSamplerate;
+			mAccu-=mInSamplerate;
 			mCnt=0;
 		}
 	}
+	printf("output samples:%d\n",outidx);
 	pOutput->sampleNum=outidx;
 	pOutput->sampleRate=mOutSamplerate;
 	pOutput->centerFreq=pInput->centerFreq;

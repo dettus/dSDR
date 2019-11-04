@@ -46,7 +46,7 @@ int main(int argc,char** argv)
 
 		outBlock.pData=outSamples;
 
-		downSampler->process(outBlock,outBlock);
+		downSampler->process(&inBlock,&outBlock);
 		fwrite(outSamples,sizeof(tSComplex),outBlock.sampleNum,g);
 
 	}
