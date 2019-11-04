@@ -54,6 +54,7 @@ void CentralMain::run()
 		if (mRecord && mFptr!=nullptr)
 		{
 			fwrite(iqSamples.pData,sizeof(tSComplex),iqSamples.sampleNum,mFptr);
+			
 		}
 		mLock.unlock();
 	}

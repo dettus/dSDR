@@ -155,11 +155,12 @@ void WSpectrum::updateWaterfall()
 }	
 void WSpectrum::paintEvent(QPaintEvent *event)
 {
-	int yupper_spectrum =(int)(0.0*this->height());
-	int ylower_spectrum =(int)(0.3*this->height());
-	int yupper_waterfall=(int)(0.3*this->height());
-	int ylower_waterfall=(int)(1.0*this->height());
 	int width=this->width();
+	int height=this->height();
+	int yupper_spectrum =(int)(0.0*height);
+	int ylower_spectrum =(int)(0.3*height);
+	int yupper_waterfall=(int)(0.3*height);
+	int ylower_waterfall=(int)(1.0*height);
 	QPainter painter(this);
 
 	// draw the waterfall diagram, scaled
@@ -204,7 +205,7 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 		int x,y;
 		double dx,dy;
 
-		painter.fillRect(0,yupper_spectrum,this->width(),ylower_spectrum-yupper_spectrum,QColor(32,32,32,255));
+		painter.fillRect(0,yupper_spectrum,width,ylower_spectrum-yupper_spectrum,QColor(32,32,32,255));
 
 		
 
@@ -216,7 +217,7 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 		}
 		x=y=0;	
 		
-		dx=(double)(this->width())/(double)(mRight-mLeft);
+		dx=(double)(width)/(double)(mRight-mLeft);
 		dy=(double)(max-min)/(double)(ylower_spectrum-yupper_spectrum);
 
 		painter.setPen(QColor(0,255,255,255));
@@ -252,7 +253,7 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 		signed long long carrierleft,carrierright;
 		int i;
 		int w;
-		w=this->width()/10;
+		w=width/10;
 		font.setPointSize(w/10);
 		freqleft-=samplerate/2;
 		freqright-=samplerate/2;
@@ -289,11 +290,11 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 		{
 			int x;
 			char tmp[64];
-			x=(i-mLeft)*this->width()/(mRight-mLeft);
+			x=(i-mLeft)*width/(mRight-mLeft);
 
-			if (x>=0 && x<=this->width())
+			if (x>=0 && x<=width)
 			{
-				painter.drawLine(x,0,x,this->height());
+				painter.drawLine(x,0,x,height);
 
 				snprintf(tmp,64,"%dHz",freq+mCenterFreq);
 

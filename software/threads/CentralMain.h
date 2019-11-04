@@ -9,6 +9,8 @@
 #include <QHBoxLayout>
 #include <QMutex>
 #include "WSpectrum.h"
+#include "Downsampler.h"
+#include "SimpleShifter.h"
 class CentralMain: public QThread
 {
 	Q_OBJECT
@@ -34,6 +36,9 @@ class CentralMain: public QThread
 		bool mRecord=false;
 
 		WSpectrum *mWSpectrum;
+
+
+// testing
 
 	public slots:
 		void handleRecord();

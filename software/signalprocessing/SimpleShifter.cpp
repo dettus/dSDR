@@ -68,8 +68,6 @@ void SimpleShifter::process(tSComplex* input,tSComplex* output,int n)
 	int i;
 	int t;
 	double yr,yi;
-	if (mOutput!=nullptr)
-		delete(mOutput);
 	mSampleCnt=n;
 
 
