@@ -28,6 +28,6 @@ class Downsampler
 		tSComplex *mBuf=nullptr;
 		
 		
-}
+};
 
 #endif
