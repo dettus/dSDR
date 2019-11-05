@@ -11,6 +11,7 @@ INCLUDEPATH += . \
 		tuners/		\
 		tuners/dummy	\
 		tuners/rtltcp	\
+		demod/	\
 		shared
 
 CONFIG += debug
@@ -40,6 +41,7 @@ HEADERS +=	threads/TunerMain.h	\
 		signalprocessing/SimpleFft.h	\
 		signalprocessing/SimpleShifter.h	\
 		signalprocessing/Filter.h	\
+		demod/DemodWidget.h	\
 		gui/WSpectrum2.h		\
 		shared/DataTypes.h
 
@@ -55,7 +57,8 @@ SOURCES +=	main.cpp \
 		signalprocessing/Downsampler.cpp	\
 		signalprocessing/Filter.cpp	\
 		signalprocessing/SimpleFft.cpp	\
-		signalprocessing/SimpleShifter.cpp
+		signalprocessing/SimpleShifter.cpp	\
+		demod/DemodWidget.cpp
          
            
 QT += multimedia widgets
