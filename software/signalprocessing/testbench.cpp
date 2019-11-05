@@ -32,7 +32,7 @@ int main(int argc,char** argv)
 	tIQSamplesBlock	inBlock,outBlock;	
 
 	SimpleShifter *shifter=new SimpleShifter(insamplerate,freqhz);
-	Downsampler *downSampler=new Downsampler(insamplerate,outsamplerate,outsamplerate/2);
+	Downsampler *downSampler=new Downsampler(insamplerate,outsamplerate,outsamplerate/4);
 
 	
 

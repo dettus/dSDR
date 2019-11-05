@@ -1,9 +1,11 @@
 #include "Downsampler.h"
 #include "Filter.h"
 #include <stdio.h>
+
+#define	TAPNUM	251
 Downsampler::Downsampler(int inSamplerate,int outSamplerate,int bandwidth)
 {
-	int tapNum=251;
+	int tapNum=TAPNUM;
 	double taps[tapNum];
 	int i,j;
 	mInSamplerate=inSamplerate;
@@ -18,7 +20,7 @@ Downsampler::Downsampler(int inSamplerate,int outSamplerate,int bandwidth)
 	mTaps2=new double[tapNum+mTapNum2];
 	
 
-	Filter::generate_lowpass(taps,tapNum,bandwidth);
+	Filter::generate_lowpass(taps,tapNum,Filter::convertFreq(inSamplerate,bandwidth));
 	Filter::apply_hamming(taps,tapNum);
 
 	mSum1=mSum2=0;
@@ -53,7 +55,6 @@ int Downsampler::process(tIQSamplesBlock* pInput,tIQSamplesBlock* pOutput)
 	int i,j;
 	int outidx;
 
-
 	outidx=0;
 	for (i=0;i<pInput->sampleNum;i++)
 	{
@@ -73,11 +74,11 @@ int Downsampler::process(tIQSamplesBlock* pInput,tIQSamplesBlock* pOutput)
 
 			if (mCnt==mTapNum1)
 			{
-				len=mTapNum1+251;
+				len=mTapNum1+TAPNUM;
 				pTaps=mTaps1;
 				sum=mSum1;
 			} else {
-				len=mTapNum2+251;
+				len=mTapNum2+TAPNUM;
 				pTaps=mTaps1;
 				sum=mSum2;
 			}
@@ -103,7 +104,6 @@ int Downsampler::process(tIQSamplesBlock* pInput,tIQSamplesBlock* pOutput)
 			mCnt=0;
 		}
 	}
-	printf("output samples:%d\n",outidx);
 	pOutput->sampleNum=outidx;
 	pOutput->sampleRate=mOutSamplerate;
 	pOutput->centerFreq=pInput->centerFreq;
