@@ -9,7 +9,7 @@
 // and waterfall diagram people are used to from other SDR
 // software packages.
 #define WATERFALLWIDTH  32768
-#define WATERFALLHEIGHT 256
+#define WATERFALLHEIGHT 512
 #define	WATERFALLNUANCES	384
 class WSpectrum: public QWidget
 {

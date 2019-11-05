@@ -7,11 +7,14 @@
 CentralMain::CentralMain(TunerMain* tunerMain)
 {
 	mTunerMain=tunerMain;
+	mV1Layout=new QVBoxLayout;
 	mHLayout=new QHBoxLayout;
-	mVLayout=new QVBoxLayout;
+	mV2Layout=new QVBoxLayout;
 	mainWin=new QWidget(nullptr);
 	mWSpectrum=new WSpectrum(nullptr);
 	mRecordButton=new QPushButton("Record");
+	mDemodWidget=nullptr;
+
 	connect(mRecordButton,SIGNAL(released()),this,SLOT(handleRecord()));
 	mainWin->hide();
 
@@ -20,6 +23,10 @@ CentralMain::CentralMain(TunerMain* tunerMain)
 void CentralMain::stop()
 {
 	mStopped=true;
+}
+void CentralMain::setDemodWidget(QWidget* demod)
+{
+	mDemodWidget=demod;
 }
 void CentralMain::run()
 {
@@ -33,13 +40,17 @@ void CentralMain::run()
 	tuner->initialize();
 	//mWSpectrum->setFFTsize(32768);
 	mWSpectrum->setFFTsize(4096);
-	mVLayout->addWidget(tuner);
-	mVLayout->addWidget(mRecordButton);
-	mHLayout->addLayout(mVLayout);
+	mV2Layout->addWidget(tuner);
+	mV2Layout->addWidget(mRecordButton);
+	mHLayout->addLayout(mV2Layout);
 	mHLayout->addWidget(mWSpectrum);
 	mHLayout->setStretch(0,10);
 	mHLayout->setStretch(1,30);
-	mainWin->setLayout(mHLayout);
+	mV1Layout->addWidget(mDemodWidget);
+	mV1Layout->addLayout(mHLayout);
+	mV1Layout->setStretch(0,10);
+	mV1Layout->setStretch(1,30);
+	mainWin->setLayout(mV1Layout);
 	mainWin->showMaximized();
 
 	while (!mStopped)

@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QPushButton>
 #include "TunerMain.h"
 #include "CentralMain.h"
 #include "DemodMain.h"
@@ -12,11 +13,14 @@ int main(int argc,char** argv)
 	DemodMain	*demodMain=new DemodMain();
 	AudioMain	*audioMain=new AudioMain();
 
+	QPushButton *demodWidget=new QPushButton("demod widget");
+
 
 
 
 	tunerMain->start();
 	centralMain->start();
+	centralMain->setDemodWidget(demodWidget);
 	demodMain->start();
 	audioMain->start();
 

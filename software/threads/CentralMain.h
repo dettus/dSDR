@@ -18,6 +18,7 @@ class CentralMain: public QThread
 	public:
 		CentralMain(TunerMain *tunerMain);
 		void stop();
+		void setDemodWidget(QWidget* demod);
 		
 	protected:
 		void run();
@@ -27,10 +28,12 @@ class CentralMain: public QThread
 		QMutex mMutex;
 
 		TunerMain *mTunerMain;
+		QVBoxLayout *mV1Layout;
 		QHBoxLayout *mHLayout;
-		QVBoxLayout *mVLayout;
+		QVBoxLayout *mV2Layout;
 		QWidget *mainWin=nullptr;
 		QPushButton *mRecordButton=nullptr;
+		QWidget *mDemodWidget=nullptr;
 		QMutex	mLock;
 		FILE *mFptr=nullptr;
 		bool mRecord=false;
