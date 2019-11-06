@@ -68,6 +68,7 @@ void DemodWidget::onNewSamples(tIQSamplesBlock* pSamples)
 	bool newResampler=false;
 	int shiftfreq;
 	shiftfreq=mShiftFreq;
+	printf("new samples:%d\n",pSamples->sampleNum);
 	if (mDemodFreq!=0 && mDemodMode!=0)
 	{
 		if (pSamples->sampleRate!=mInSamplerate)
@@ -106,7 +107,7 @@ void DemodWidget::onNewSamples(tIQSamplesBlock* pSamples)
 		}
 	}
 }
-void DemodWidget::setDemodFreq(int freqHz)
+void DemodWidget::setDemodFrequency(int freqHz)
 {
 	mDemodFreq=freqHz;	
 }

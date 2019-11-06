@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QMutex>
 #include "TunerMain.h"
+#include "DemodMain.h"
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -16,9 +17,8 @@ class CentralMain: public QThread
 	Q_OBJECT
 
 	public:
-		CentralMain(TunerMain *tunerMain);
+		CentralMain(TunerMain *tunerMain,DemodMain *demodMain);
 		void stop();
-		void setDemodWidget(QWidget* demod);
 		
 	protected:
 		void run();
@@ -28,6 +28,7 @@ class CentralMain: public QThread
 		QMutex mMutex;
 
 		TunerMain *mTunerMain;
+		DemodMain *mDemodMain;
 		QVBoxLayout *mV1Layout;
 		QHBoxLayout *mHLayout;
 		QVBoxLayout *mV2Layout;

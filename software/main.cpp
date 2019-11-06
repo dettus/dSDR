@@ -8,21 +8,20 @@
 int main(int argc,char** argv)
 {
 	QApplication app(argc,argv);
+	DemodWidget *demodWidget=new DemodWidget();
 	TunerMain	*tunerMain=new TunerMain();
-	CentralMain	*centralMain=new CentralMain(tunerMain);
-	DemodMain	*demodMain=new DemodMain();
+	DemodMain	*demodMain=new DemodMain(demodWidget);
+	CentralMain	*centralMain=new CentralMain(tunerMain,demodMain);
 	AudioMain	*audioMain=new AudioMain();
 
-	DemodWidget *demodWidget=new DemodWidget();
 
 
 
 
 	tunerMain->start();
-	centralMain->start();
-	centralMain->setDemodWidget(demodWidget);
 	demodMain->start();
 	audioMain->start();
+	centralMain->start();
 
 	return app.exec();
 	

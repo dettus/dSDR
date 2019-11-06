@@ -16,7 +16,7 @@ class DemodWidget: public QWidget
 		DemodWidget(QWidget *parent=nullptr);
 		QSize sizeHint();
 		void onNewSamples(tIQSamplesBlock* pSamples);
-		void setDemodFreq(int freqHz);
+		void setDemodFrequency(int freqHz);
 	
 	public slots:
 		void handleToggled();

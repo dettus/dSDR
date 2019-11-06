@@ -4,9 +4,10 @@
 
 
 
-CentralMain::CentralMain(TunerMain* tunerMain)
+CentralMain::CentralMain(TunerMain* tunerMain,DemodMain* demodMain)
 {
 	mTunerMain=tunerMain;
+	mDemodMain=demodMain;
 	mV1Layout=new QVBoxLayout;
 	mHLayout=new QHBoxLayout;
 	mV2Layout=new QVBoxLayout;
@@ -17,16 +18,13 @@ CentralMain::CentralMain(TunerMain* tunerMain)
 
 	connect(mRecordButton,SIGNAL(released()),this,SLOT(handleRecord()));
 	mainWin->hide();
+	mDemodWidget=demodMain->getDemodWidget();
 
 
 }
 void CentralMain::stop()
 {
 	mStopped=true;
-}
-void CentralMain::setDemodWidget(QWidget* demod)
-{
-	mDemodWidget=demod;
 }
 void CentralMain::run()
 {
@@ -60,6 +58,7 @@ void CentralMain::run()
 		tuner->getSamples(&iqSamples);
 		if (iqSamples.sampleNum)
 		{
+			mDemodMain->onNewSamples(&iqSamples);
 			mWSpectrum->onNewSamples(&iqSamples);
 		}
 		mLock.lock();
