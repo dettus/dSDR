@@ -38,7 +38,7 @@ void CentralMain::run()
 		tuner=mTunerMain->getTuner();
 	}
 	tuner->initialize();
-	//mWSpectrum->setFFTsize(32768);
+//	mWSpectrum->setFFTsize(32768);
 	mWSpectrum->setFFTsize(4096);
 	mV2Layout->addWidget(tuner);
 	mV2Layout->addWidget(mRecordButton);
@@ -48,8 +48,8 @@ void CentralMain::run()
 	mHLayout->setStretch(1,30);
 	mV1Layout->addWidget(mDemodWidget);
 	mV1Layout->addLayout(mHLayout);
-	mV1Layout->setStretch(0,10);
-	mV1Layout->setStretch(1,30);
+	mV1Layout->setStretch(0,5);
+	mV1Layout->setStretch(1,50);
 	mainWin->setLayout(mV1Layout);
 	mainWin->showMaximized();
 
