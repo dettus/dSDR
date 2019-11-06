@@ -4,6 +4,7 @@
 #include <QMutex>
 #include <QAudioDeviceInfo>
 #include <QAudioOutput>
+#include "AudioIODevice.h"
 
 class AudioMain: public QThread
 {
@@ -14,13 +15,20 @@ class AudioMain: public QThread
 		void stop();
 		void setAudioFormat(QAudioFormat format);
 		void onNewPcmSamples(signed short* pcmBuf,int num);
-		
+
+
+
 	protected:
 		void run();
-	
+
 	private:
 		bool mStopped=false;
 		QMutex mMutex;
 		QAudioFormat mFormat;
+
+		AudioIODevice	*mAudioIODevice;
+
+		QAudioDeviceInfo mAudioDeviceInfo;
+		QAudioOutput *mAudioOutput=nullptr;
 };
 #endif
