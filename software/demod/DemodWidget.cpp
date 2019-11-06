@@ -1,4 +1,5 @@
 #include "DemodWidget.h"
+#include "DataTypes.h"
 
 DemodWidget::DemodWidget(QWidget *parent):QWidget(parent)
 {
@@ -61,5 +62,51 @@ void DemodWidget::handleToggled()
 	}
 	mDemodMode=demodmode;
 	mStackedLayout->setCurrentIndex(mDemodMode);
-	
+}
+void DemodWidget::onNewSamples(tIQSamplesBlock* pSamples)
+{
+	bool newResampler=false;
+	int shiftfreq;
+	shiftfreq=mShiftFreq;
+	if (mDemodFreq!=0 && mDemodMode!=0)
+	{
+		if (pSamples->sampleRate!=mInSamplerate)
+		{
+			mInSamplerate=pSamples->sampleRate;
+			newResampler=true;
+		}
+		shiftfreq=pSamples->centerFreq-mDemodFreq;
+		if (mDemodMode!=0)
+		{
+#if 0
+			shiftfreq+=demod_widget[mDemodMode]->getFreqOffset();
+			demod_widget[mDemodMode]->getBandwidth();
+			if (demod_widget[mDemodMode]->getSampleRate()!=mInSampleRate || demod_widget[mDemodMode]->bandwidth()!=mBandwidth)
+			{
+				mInSampleRate=demod_widget[mDemodMode]->getSampleRate();
+				mBandwidth=demod_widget[mDemodMode]->getBandwidth();
+				newResampler=true;
+			}
+#endif
+		}
+		if (newResampler || mDownsampler==nullptr)
+		{
+			if (mDownsampler!=nullptr) 
+				delete(mDownsampler);
+			mDownsampler=new Downsampler(mInSamplerate,mOutSamplerate,mBandwidth);
+		}
+		if (shiftfreq>=-mInSamplerate/2 && shiftfreq<=mInSamplerate/2)
+		{
+			if (shiftfreq!=mShiftFreq || mSimpleShifter==nullptr)
+			{
+				if (mSimpleShifter!=nullptr)
+					delete(mSimpleShifter);
+				mSimpleShifter=new SimpleShifter(mInSamplerate,mShiftFreq);
+			}
+		}
+	}
+}
+void DemodWidget::setDemodFreq(int freqHz)
+{
+	mDemodFreq=freqHz;	
 }
