@@ -109,5 +109,12 @@ void DemodWidget::onNewSamples(tIQSamplesBlock* pSamples)
 }
 void DemodWidget::setDemodFrequency(int freqHz)
 {
-	mDemodFreq=freqHz;	
+	int raster=100000;
+	freqHz+=raster/2;
+	freqHz-=(freqHz%raster);
+	if (freqHz!=mDemodFreq)
+	{
+		mDemodFreq=freqHz;	
+		printf("new demodfreq!i %dHz\n",mDemodFreq);
+	}
 }

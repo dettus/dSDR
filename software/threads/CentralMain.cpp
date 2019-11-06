@@ -58,6 +58,7 @@ void CentralMain::run()
 		tuner->getSamples(&iqSamples);
 		if (iqSamples.sampleNum)
 		{
+			mDemodMain->setDemodFreq(mWSpectrum->getLastFreq());
 			mDemodMain->onNewSamples(&iqSamples);
 			mWSpectrum->onNewSamples(&iqSamples);
 		}

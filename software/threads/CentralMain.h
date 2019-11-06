@@ -9,7 +9,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QMutex>
-#include "WSpectrum.h"
+#include "WSpectrum2.h"
 #include "Downsampler.h"
 #include "SimpleShifter.h"
 class CentralMain: public QThread

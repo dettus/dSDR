@@ -20,6 +20,7 @@ class WSpectrum: public QWidget
 		void setFFTsize(int fftsize);
 		void onNewSamples(tIQSamplesBlock *pIqSamples);
 		QSize sizeHint() const;
+		int getLastFreq() {return mLastFreq;};
 
 	protected:
 		void paintEvent(QPaintEvent *event) override;
@@ -50,6 +51,7 @@ class WSpectrum: public QWidget
 		int mSampleRate=0;
 		int mCenterFreq=0;
 		int mGain=0;
+		int mLastFreq=0;
 	
 };
 

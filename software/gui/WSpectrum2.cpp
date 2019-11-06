@@ -326,17 +326,19 @@ void WSpectrum::mouseReleaseEvent(QMouseEvent *event)
 	width=this->width();
 	x=curPoint.x();
 
-	printf("X:%d width:%d samplerate:%d center:%d mLeft:%d mRight:%d fftsize:%d\n",x,width,mSampleRate,mCenterFreq,mLeft,mRight,mFftSize);
+//	printf("X:%d width:%d samplerate:%d center:%d mLeft:%d mRight:%d fftsize:%d\n",x,width,mSampleRate,mCenterFreq,mLeft,mRight,mFftSize);
 		
 	fl=((double)mLeft*(double)mSampleRate)/(double)mFftSize;
 	fr=((double)mRight*(double)mSampleRate)/(double)mFftSize;
 
 	nx=(double)x/(double)width;
 
-	printf("fl:%f fr:%f  x:%.f --> ",fl,fr,nx);
+//	printf("fl:%f fr:%f  x:%.f --> ",fl,fr,nx);
 	f=(nx*fr+(1-nx)*fl);
 	freq=(int)f-mSampleRate/2;
-	printf("clicked frequency:%d\n",freq);
+	freq+=mCenterFreq;
+
+	mLastFreq=freq;
 	
 	
 }
@@ -399,7 +401,5 @@ void WSpectrum::wheelEvent(QWheelEvent *event)
 	mLeft=left;
 	mRight=right;	
 	update();
-
-	
 }
 
