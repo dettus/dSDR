@@ -30,7 +30,7 @@ int main(int argc,char** argv)
 		angle_old=angle_new;
 		angle_new=atan2(qpart,ipart);
 		delta=angle_new-angle_old;
-		if (delta<M_PI) delta+=2*M_PI;
+		if (delta<-M_PI) delta+=2*M_PI;
 		if (delta>M_PI) delta-=2*M_PI;
 		pcm=(signed short)(delta*8192.0/M_PI);
 		fwrite(&pcm,sizeof(short),1,g);
