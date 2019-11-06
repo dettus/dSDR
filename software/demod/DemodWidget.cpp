@@ -67,12 +67,14 @@ void DemodWidget::handleToggled()
 	mDemodMode=demodmode;
 	mStackedLayout->setCurrentIndex(mDemodMode);
 }
-void DemodWidget::onNewSamples(tIQSamplesBlock* pSamples)
+void DemodWidget::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,int pcmBufSize,int* pcmNum,int* sampleRate)
 {
 	bool newResampler=false;
 	int shiftfreq;
 	shiftfreq=mShiftFreq;
 	printf("new samples:%d\n",pSamples->sampleNum);
+	*pcmNum=0;
+	*sampleRate=0;
 	if (mDemodFreq!=0 && mDemodMode!=0 && demod_modules[mDemodMode]!=nullptr)
 	{
 		tSComplex shiftedSamples[2048];
@@ -81,6 +83,7 @@ void DemodWidget::onNewSamples(tIQSamplesBlock* pSamples)
 		int n;
 		tIQSamplesBlock shiftedBlock=*pSamples;
 		tIQSamplesBlock downBlock=*pSamples;
+		downBlock.pData=downSamples;
 		if (pSamples->sampleRate!=mInSamplerate)
 		{
 			mInSamplerate=pSamples->sampleRate;
@@ -108,8 +111,10 @@ void DemodWidget::onNewSamples(tIQSamplesBlock* pSamples)
 		{
 			if (shiftfreq!=mShiftFreq || mSimpleShifter==nullptr)
 			{
+				mShiftFreq=shiftfreq;
 				if (mSimpleShifter!=nullptr)
 					delete(mSimpleShifter);
+				printf("\x1b[1;32mSHIFTFREQ:%d \x1b[0m\n",mShiftFreq);
 				mSimpleShifter=new SimpleShifter(mInSamplerate,mShiftFreq);
 			}
 		}
@@ -117,6 +122,7 @@ void DemodWidget::onNewSamples(tIQSamplesBlock* pSamples)
 		ridx=0;
 		while (ridx<pSamples->sampleNum)
 		{
+			int num;
 			n=pSamples->sampleNum-ridx;
 			if (n>2048) n=2048;
 			shiftedBlock.pData=shiftedSamples;
@@ -124,8 +130,20 @@ void DemodWidget::onNewSamples(tIQSamplesBlock* pSamples)
 			shiftedBlock.sampleNum=n;
 			mSimpleShifter->process(&pSamples->pData[ridx],shiftedBlock.pData,n);
 			mDownsampler->process(&shiftedBlock,&downBlock);
+#if 0
+			{
+				static FILE *f1=nullptr;
+				static FILE *f2=nullptr;
 
-			demod_modules[mDemodMode]->onNewSamples(&downBlock);
+				if (f1==nullptr) f1=fopen("shifted.iq2048","wb");
+				if (f2==nullptr) f2=fopen("downsampled.iq192","wb");
+				fwrite(shiftedBlock.pData,sizeof(tSComplex),shiftedBlock.sampleNum,f1);
+				fwrite(downBlock.pData,sizeof(tSComplex),downBlock.sampleNum,f2);
+			}
+#endif
+			demod_modules[mDemodMode]->onNewSamples(&downBlock,&pcmBuf[*pcmNum],pcmBufSize,&num,sampleRate);
+			pcmBufSize-=num;
+			*pcmNum+=num;
 			ridx+=n;
 
 		}

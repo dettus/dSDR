@@ -2,7 +2,7 @@
 #include "Filter.h"
 #include <stdio.h>
 
-#define	TAPNUM	101
+#define	TAPNUM	151
 Downsampler::Downsampler(int inSamplerate,int outSamplerate,int bandwidth)
 {
 	int tapNum=TAPNUM;
@@ -92,8 +92,8 @@ int Downsampler::process(tIQSamplesBlock* pInput,tIQSamplesBlock* pOutput)
 				sumre+=pTaps[j]*mBuf[ridx].real;	
 				sumim+=pTaps[j]*mBuf[ridx].imag;	
 			}
-			sumre/=(sum*mCnt);
-			sumim/=(sum*mCnt);
+			sumre/=(mCnt);
+			sumim/=(mCnt);
 			pOutput->pData[outidx].real=sumre;
 			pOutput->pData[outidx].imag=sumim;
 

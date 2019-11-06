@@ -9,7 +9,7 @@ DemodFM::DemodFM(QWidget* parent):Demod(parent)
 	mHLayout->addWidget(mLabel);
 	setLayout(mHLayout);
 }
-void DemodFM::onNewSamples(tIQSamplesBlock *pSamples)
+void DemodFM::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,int pcmBufSize,int* pcmNum,int *sampleRate)
 {
 	int i;
 	double angle;
@@ -23,6 +23,14 @@ void DemodFM::onNewSamples(tIQSamplesBlock *pSamples)
 		if (delta<-M_PI) delta+=2*M_PI;
 		if (delta> M_PI) delta-=2*M_PI;
 		pcm=(signed short)(delta*8192.0/M_PI);
+		// mono to stereo conversion
+		if (i<pcmBufSize/2)
+		{
+			pcmBuf[i*2+0]=pcm;
+			pcmBuf[i*2+1]=pcm;
+		}
 	}
+	*pcmNum=pSamples->sampleNum;
+	*sampleRate=pSamples->sampleRate;
 }
 

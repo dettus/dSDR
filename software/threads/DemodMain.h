@@ -4,12 +4,13 @@
 #include <QMutex>
 #include "DataTypes.h"
 #include "DemodWidget.h"
+#include "AudioMain.h"
 class DemodMain: public QThread
 {
 	Q_OBJECT
 
 	public:
-		DemodMain(DemodWidget* demodWidget);
+		DemodMain(DemodWidget* demodWidget,AudioMain* audioMain);
 		void onNewSamples(tIQSamplesBlock* pSamples);
 		void stop();
 		void setDemodFreq(int freqHz);
@@ -25,5 +26,7 @@ class DemodMain: public QThread
 		tIQSamplesBlock mIqSamples;
 		DemodWidget *mDemodWidget;
 		int mFrequency=0;
+		AudioMain	*mAudioMain;
+		signed short *mPcmBuf;
 };
 #endif

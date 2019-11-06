@@ -17,7 +17,7 @@ class DemodWidget: public QWidget
 	public:
 		DemodWidget(QWidget *parent=nullptr);
 		QSize sizeHint();
-		void onNewSamples(tIQSamplesBlock* pSamples);
+		void onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,int pcmBufSize,int* pcmNum,int* sampleRate);
 		void setDemodFrequency(int freqHz);
 	
 	public slots:

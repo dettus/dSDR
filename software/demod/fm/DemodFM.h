@@ -9,8 +9,8 @@ class DemodFM: public Demod
 	Q_OBJECT
 	public:
 		DemodFM(QWidget* parent=nullptr);
-		void onNewSamples(tIQSamplesBlock *pSamples);
-		int getBandwidth() {return 192000/4;};
+		void onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,int pcmBufSize,int* pcmNum,int* sampleRate);
+		int getBandwidth() {return 192000/2;};
 		int getSampleRate() {return 192000;};
 		int getFreqOffset() {return 0;};
 

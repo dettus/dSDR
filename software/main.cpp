@@ -10,9 +10,9 @@ int main(int argc,char** argv)
 	QApplication app(argc,argv);
 	DemodWidget *demodWidget=new DemodWidget();
 	TunerMain	*tunerMain=new TunerMain();
-	DemodMain	*demodMain=new DemodMain(demodWidget);
-	CentralMain	*centralMain=new CentralMain(tunerMain,demodMain);
 	AudioMain	*audioMain=new AudioMain();
+	DemodMain	*demodMain=new DemodMain(demodWidget,audioMain);
+	CentralMain	*centralMain=new CentralMain(tunerMain,demodMain);
 
 
 

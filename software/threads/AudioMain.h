@@ -2,6 +2,9 @@
 #define	AUDIOMAIN_H
 #include <QThread>
 #include <QMutex>
+#include <QAudioDeviceInfo>
+#include <QAudioOutput>
+
 class AudioMain: public QThread
 {
 	Q_OBJECT
@@ -9,6 +12,8 @@ class AudioMain: public QThread
 	public:
 		AudioMain();
 		void stop();
+		void setAudioFormat(QAudioFormat format);
+		void onNewPcmSamples(signed short* pcmBuf,int num);
 		
 	protected:
 		void run();
@@ -16,5 +21,6 @@ class AudioMain: public QThread
 	private:
 		bool mStopped=false;
 		QMutex mMutex;
+		QAudioFormat mFormat;
 };
 #endif
