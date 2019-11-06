@@ -7,6 +7,8 @@
 #include "DataTypes.h"
 #include "Downsampler.h"
 #include "SimpleShifter.h"
+#include "Demod.h"
+
 
 class DemodWidget: public QWidget
 {
@@ -28,6 +30,7 @@ class DemodWidget: public QWidget
 		#define	BUTTON_NUM	6
 		QRadioButton *demod_buttons[BUTTON_NUM]={nullptr};
 		QWidget	*demod_labels[BUTTON_NUM];
+		Demod   *demod_modules[BUTTON_NUM]={nullptr};
 		int mInSamplerate=0;
 		int mOutSamplerate=0;
 		int mDemodFreq=0;
