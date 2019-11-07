@@ -55,6 +55,7 @@ void DemodWidget::handleToggled()
 {
 	int i;
 	int demodmode;
+	mMutex.lock();
 	demodmode=mDemodMode;
 	for (i=0;i<BUTTON_NUM;i++)
 	{
@@ -66,6 +67,7 @@ void DemodWidget::handleToggled()
 	}
 	mDemodMode=demodmode;
 	mStackedLayout->setCurrentIndex(mDemodMode);
+	mMutex.unlock();
 }
 void DemodWidget::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,int pcmBufSize,int* pcmNum,int* sampleRate)
 {
@@ -74,6 +76,7 @@ void DemodWidget::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,in
 	shiftfreq=mShiftFreq;
 	*pcmNum=0;
 	*sampleRate=0;
+	mMutex.lock();
 	if (mDemodFreq!=0 && mDemodMode!=0 && demod_modules[mDemodMode]!=nullptr)
 	{
 		tSComplex shiftedSamples[2048];
@@ -129,7 +132,7 @@ void DemodWidget::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,in
 			shiftedBlock.sampleNum=n;
 			mSimpleShifter->process(&pSamples->pData[ridx],shiftedBlock.pData,n);
 			mDownsampler->process(&shiftedBlock,&downBlock);
-#if 1
+#if 0
 			{
 				static FILE *f1=nullptr;
 				static FILE *f2=nullptr;
@@ -148,6 +151,7 @@ void DemodWidget::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,in
 		}
 
 	}
+	mMutex.unlock();	
 }
 void DemodWidget::setDemodFrequency(int freqHz)
 {

@@ -4,6 +4,7 @@
 #include <QtWidgets>
 #include <QRadioButton>
 #include <QVBoxLayout>
+#include <QMutex>
 #include "DataTypes.h"
 #include "Downsampler.h"
 #include "SimpleShifter.h"
@@ -24,6 +25,7 @@ class DemodWidget: public QWidget
 		void handleToggled();
 
 	private:
+		QMutex	mMutex;
 		QVBoxLayout *mVLayout=nullptr;	
 		QHBoxLayout *mHLayout=nullptr;
 		QStackedLayout *mStackedLayout=nullptr;
