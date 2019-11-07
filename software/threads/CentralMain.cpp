@@ -58,9 +58,17 @@ void CentralMain::run()
 		tuner->getSamples(&iqSamples);
 		if (iqSamples.sampleNum)
 		{
+			int demodFreq;
+			int demodBw;
+			bool demodOn;
 			mDemodMain->setDemodFreq(mWSpectrum->getLastFreq());
+			mDemodMain->getDemodParams(&demodFreq,&demodBw,&demodOn);
+			
 			mDemodMain->onNewSamples(&iqSamples);
 			mWSpectrum->onNewSamples(&iqSamples);
+			mWSpectrum->setDemodParams(demodFreq,demodBw,demodOn);
+
+			
 		}
 		mLock.lock();
 		if (mRecord && mFptr!=nullptr)

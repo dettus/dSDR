@@ -188,5 +188,5 @@ double Filter::apply_kaiser(double *pTaps,int tapnum,double gamma)
 
 double Filter::convertFreq(int samplerate,int freq)
 {
-	return (double)freq*2*M_PI/(double)samplerate;	
+	return (double)freq*M_PI/(double)samplerate;	
 }

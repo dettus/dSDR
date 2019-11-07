@@ -21,6 +21,7 @@ class WSpectrum: public QWidget
 		void onNewSamples(tIQSamplesBlock *pIqSamples);
 		QSize sizeHint() const;
 		int getLastFreq() {return mLastFreq;};
+		void setDemodParams(int demodFreq,int demodBW,bool demodOn) {mDemodFreq=demodFreq;mDemodBW=demodBW;mDemodOn=demodOn;};
 
 	protected:
 		void paintEvent(QPaintEvent *event) override;
@@ -52,6 +53,10 @@ class WSpectrum: public QWidget
 		int mCenterFreq=0;
 		int mGain=0;
 		int mLastFreq=0;
+
+		int mDemodFreq=0;
+		int mDemodBW=0;
+		bool mDemodOn=false;
 	
 };
 

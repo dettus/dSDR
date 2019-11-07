@@ -1,5 +1,8 @@
 #include "SimpleShifter.h"
 #include "math.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 SimpleShifter::SimpleShifter(int samplerate,int freqHz)
 {
@@ -7,13 +10,13 @@ SimpleShifter::SimpleShifter(int samplerate,int freqHz)
 	mSinLUT=new double[samplerate];
 	mCosLUT=new double[samplerate];
 	mTimeIdx=0;
-
 	for (i=0;i<samplerate;i++)
 	{
 		mSinLUT[i]= sin(2*M_PI*(double)i*double(freqHz)/double(samplerate));	
 		mCosLUT[i]= cos(2*M_PI*(double)i*double(freqHz)/double(samplerate));	
 	}
 	mSampleRate=samplerate;
+	mFrequency=freqHz;
 }
 SimpleShifter::~SimpleShifter()
 {
@@ -84,6 +87,7 @@ void SimpleShifter::process(tSComplex* input,tSComplex* output,int n)
 		output[i].real=yr;
 		output[i].imag=yi;
 	}
+	
 	mTimeIdx=t;
 
 }

@@ -21,6 +21,7 @@ class SimpleShifter
 		int	mTimeIdx;
 		int	mSampleRate;
 		int	mSampleCnt;
+		int	mFrequency;
 };
 
 #endif

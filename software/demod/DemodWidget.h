@@ -20,6 +20,22 @@ class DemodWidget: public QWidget
 		QSize sizeHint();
 		void onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,int pcmBufSize,int* pcmNum,int* sampleRate);
 		void setDemodFrequency(int freqHz);
+
+		void getDemodParams(int* demodFreq,int* demodBW,bool* demodOn)
+		{
+			mMutex.lock();
+			if (mDemodMode==0 || demod_modules[mDemodMode]==nullptr)
+			{
+				*demodFreq=0;
+				*demodBW=0;
+				*demodOn=false;
+			} else {
+				*demodFreq=mDemodFreq;
+				*demodBW=demod_modules[mDemodMode]->getBandwidth();
+				*demodOn=true;
+			}
+			mMutex.unlock();
+		};
 	
 	public slots:
 		void handleToggled();

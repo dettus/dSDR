@@ -309,7 +309,34 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 			}
 			freq+=freqinc;
 		}
+	
+		if (mDemodOn)
+		{
+			int demodfreq=mDemodFreq;
+			int demodbw=mDemodBW;
+			int xr,xl;
+			signed long long kl,kr;
+			// first: calculate the carriers left and right of the demod frequency
+			kl=((signed long long)(demodfreq-mCenterFreq-demodbw/2)*(signed long long)mFftSize/mSampleRate)+mFftSize/2;
+			kr=((signed long long)(demodfreq-mCenterFreq+demodbw/2)*(signed long long)mFftSize/mSampleRate)+mFftSize/2;
 
+
+	
+			// figure out if the carriers are visible	
+			if (kl<mRight && kr>mLeft)
+			{
+				// translate the carriers to x-coordinates
+				xr=(kr-mLeft)*width;
+				xl=(kl-mLeft)*width;
+				xr/=(mRight-mLeft);
+				xl/=(mRight-mLeft);
+
+				if (xr>width)	xr=width;
+				if (xl<0) xl=0;
+				painter.fillRect(xl,0,xr-xl,height,QColor(0,128,128,128));
+			}
+	
+		}
 
 	}	
 }
