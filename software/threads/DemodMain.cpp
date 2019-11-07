@@ -47,12 +47,15 @@ void DemodMain::run()
 		mDemodWidget->onNewSamples(&mIqSamples,mPcmBuf,PCMBUF_SIZE,&pcmNum,&sampleRate);
 		mIqSamples.sampleNum=0;
 		mMutex.unlock();
-		if (sampleRate!=format.sampleRate())
+		if (pcmNum)
 		{
-			format.setSampleRate(sampleRate);
-			mAudioMain->setAudioFormat(format);
+			if (sampleRate!=format.sampleRate())
+			{
+				format.setSampleRate(sampleRate);
+				mAudioMain->setAudioFormat(format);
+			}
+			mAudioMain->onNewPcmSamples(mPcmBuf,pcmNum);
 		}
-		mAudioMain->onNewPcmSamples(mPcmBuf,pcmNum);
 	}
 }
 void DemodMain::onNewSamples(tIQSamplesBlock* pSamples)

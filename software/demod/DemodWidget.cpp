@@ -72,7 +72,6 @@ void DemodWidget::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,in
 	bool newResampler=false;
 	int shiftfreq;
 	shiftfreq=mShiftFreq;
-	printf("new samples:%d\n",pSamples->sampleNum);
 	*pcmNum=0;
 	*sampleRate=0;
 	if (mDemodFreq!=0 && mDemodMode!=0 && demod_modules[mDemodMode]!=nullptr)

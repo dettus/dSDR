@@ -2,7 +2,6 @@
 AudioMain::AudioMain()
 {
 	mAudioDeviceInfo=QAudioDeviceInfo::defaultOutputDevice();
-	mAudioIODevice=new AudioIODevice();
 }
 void AudioMain::stop()
 {
@@ -29,12 +28,13 @@ void AudioMain::setAudioFormat(QAudioFormat format)
 		printf("format supported:%d\n",(int)mAudioDeviceInfo.isFormatSupported(mFormat));
 		mAudioOutput=new QAudioOutput(mAudioDeviceInfo,mFormat);
 		
-		mAudioOutput->start(mAudioIODevice);
+		mIoDevice=mAudioOutput->start();
 	}
 		
 }
 void AudioMain::onNewPcmSamples(signed short* pcmBuf,int num)
 {
-	mAudioIODevice->onNewPcmSamples(pcmBuf,num);
+	if (mIoDevice!=nullptr)
+		mIoDevice->write((char*)pcmBuf,num*sizeof(short));
 }
 
