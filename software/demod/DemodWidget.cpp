@@ -1,5 +1,6 @@
 #include "DemodWidget.h"
 #include "DataTypes.h"
+#include "DemodAM.h"
 #include "DemodFM.h"
 
 DemodWidget::DemodWidget(QWidget *parent):QWidget(parent)
@@ -17,12 +18,14 @@ DemodWidget::DemodWidget(QWidget *parent):QWidget(parent)
 
 	// some dummy widgets, before the "real" ones are being implemented.
 	demod_labels[0]=(QWidget*)(new QLabel("Demodulation deactivated"));
-	demod_labels[1]=(QWidget*)(new QLabel("Amplitude Modulation"));
+//	demod_labels[1]=(QWidget*)(new QLabel("Amplitude Modulation"));
 //	demod_labels[2]=(QWidget*)(new QLabel("Frequency Modulation"));
 	demod_labels[3]=(QWidget*)(new QLabel("Digital Radio Mondiale Mode A-D"));
 	demod_labels[4]=(QWidget*)(new QLabel("Digital Radio Mondiale Mode E"));
 	demod_labels[5]=(QWidget*)(new QLabel("Digital Audio Broadcasting"));
 
+	demod_modules[1]=new DemodAM();
+	demod_labels[1]=(QWidget*)demod_modules[1];
 	demod_modules[2]=new DemodFM();
 	demod_labels[2]=(QWidget*)demod_modules[2];
 

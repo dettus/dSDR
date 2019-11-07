@@ -16,8 +16,10 @@ WSpectrum::WSpectrum(QWidget* parent): QWidget(parent)
 		{
 			mPalette[i]=QColor(i,i,i,255);
 
+		} else if (i<320) {
+			mPalette[i]=QColor((int)(((double)i)*0.2),(int)(((double)i)*0.8),128,255);
 		} else {
-			mPalette[i]=QColor((int)((double)i*0.2),(int)((double)i*0.8),128,255);
+			mPalette[i]=QColor(255,255,128+(i-320),255);
 		}
 	}
 #else		// blue/red

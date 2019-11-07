@@ -12,6 +12,7 @@ INCLUDEPATH += . \
 		tuners/dummy	\
 		tuners/rtltcp	\
 		demod/	\
+		demod/am	\
 		demod/fm	\
 		shared
 
@@ -45,6 +46,7 @@ HEADERS +=	threads/TunerMain.h	\
 		signalprocessing/Filter.h	\
 		demod/DemodWidget.h	\
 		demod/Demod.h	\
+		demod/am/DemodAM.h	\
 		demod/fm/DemodFM.h	\
 		gui/WSpectrum2.h		\
 		shared/DataTypes.h
@@ -64,6 +66,7 @@ SOURCES +=	main.cpp \
 		signalprocessing/SimpleFft.cpp	\
 		signalprocessing/SimpleShifter.cpp	\
 		demod/DemodWidget.cpp	\
+		demod/am/DemodAM.cpp	\
 		demod/fm/DemodFM.cpp	
          
            
