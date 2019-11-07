@@ -28,11 +28,11 @@ class AudioIODevice: public QIODevice
 		bool isSequential() const {return true;};
 
 	private:
+		QAudioOutput		*mOutput=nullptr;
 		QByteArray		mBuffer;
 		bool			mValid=false;
 		QAudioFormat		mFormat;
 		QAudioDeviceInfo	mDeviceInfo;
-		QAudioOutput		*mOutput=nullptr;
 		double			mVolume=1.0f;
 		QMutex			mMutex;
 

@@ -34,6 +34,7 @@ HEADERS +=	threads/TunerMain.h	\
 		threads/CentralMain.h	\
 		threads/DemodMain.h	\
 		threads/AudioMain.h	\
+		threads/AudioIODevice.h	\
 		tuners/Tuners.h		\
 		tuners/TunerDialog.h	\
 		tuners/dummy/TDummy.h	\
@@ -53,6 +54,7 @@ SOURCES +=	main.cpp \
 		threads/CentralMain.cpp	\
 		threads/DemodMain.cpp	\
 		threads/AudioMain.cpp	\
+		threads/AudioIODevice.cpp	\
 		tuners/TunerDialog.cpp	\
 		tuners/dummy/TDummy.cpp	\
 		tuners/rtltcp/TRtlTcp.cpp	\

@@ -2,9 +2,16 @@
 #define	UNDERRUN_SIZE	256000
 #define	OVERRUN_SIZE	2*UNDERRUN_SIZE
 
-AudioIODevice::AudioIODevice(QObject* parent):QObject(parent)
+AudioIODevice::AudioIODevice(QObject* parent):QIODevice(parent)
 {
 	mDeviceInfo=QAudioDeviceInfo::defaultOutputDevice();
+	mFormat.setSampleSize(16);
+	mFormat.setChannelCount(2);
+	mFormat.setSampleRate(48000);
+	mFormat.setCodec("audio/pcm");
+	mFormat.setByteOrder(QAudioFormat::LittleEndian);
+	mFormat.setSampleType(QAudioFormat::SignedInt);
+	setAudioDevice(mDeviceInfo);
 }
 bool AudioIODevice::setAudioDevice(QAudioDeviceInfo deviceInfo)
 {
@@ -17,10 +24,15 @@ bool AudioIODevice::setAudioDevice(QAudioDeviceInfo deviceInfo)
 		{
 			restartRequired=true;
 		}
+		stop();
 		delete(mOutput);
 	}
-	stop();
+	printf("FUCK\n");
 	mOutput=new QAudioOutput(mDeviceInfo,mFormat,this);
+	if (mDeviceInfo.isFormatSupported(mFormat))
+	printf("you\n");
+	mOutput->start(this);
+	mOutput->suspend();
 
 	connect(mOutput,SIGNAL(notify()),	SLOT(notified()));
 	connect(mOutput,SIGNAL(stateChanged(QAudio::State)),	SLOT(stateChanged(QAudio::State)));
@@ -43,7 +55,7 @@ bool AudioIODevice::setAudioConfig(int bits,int channels,int sampleRate)
 	mFormat.setSampleType(QAudioFormat::SignedInt);
 	if (mDeviceInfo.isFormatSupported(mFormat))
 	{
-		return setAudioDevice(mDeviceInfo);
+//		return setAudioDevice(mDeviceInfo);
 	}
 	return false;
 }
@@ -56,8 +68,11 @@ void AudioIODevice::start()
 	} else return;
 	this->open(QIODevice::ReadOnly);
 	mBuffer.clear();
+	printf("mOutput state:%d\n",mOutput->state());
 	mOutput->start(this);
+	printf("mOutput state:%d\n",mOutput->state());
 	mOutput->suspend();
+	printf("mOutput state:%d\n",mOutput->state());
 }
 void AudioIODevice::stop()
 {
@@ -81,6 +96,7 @@ void AudioIODevice::newSamples(short* pcmSamples,int sampleNum)
 		int newBytes;
 		int delta;
 		newBytes=sampleNum*sizeof(short);
+		printf("new bytes:%d output state:%d\n",newBytes,(int)mOutput->state());
 	
 		if (mOutput->state()==QAudio::StoppedState)
 			return;		
@@ -94,7 +110,7 @@ void AudioIODevice::newSamples(short* pcmSamples,int sampleNum)
 		mMutex.unlock();
 		if (mOutput->state()==QAudio::SuspendedState)
 		{
-			if (mBuffer.length>=UNDERRUN_SIZE)
+			if (mBuffer.length()>=UNDERRUN_SIZE)
 				mOutput->resume();
 		}
 	}
@@ -114,8 +130,9 @@ qint64 AudioIODevice::readData(char* data,qint64 maxlen)
 	if (maxlen<outlen) outlen=maxlen;
 	
 	memcpy(data,mBuffer.data(),outlen);
-	ptr=data;
-	for (i=0;i<outlen/2;i++) ptr[i]=(signed short)((double)ptr[i]*mVolume);	
+	ptr=(signed short*)data;
+	printf("read: %d outlen\n",outlen);
+//	for (i=0;i<outlen/2;i++) ptr[i]=(signed short)((double)ptr[i]*mVolume);	
 	mBuffer.remove(0,outlen);	
 	mMutex.unlock();
 
@@ -131,9 +148,7 @@ qint64 AudioIODevice::writeData(const char *data,qint64 len)
 qint64 AudioIODevice::bytesAvailable() const
 {
 	qint64 retval;
-	mMutex.lock();
 	retval=mBuffer.length()+QIODevice::bytesAvailable();
-	mMutex.unlock();
 	return retval;
 }
 void AudioIODevice::notified() {}
