@@ -28,7 +28,7 @@ class AudioMain: public QThread
 		QByteArray	mBuffer;
 
 		//QIODevice	*mIoDevice=nullptr;
-		AudioIODevice	*mAudioIODevice=nullptr;
+//		AudioIODevice	*mAudioIODevice=nullptr;
 
 	//	QAudioDeviceInfo mAudioDeviceInfo;
 	//	QAudioOutput *mAudioOutput=nullptr;

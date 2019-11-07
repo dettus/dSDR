@@ -1,11 +1,26 @@
 #include "AudioMain.h"
 AudioMain::AudioMain()
 {
-//	mAudioDeviceInfo=QAudioDeviceInfo::defaultOutputDevice();
-	mAudioIODevice=new AudioIODevice(this);
-//	mAudioIODevice->setAudioDevice(QAudioDeviceInfo::defaultOutputDevice());
-	mAudioIODevice->start();
 	mBuffer.clear();
+	{
+		QAudioFormat            mFormat;
+		QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+		AudioIODevice	*audioIODevice=new AudioIODevice(nullptr);
+		
+		mFormat.setSampleSize(16);
+		mFormat.setChannelCount(2);
+		mFormat.setSampleRate(48000);
+		mFormat.setCodec("audio/pcm");
+		mFormat.setByteOrder(QAudioFormat::LittleEndian);
+		mFormat.setSampleType(QAudioFormat::SignedInt);
+
+
+		if (info.isFormatSupported(mFormat)) printf("\x1b[1;34m format supported \x1b[0m\n");
+		QAudioOutput *test=new QAudioOutput(mFormat);
+		audioIODevice->start();
+		test->start(audioIODevice);		
+	}
+
 }
 void AudioMain::stop()
 {
@@ -21,11 +36,11 @@ void AudioMain::run()
 		mMutex.lock();
 		if (format!=mFormat)
 		{	
-			mAudioIODevice->setAudioConfig(16,mFormat.channelCount(),mFormat.sampleRate());
-			mAudioIODevice->start();
+//			mAudioIODevice->setAudioConfig(16,mFormat.channelCount(),mFormat.sampleRate());
+//			mAudioIODevice->start();
 		}
-		mAudioIODevice->newSamples((signed short*)mBuffer.data(),mBuffer.length()/sizeof(short));
-		printf("AUDIO len:%d\n",mBuffer.length());
+//		mAudioIODevice->newSamples((signed short*)mBuffer.data(),mBuffer.length()/sizeof(short));
+//		printf("AUDIO len:%d\n",mBuffer.length());
 		mBuffer.clear();
 		mMutex.unlock();
 		format=mFormat;
