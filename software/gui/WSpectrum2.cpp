@@ -204,8 +204,15 @@ void WSpectrum::paintEvent(QPaintEvent *event)
 		int i;
 		int x,y;
 		double dx,dy;
+        QLinearGradient linearGradient(0,0, width,ylower_spectrum-yupper_spectrum);
 
-		painter.fillRect(0,yupper_spectrum,width,ylower_spectrum-yupper_spectrum,QColor(32,32,32,255));
+
+	linearGradient.setColorAt(0.0, QColor(0,0,0,255));
+	linearGradient.setColorAt(0.8, QColor(48,32,48,255));
+	linearGradient.setColorAt(1.0, QColor(64,64,64,255));
+
+//		painter.fillRect(0,yupper_spectrum,width,ylower_spectrum-yupper_spectrum,QColor(32,32,32,255));
+		painter.fillRect(0,yupper_spectrum,width,ylower_spectrum-yupper_spectrum,linearGradient);
 
 		
 

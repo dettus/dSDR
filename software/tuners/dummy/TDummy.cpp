@@ -1,5 +1,5 @@
 #include "TDummy.h"
-
+#define	GRANULARITY	500
 void TDummy::initialize()
 {
 	mSampleBuf=new tSComplex[4*mSampleRate];	// set up a buffer for at least 4 seconds of samples.
@@ -16,15 +16,15 @@ void TDummy::process()
 		{
 			fseek(mFptr,0,SEEK_SET);
 		}
-		fread(&mSampleBuf[mSampleBufWriteLevel%(4*mSampleRate)],sizeof(tSComplex),mSampleRate,mFptr);
-		mSampleBufWriteLevel=(mSampleBufWriteLevel+mSampleRate)%(8*mSampleRate);
+		fread(&mSampleBuf[mSampleBufWriteLevel%(4*mSampleRate)],sizeof(tSComplex),mSampleRate*GRANULARITY/1000,mFptr);
+		mSampleBufWriteLevel=(mSampleBufWriteLevel+(mSampleRate*GRANULARITY/1000))%(8*mSampleRate);
 		mLock.unlock();
 	}
 }
 
 int TDummy::timeToWait()
 {
-	return 1000;	// wait for 1000 milliseconds between process calls
+	return GRANULARITY;	// wait for 1000 milliseconds between process calls
 }
 
 void TDummy::getSamples(tIQSamplesBlock *pIQSamplesBlock)
