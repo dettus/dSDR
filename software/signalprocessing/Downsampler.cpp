@@ -2,7 +2,7 @@
 #include "Filter.h"
 #include <stdio.h>
 
-#define	TAPNUM	151
+#define	TAPNUM	251
 Downsampler::Downsampler(int inSamplerate,int outSamplerate,int bandwidth)
 {
 	int tapNum=TAPNUM;

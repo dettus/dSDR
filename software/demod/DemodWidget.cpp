@@ -129,7 +129,7 @@ void DemodWidget::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,in
 			shiftedBlock.sampleNum=n;
 			mSimpleShifter->process(&pSamples->pData[ridx],shiftedBlock.pData,n);
 			mDownsampler->process(&shiftedBlock,&downBlock);
-#if 0
+#if 1
 			{
 				static FILE *f1=nullptr;
 				static FILE *f2=nullptr;
@@ -152,7 +152,8 @@ void DemodWidget::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,in
 void DemodWidget::setDemodFrequency(int freqHz)
 {
 	int raster=100000;
-	freqHz+=raster/2;
+	if (freqHz>=0) freqHz+=raster/2;
+	else freqHz-=raster/2;
 	freqHz-=(freqHz%raster);
 	if (freqHz!=mDemodFreq)
 	{

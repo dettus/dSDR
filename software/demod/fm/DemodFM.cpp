@@ -30,7 +30,7 @@ void DemodFM::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,int pc
 			pcmBuf[i*2+1]=pcm;
 		}
 	}
-	*pcmNum=pSamples->sampleNum;
+	*pcmNum=pSamples->sampleNum*2;
 	*sampleRate=pSamples->sampleRate;
 }
 

@@ -10,20 +10,25 @@ void AudioIODevice::stop()
 {
 	close();
 }
+void AudioIODevice::newSamples(signed short* pcm,int numSamples)
+{
+	mMutex.lock();
+	mBuffer.append((char*)pcm,numSamples*sizeof(short));
+	mMutex.unlock();
+}
 qint64 AudioIODevice::readData(char* data,qint64 maxlen)
 {
 	int outlen=0;
 	int i;
-	signed short *ptr;
 
-	ptr=(signed short*)data;
+	
+	if (maxlen<2) 
+		return 0;
 	mMutex.lock();
-//	outlen=maxlen;
-	printf("maxlen:%d\n",maxlen);
-	for (i=0;i<outlen/sizeof(short);i++)
-	{
-		ptr[i]=i;
-	}
+	outlen=mBuffer.length();
+	if (outlen>maxlen) outlen=maxlen;
+	memcpy(data,mBuffer.data(),outlen);
+	mBuffer.remove(0,outlen);	
 	mMutex.unlock();
 
 
