@@ -21,7 +21,8 @@ Downsampler::Downsampler(int inSamplerate,int outSamplerate,int bandwidth)
 	
 
 	Filter::generate_lowpass(taps,tapNum,Filter::convertFreq(inSamplerate,bandwidth));
-	Filter::apply_hamming(taps,tapNum);
+	Filter::apply_blackman(taps,tapNum);
+//	Filter::apply_hamming(taps,tapNum);
 
 	mSum1=mSum2=0;
 
