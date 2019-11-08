@@ -10,6 +10,39 @@
 
 TMirics::TMirics(QWidget* parent): Tuners(parent)
 {
+	char tmp[32];
+	mLayout=new QVBoxLayout;
+	mGainUp=new QPushButton("gain up");
+	mGainDown=new QPushButton("gain down");
+	mFreqUp=new QPushButton("Frequency up");
+	snprintf(tmp,32,"%d",mFrequency);
+	mFreqInput=new QLineEdit(tmp);
+	mFreqDown=new QPushButton("Frequency down");
+	setAutoFillBackground(true);
+	QPalette pal = palette();
+	pal.setColor(QPalette::Background, QColor(255,255,255,255));
+	setPalette(pal);
+	mLayout->setAlignment(Qt::AlignTop);
+	mLayout->addWidget(new QLabel("Mirics Settings"));
+	mLayout->addWidget(mGainUp);
+	mLayout->addWidget(mGainDown);
+	mLayout->addWidget(mFreqUp);
+	mLayout->addWidget(mFreqInput);
+	mLayout->addWidget(mFreqDown);
+
+	setLayout(mLayout);
+
+
+	connect(mGainUp,SIGNAL(released()),this,SLOT(handleGainUp()));
+	connect(mGainDown,SIGNAL(released()),this,SLOT(handleGainDown()));
+	connect(mFreqUp,SIGNAL(released()),this,SLOT(handleFreqUp()));
+	connect(mFreqInput,SIGNAL(returnPressed()),this,SLOT(handleFreqInput()));
+	connect(mFreqDown,SIGNAL(released()),this,SLOT(handleFreqDown()));
+
+//	
+
+	
+
 }
 TMirics::~TMirics()
 {
@@ -45,7 +78,7 @@ void TMirics::initialize()
 		mir_sdr_RSPII_AntennaControl(mir_sdr_RSPII_ANTENNA_A);
 		mir_sdr_AmPortSelect(0);
 	}
-	mir_sdr_StreamInit(&mGRdB, (double)mSamplerate/1000000.0f,(double)mFrequency/1000000.0f,mBandwidth,mir_sdr_IF_Zero, mRspLNA, &mGRdBsystem,mGrMode, &mSamplesPacket, static_streamCallback,static_gainCallback,this);
+	mir_sdr_StreamInit(&mGRdB, (double)mSampleRate/1000000.0f,(double)mFrequency/1000000.0f,mBandwidth,mir_sdr_IF_Zero, mRspLNA, &mGRdBsystem,mGrMode, &mSamplesPacket, static_streamCallback,static_gainCallback,this);
         mir_sdr_AgcControl(mAgcControl,msetPoint, 0,0,0,0, mRspLNA);
 	
         if (mHWVersion==2)
@@ -100,7 +133,7 @@ void TMirics::initialize()
         }
 
 #endif
-	mSamples=new tSComplex[mSamplerate*2];
+	mSamples=new tSComplex[mSampleRate*2];
 }
 void TMirics::process() {}
 void TMirics::getSamples(tIQSamplesBlock *pIQSamplesBlock) 
@@ -110,7 +143,7 @@ void TMirics::getSamples(tIQSamplesBlock *pIQSamplesBlock)
 	signed short *ptrim;
 
 	pIQSamplesBlock->pData=mSamples;
-	pIQSamplesBlock->sampleRate=mSamplerate;
+	pIQSamplesBlock->sampleRate=mSampleRate;
 	pIQSamplesBlock->centerFreq=mFrequency;
 	pIQSamplesBlock->gain=msetPoint*10;
 	pIQSamplesBlock->sampleNum=mBufRe.length()/sizeof(short);	
@@ -132,22 +165,31 @@ void TMirics::getSamples(tIQSamplesBlock *pIQSamplesBlock)
 
 bool TMirics::setFrequency(int freqHz) 
 {
-#if 0
+	char tmp[32];
+	mir_sdr_Reinit(&mGRdB, (double)mSampleRate/1000000.0f,(double)mFrequency/1000000.0f,mBandwidth,mir_sdr_IF_Zero, mLoMode,mRspLNA, &mGRdBsystem,mGrMode, &mSamplesPacket,mir_sdr_CHANGE_RF_FREQ);
 
-instead of 
-
-mir_sdr_StreamInit(int *gRdB, double fsMHz, double rfMHz, mir_sdr_Bw_MHzT bwType, mir_sdr_If_kHzT ifType, int LNAstate, int *gRdBsystem, mir_sdr_SetGrModeT setGrMode, int *samplesPerPacket, mir_sdr_StreamCallback_t StreamCbFn, mir_sdr_GainChangeCallback_t GainChangeCbFn, void *cbContext);
-
-call
-typedef mir_sdr_ErrT (*mir_sdr_Reinit_t)(int *gRdB, double fsMHz, double rfMHz, mir_sdr_Bw_MHzT bwType, mir_sdr_If_kHzT ifType, mir_sdr_LoModeT loMode, int LNAstate, int *gRdBsystem, mir_sdr_SetGrModeT setGrMode, int *samplesPerPacket, mir_sdr_ReasonForReinitT reasonForReinit);
-
-
-mir_sdr_CHANGE_RF_FREQ
-#endif
+	mFrequency=freqHz;
+	snprintf(tmp,32,"%d",mFrequency);
+	mFreqInput->setText(tmp);
+	mir_sdr_Reinit(&mGRdB, (double)mSampleRate/1000000.0f,(double)mFrequency/1000000.0f,mBandwidth,mir_sdr_IF_Zero, mLoMode,mRspLNA, &mGRdBsystem,mGrMode, &mSamplesPacket,mir_sdr_CHANGE_RF_FREQ);
 }
-bool TMirics::setGain(int gainCB) {}
-bool TMirics::gainUp() {}
-bool TMirics::gainDown() {}
+bool TMirics::setGain(int gainCB) 
+{
+	if (gainCB<=0 && gainCB>=-600)
+	{
+		msetPoint=gainCB/10;
+		mir_sdr_AgcControl(mAgcControl,msetPoint, 0,0,0,0, mRspLNA);
+	}
+
+}
+bool TMirics::gainUp() 
+{
+	setGain((msetPoint+1)*10);
+}
+bool TMirics::gainDown() 
+{
+	setGain((msetPoint-1)*10);
+}
 void TMirics::gainCallback(unsigned int gRdB, unsigned int lnaGRdB) {}
 void TMirics::streamCallback(short *xi, short *xq, unsigned int firstSampleNum,
 		int grChanged, int rfChanged, int fsChanged, unsigned int numSamples,
@@ -157,6 +199,36 @@ void TMirics::streamCallback(short *xi, short *xq, unsigned int firstSampleNum,
 	mBufRe.append((char*)xi,numSamples*sizeof(short));
 	mBufIm.append((char*)xq,numSamples*sizeof(short));
 	mMutex.unlock();
+}
+
+void TMirics::handleGainUp()
+{
+	gainUp();
+}
+void TMirics::handleGainDown()
+{
+	gainDown();
+}
+void TMirics::handleFreqUp()
+{
+	int frequency;
+	frequency=mFrequency+100000;
+	setFrequency(frequency);
+}
+void TMirics::handleFreqInput()
+{
+	int frequency;
+	frequency=mFreqInput->text().toInt();
+	if (frequency>mSampleRate/2)
+		setFrequency(frequency);
+	
+}
+void TMirics::handleFreqDown()
+{
+	int frequency;
+	frequency=mFrequency-100000;
+	if (frequency>mSampleRate/2)
+		setFrequency(frequency);
 }
 
 

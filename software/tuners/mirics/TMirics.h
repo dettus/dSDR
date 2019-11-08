@@ -1,5 +1,8 @@
 #ifndef	TMIRICS_H
 #define	TMIRICS_H
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QCheckBox>
 
 #include "DataTypes.h"
 #include "Tuners.h"
@@ -19,13 +22,22 @@ class TMirics: public Tuners
 		int minValue() {return -2048;}
 		int maxValue() {return  2048;}
 		void getSamples(tIQSamplesBlock *pIQSamplesBlock);
-		int getSampleRate() {return mSamplerate;};
+		int getSampleRate() {return mSampleRate;};
 		int getFrequency() {return mFrequency;};
 
 		bool setFrequency(int freqHz);
 		bool setGain(int gainCB);
 		bool gainUp();
 		bool gainDown();
+
+
+		////// widgets for the GUI start here
+		QVBoxLayout	*mLayout;
+		QPushButton	*mGainUp;
+		QPushButton	*mGainDown;
+		QPushButton	*mFreqUp;
+		QLineEdit	*mFreqInput;
+		QPushButton	*mFreqDown;
 
 	
 		// callbacks for the mirics tuner
@@ -61,13 +73,24 @@ class TMirics: public Tuners
 
 
 		int mFrequency=87800000;
-		int mSamplerate=2048000;
+		int mSampleRate=2048000;
 	
 		QMutex mMutex;	
 
 		QByteArray mBufRe;
 		QByteArray mBufIm;
 		tSComplex *mSamples;
+		mir_sdr_LoModeT mLoMode=mir_sdr_LO_Undefined; 
+	public slots:
+		// GUI slots
+		void handleGainUp();
+		void handleGainDown();
+		void handleFreqUp();
+		void handleFreqInput();
+		void handleFreqDown();
+		
+
+
 };
 
 #endif
