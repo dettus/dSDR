@@ -45,6 +45,7 @@ HEADERS +=	threads/TunerMain.h	\
 		tuners/rtltcp/TRtlTcp.h	\
 		tuners/mirics/TMirics.h	\
 		signalprocessing/Downsampler.h	\
+		signalprocessing/Upsampler.h	\
 		signalprocessing/SimpleFft.h	\
 		signalprocessing/SimpleShifter.h	\
 		signalprocessing/Filter.h	\
@@ -67,6 +68,7 @@ SOURCES +=	main.cpp \
 		tuners/mirics/TMirics.cpp	\
 		gui/WSpectrum2.cpp		\
 		signalprocessing/Downsampler.cpp	\
+		signalprocessing/Upsampler.cpp	\
 		signalprocessing/Filter.cpp	\
 		signalprocessing/SimpleFft.cpp	\
 		signalprocessing/SimpleShifter.cpp	\

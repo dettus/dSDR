@@ -6,6 +6,8 @@
 #include <QAudioOutput>
 #include "AudioIODevice.h"
 
+#include "Upsampler.h"
+#include "Downsampler.h"
 class AudioMain: public QThread
 {
 	Q_OBJECT
@@ -32,5 +34,10 @@ class AudioMain: public QThread
 
 	//	QAudioDeviceInfo mAudioDeviceInfo;
 		QAudioOutput *mAudioOutput=nullptr;
+
+		Downsampler	*mDownSampler=nullptr;
+		Upsampler	*mUpSampler=nullptr;
+	
+		tSComplex	*mPcmBuf=nullptr;
 };
 #endif

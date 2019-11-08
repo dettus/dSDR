@@ -10,8 +10,8 @@ class DemodAM: public Demod
 	public:
 		DemodAM(QWidget* parent=nullptr);
 		void onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,int pcmBufSize,int* pcmNum,int* sampleRate);
-		int getBandwidth() {return 192000/2;};
-		int getSampleRate() {return 192000;};
+		int getBandwidth() {return 12000/2;};
+		int getSampleRate() {return 12000;};
 //		int getBandwidth() {return 10000/2;};
 //		int getSampleRate() {return 10000;};
 		int getFreqOffset() {return 0;};
