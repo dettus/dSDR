@@ -35,6 +35,9 @@ class Filter
 		int mLowerFreq=0;
 		int mSampleRate=0;
 		double *mTaps=nullptr;
+		tSComplex *mBuf;
+		int mBufIdx=0;
+		int mBufLen=0;
 		
 };
 

@@ -31,6 +31,9 @@ Filter::Filter(int samplerate,int tapnum,int upper, int lower)
 
 	apply_hamming(mTaps,mTapnum);
 
+	mBufLen=mTapNum*2;	
+	mBuf=new tSComplex[mBufLen];
+
 }
 
 Filter::~Filter()
@@ -189,4 +192,8 @@ double Filter::apply_kaiser(double *pTaps,int tapnum,double gamma)
 double Filter::convertFreq(int samplerate,int freq)
 {
 	return (double)freq*M_PI/(double)samplerate;	
+}
+void Filter::process(tSComplex* input,tSComplex* output,int n)
+{
+
 }
