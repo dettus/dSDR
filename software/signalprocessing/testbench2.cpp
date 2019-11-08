@@ -2,12 +2,11 @@
 #include <stdlib.h>
 #include "DataTypes.h"
 
+#include "Upsampler.h"
 #include "Downsampler.h"
 #include "Filter.h"
 #include "SimpleFft.h"
-#include "SimpleShifter.h"
 tSComplex inSamples[2048000];
-tSComplex tmpSamples[2048000];
 tSComplex outSamples[2048000];
 
 int main(int argc,char** argv)
@@ -16,9 +15,9 @@ int main(int argc,char** argv)
 	FILE *g;
 	int n;
 
-	if (argc!=6)
+	if (argc!=5)
 	{
-		fprintf(stderr,"please run with %s INPUTFILE.iq2048 OUTPUTFILE.iq192 INSAMPLERATE FREQHZ OUTSAMPLERATE\n",argv[0]);
+		fprintf(stderr,"please run with %s INPUTFILE.iq12 OUTPUTFILE.iq48 INSAMPLERATE OUTSAMPLERATE\n",argv[0]);
 		return 0;
 	}
 
@@ -26,27 +25,32 @@ int main(int argc,char** argv)
 	g=fopen(argv[2],"wb");
 
 	int insamplerate=atoi(argv[3]);
-	int freqhz=atoi(argv[4]);
-	int outsamplerate=atoi(argv[5]);
+	int outsamplerate=atoi(argv[4]);
 
 	tIQSamplesBlock	inBlock,outBlock;	
 
-	SimpleShifter *shifter=new SimpleShifter(insamplerate,freqhz);
-	Downsampler *downSampler=new Downsampler(insamplerate,outsamplerate,outsamplerate/4);
+	Downsampler *downSampler=nullptr;
+	Upsampler *upSampler=nullptr;
+
+	if (insamplerate>outsamplerate)
+	{
+		downSampler=new Downsampler(insamplerate,outsamplerate,outsamplerate/4);
+	} else {
+		upSampler=new Upsampler(insamplerate,outsamplerate);
+	}
 
 	
-
+	inBlock.pData=inSamples;
 	while (!feof(f))
 	{
 		n=fread(inSamples,sizeof(tSComplex),insamplerate,f);
-		shifter->process(inSamples,tmpSamples,n);
-		inBlock.pData=tmpSamples;
 		inBlock.sampleNum=n;
 		inBlock.sampleRate=insamplerate;
 
 		outBlock.pData=outSamples;
 
-		downSampler->process(&inBlock,&outBlock);
+		if (upSampler!=nullptr) upSampler->process(&inBlock,&outBlock);
+		if (downSampler!=nullptr) downSampler->process(&inBlock,&outBlock);
 		fwrite(outSamples,sizeof(tSComplex),outBlock.sampleNum,g);
 
 	}

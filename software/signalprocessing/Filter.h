@@ -10,6 +10,7 @@ class Filter
 	public:
 		Filter(int samplerate,int tapnum,int upper,int lower);
 		~Filter();
+		void process(tSComplex* input,tSComplex* output,int n);
 		static void generate_bandpass(double* pTaps,int tapnum,double u,double l);
 		static void generate_bandstop(double *pTaps,int tapnum,double u,double l);
 		static void generate_lowpass(double *pTaps,int tapnum,double u);

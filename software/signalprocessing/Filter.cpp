@@ -1,5 +1,6 @@
 #include "Filter.h"
 #include <math.h>
+#include <stdio.h>
 
 Filter::Filter(int samplerate,int tapnum,int upper, int lower)
 {
@@ -31,7 +32,7 @@ Filter::Filter(int samplerate,int tapnum,int upper, int lower)
 
 	apply_hamming(mTaps,mTapnum);
 
-	mBufLen=mTapNum*2;	
+	mBufLen=mTapnum*2;	
 	mBuf=new tSComplex[mBufLen];
 
 }
@@ -195,5 +196,29 @@ double Filter::convertFreq(int samplerate,int freq)
 }
 void Filter::process(tSComplex* input,tSComplex* output,int n)
 {
+	int i;
+	int j;
+	int ridx;
+	double sumr,sumi;
 
+	
+	for (i=0;i<n;i++)
+	{
+		mBuf[mBufIdx]=input[i];
+		mBufIdx=(mBufIdx+1)%mBufLen;
+		ridx=mBufIdx;
+		sumr=sumi=0;
+		for (j=0;j<mTapnum;j++)
+		{
+			if (ridx==0) ridx=mBufLen;
+			ridx--;
+			sumr+=mTaps[j]*mBuf[ridx].real;
+			sumi+=mTaps[j]*mBuf[ridx].imag;
+		}
+	//	sumr/=mBufLen;
+	//	sumi/=mBufLen;
+
+		output[i].real=(signed short)sumr;
+		output[i].imag=(signed short)sumi;
+	}
 }
