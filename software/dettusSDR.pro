@@ -10,6 +10,7 @@ INCLUDEPATH += . \
 		signalprocessing/	\
 		tuners/		\
 		tuners/dummy	\
+		tuners/mirics	\
 		tuners/rtltcp	\
 		demod/	\
 		demod/am	\
@@ -40,6 +41,7 @@ HEADERS +=	threads/TunerMain.h	\
 		tuners/TunerDialog.h	\
 		tuners/dummy/TDummy.h	\
 		tuners/rtltcp/TRtlTcp.h	\
+		tuners/mirics/TMirics.h	\
 		signalprocessing/Downsampler.h	\
 		signalprocessing/SimpleFft.h	\
 		signalprocessing/SimpleShifter.h	\
@@ -60,6 +62,7 @@ SOURCES +=	main.cpp \
 		tuners/TunerDialog.cpp	\
 		tuners/dummy/TDummy.cpp	\
 		tuners/rtltcp/TRtlTcp.cpp	\
+		tuners/mirics/TMirics.cpp	\
 		gui/WSpectrum2.cpp		\
 		signalprocessing/Downsampler.cpp	\
 		signalprocessing/Filter.cpp	\

@@ -13,7 +13,8 @@ enum eTunerType
 	TUNER_UNDEF=-1,TUNER_QUIT=0,	// special tuner types
 
 	TUNER_DUMMY=1,			// the example tuner
-	TUNER_RTLTCP=2			// the realtek tuner
+	TUNER_MIRICS=2,			// the mirics tuners
+	TUNER_RTLTCP=3			// the realtek tuner
 };
 typedef struct _tSComplex
 {

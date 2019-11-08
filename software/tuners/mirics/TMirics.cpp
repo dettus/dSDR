@@ -1,6 +1,6 @@
 #include "TMirics.h"
 
-TMirics::TMirics(QWidget* parent): QWidget(parent)
+TMirics::TMirics(QWidget* parent): Tuners(parent)
 {
 
 }
@@ -83,12 +83,12 @@ bool TMirics::setGain(int gainCB) {}
 bool TMirics::gainUp() {}
 bool TMirics::gainDown() {}
 
-static void TMirics::static_gainCallback(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext) 
+static void static_gainCallback(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext) 
 {
 	TMirics* context=(TMirics*)cbContext;
 	context->gainCallback(gRdB,lnaGRdB);
 }
-static void TMirics::static_streamCallback(short *xi, short *xq, unsigned int firstSampleNum,
+static void static_streamCallback(short *xi, short *xq, unsigned int firstSampleNum,
 		int grChanged, int rfChanged, int fsChanged, unsigned int numSamples,
 		unsigned int reset, unsigned int hwRemoved, void *cbContext)
 {
@@ -96,7 +96,7 @@ static void TMirics::static_streamCallback(short *xi, short *xq, unsigned int fi
 	context->streamCallback(xi,xq,firstSampleNum,grChanged,rfChanged,fsChanged,numSamples,reset, hwRemoved);
 }
 
-void TMirics::gainCallback(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext) {}
+void TMirics::gainCallback(unsigned int gRdB, unsigned int lnaGRdB) {}
 void TMirics::streamCallback(short *xi, short *xq, unsigned int firstSampleNum,
 		int grChanged, int rfChanged, int fsChanged, unsigned int numSamples,
 		unsigned int reset, unsigned int hwRemoved) {}

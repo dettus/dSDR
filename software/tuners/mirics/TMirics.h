@@ -19,12 +19,13 @@ class TMirics: public Tuners
 	Q_OBJECT
 
 	public:
-		TMirics(QWidget* parent=nullptr): Tuners(parent);
+		TMirics(QWidget* parent=nullptr);
+		~TMirics();
 		void initialize();
 		void process();
 		int timeToWait() {return 100;}
-		int minValue() {return -32767;}
-		int maxValue() {return  32767;}
+		int minValue() {return -2048;}
+		int maxValue() {return  2048;}
 		void getSamples(tIQSamplesBlock *pIQSamplesBlock);
 		int getSampleRate();
 		int getFrequency();
@@ -36,10 +37,11 @@ class TMirics: public Tuners
 
 	
 		// callbacks for the mirics tuner
-		static void static_gainCallback(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext);
-		static void static_streamCallback(short *xi, short *xq, unsigned int firstSampleNum,
-				int grChanged, int rfChanged, int fsChanged, unsigned int numSamples,
-				unsigned int reset, unsigned int hwRemoved, void *cbContext);
+//		static void static_gainCallback(unsigned int gRdB, unsigned int lnaGRdB, void *cbContext);
+//
+//		static void static_streamCallback(short *xi, short *xq, unsigned int firstSampleNum,
+//				int grChanged, int rfChanged, int fsChanged, unsigned int numSamples,
+//				unsigned int reset, unsigned int hwRemoved, void *cbContext);
 		void gainCallback(unsigned int gRdB, unsigned int lnaGRdB);
 		void streamCallback(short *xi, short *xq, unsigned int firstSampleNum,
 			int grChanged, int rfChanged, int fsChanged, unsigned int numSamples,

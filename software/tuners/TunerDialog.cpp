@@ -6,6 +6,7 @@ TunerDialog::TunerDialog(QWidget* parent): QWidget(parent)
 	mLayout=new QVBoxLayout;
 
 	mTunerDummy=new TDummy();
+	mTunerMirics=new TMirics();
 	mTunerRtlTcp=new TRtlTcp();
 	for (i=0;i<NUM_TUNER_BUTTONS;i++)
 	{
@@ -74,11 +75,22 @@ void TunerDialog::buttonReleased()
 			case TUNER_DUMMY:
 				mTuner=mTunerDummy;
 				delete(mTunerRtlTcp);
+				delete(mTunerMirics);
+				mTunerMirics=nullptr;
 				mTunerRtlTcp=nullptr;
 				break;	
+			case TUNER_MIRICS:
+				mTuner=mTunerMirics;
+				delete(mTunerDummy);
+				delete(mTunerRtlTcp);
+				mTunerDummy=nullptr;
+				mTunerRtlTcp=nullptr;
+				break;
 			case TUNER_RTLTCP:
 				mTuner=mTunerRtlTcp;
 				delete(mTunerDummy);
+				delete(mTunerMirics);
+				mTunerMirics=nullptr;
 				mTunerDummy=nullptr;
 				break;
 			default:

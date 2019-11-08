@@ -19,6 +19,7 @@
 #include "DataTypes.h"
 #include "Tuners.h"
 #include "TDummy.h"	// tuner header file
+#include "TMirics.h"	// tuner header file
 #include "TRtlTcp.h"	// tuner header file
 
 
@@ -43,14 +44,16 @@ class TunerDialog: public QWidget
 	} tSelectedTuner;
 
 	// ---> in case you want to implement a new tuner. they have to be registerd HERE
-	#define	NUM_TUNER_BUTTONS			3
+	#define	NUM_TUNER_BUTTONS			4
 	const tSelectedTuner cTunerButtons[NUM_TUNER_BUTTONS]={
 		{TUNER_DUMMY,	"Dummy Tuner"},
+		{TUNER_MIRICS,	"Mirics (SDRplay devices)"},
 		{TUNER_RTLTCP,	"RTL TCP Client"},
 		// room for new tuners
 		{TUNER_QUIT,	"Quit!"}	
 	};
 	TDummy *mTunerDummy=nullptr;
+	TMirics *mTunerMirics=nullptr;
 	TRtlTcp *mTunerRtlTcp=nullptr;
 	// ---> until HERE.
 
