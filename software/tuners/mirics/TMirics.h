@@ -1,18 +1,10 @@
 #ifndef	TMIRICS_H
 #define	TMIRICS_H
 
-#include <stdint.h>
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <string.h>
-#include <unistd.h>
-#include "mirsdrapi-rsp.h"
-
 #include "DataTypes.h"
 #include "Tuners.h"
 // the purpose of this class is to provide an interface to the mirics sdrplay tuners
+#include "mirsdrapi-rsp.h"
 
 class TMirics: public Tuners
 {
@@ -27,8 +19,8 @@ class TMirics: public Tuners
 		int minValue() {return -2048;}
 		int maxValue() {return  2048;}
 		void getSamples(tIQSamplesBlock *pIQSamplesBlock);
-		int getSampleRate();
-		int getFrequency();
+		int getSampleRate() {return mSamplerate;};
+		int getFrequency() {return mFrequency;};
 
 		bool setFrequency(int freqHz);
 		bool setGain(int gainCB);
@@ -47,6 +39,35 @@ class TMirics: public Tuners
 			int grChanged, int rfChanged, int fsChanged, unsigned int numSamples,
 			unsigned int reset, unsigned int hwRemoved);
 
+		
+
+	private:
+		mir_sdr_Bw_MHzT mBandwidth=mir_sdr_BW_1_536;
+		int mRspLNA=0;
+		mir_sdr_SetGrModeT mGrMode=mir_sdr_USE_SET_GR_ALT_MODE;
+		double mIfFreq=0;	// 450,1620,2048
+#define	MAX_DEVICE_NUM		4
+		mir_sdr_DeviceT mDevices[MAX_DEVICE_NUM];
+		unsigned int mNumDevices=0;
+		int mDevIdx;
+		double mPpmOffset=0;
+		int mGRdB=20;
+		int mGRdBsystem;
+		int mSamplesPacket=0;
+		int mNumDevs;
+		int mHWVersion;
+		mir_sdr_AgcControlT mAgcControl=mir_sdr_AGC_100HZ;
+		int msetPoint=-40;
+
+
+		int mFrequency=87800000;
+		int mSamplerate=2048000;
+	
+		QMutex mMutex;	
+
+		QByteArray mBufRe;
+		QByteArray mBufIm;
+		tSComplex *mSamples;
 };
 
 #endif
