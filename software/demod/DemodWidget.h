@@ -21,17 +21,19 @@ class DemodWidget: public QWidget
 		void onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,int pcmBufSize,int* pcmNum,int* sampleRate);
 		void setDemodFrequency(int freqHz);
 
-		void getDemodParams(int* demodFreq,int* demodBW,bool* demodOn)
+		void getDemodParams(int* demodFreq,int* demodBW,int* raster,bool* demodOn)
 		{
 			mMutex.lock();
 			if (mDemodMode==0 || demod_modules[mDemodMode]==nullptr)
 			{
 				*demodFreq=0;
 				*demodBW=0;
+				*raster=0;
 				*demodOn=false;
 			} else {
 				*demodFreq=mDemodFreq;
 				*demodBW=demod_modules[mDemodMode]->getBandwidth();
+				*raster=demod_modules[mDemodMode]->getRaster();
 				*demodOn=true;
 			}
 			mMutex.unlock();

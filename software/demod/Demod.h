@@ -13,6 +13,7 @@ class Demod: public QWidget
 		virtual int getBandwidth()=0;
 		virtual int getSampleRate()=0;
 		virtual int getFreqOffset()=0;
+		virtual int getRaster()=0;
 };
 
 #endif

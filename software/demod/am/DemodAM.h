@@ -15,6 +15,7 @@ class DemodAM: public Demod
 //		int getBandwidth() {return 10000/2;};
 //		int getSampleRate() {return 10000;};
 		int getFreqOffset() {return 0;};
+		int getRaster() {return 1000;};
 
 	private:
 		double mAngle=0;

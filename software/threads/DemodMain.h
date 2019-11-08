@@ -15,14 +15,15 @@ class DemodMain: public QThread
 		void stop();
 		void setDemodFreq(int freqHz);
 		QWidget* getDemodWidget() {return mDemodWidget;};
-		void getDemodParams(int* demodFreq,int* demodBW,bool* demodOn)
+		void getDemodParams(int* demodFreq,int* demodBW,int* raster,bool* demodOn)
 		{
 			if (mDemodWidget!=nullptr)
 			{
-				mDemodWidget->getDemodParams(demodFreq,demodBW,demodOn);
+				mDemodWidget->getDemodParams(demodFreq,demodBW,raster,demodOn);
 			} else {
 				*demodFreq=0;
                                 *demodBW=0;
+				*raster=0;
                                 *demodOn=false;
 			}	
 		};

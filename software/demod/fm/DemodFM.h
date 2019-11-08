@@ -13,6 +13,7 @@ class DemodFM: public Demod
 		int getBandwidth() {return 192000/2;};
 		int getSampleRate() {return 192000;};
 		int getFreqOffset() {return 0;};
+		int getRaster() {return 100000;};
 
 	private:
 		double mAngle=0;

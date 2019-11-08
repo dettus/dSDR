@@ -60,13 +60,14 @@ void CentralMain::run()
 		{
 			int demodFreq;
 			int demodBw;
+			int raster;
 			bool demodOn;
 			mDemodMain->setDemodFreq(mWSpectrum->getLastFreq());
-			mDemodMain->getDemodParams(&demodFreq,&demodBw,&demodOn);
+			mDemodMain->getDemodParams(&demodFreq,&demodBw,&raster,&demodOn);
 			
 			mDemodMain->onNewSamples(&iqSamples);
 			mWSpectrum->onNewSamples(&iqSamples);
-			mWSpectrum->setDemodParams(demodFreq,demodBw,demodOn);
+			mWSpectrum->setDemodParams(demodFreq,demodBw,raster,demodOn);
 
 			
 		}

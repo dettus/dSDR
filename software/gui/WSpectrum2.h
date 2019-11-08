@@ -21,7 +21,7 @@ class WSpectrum: public QWidget
 		void onNewSamples(tIQSamplesBlock *pIqSamples);
 		QSize sizeHint() const;
 		int getLastFreq() {return mLastFreq;};
-		void setDemodParams(int demodFreq,int demodBW,bool demodOn) {mDemodFreq=demodFreq;mDemodBW=demodBW;mDemodOn=demodOn;};
+		void setDemodParams(int demodFreq,int demodBW,int raster,bool demodOn) {mDemodFreq=demodFreq;mDemodBW=demodBW;mRaster=raster;mDemodOn=demodOn;};
 
 	protected:
 		void paintEvent(QPaintEvent *event) override;
@@ -56,6 +56,7 @@ class WSpectrum: public QWidget
 
 		int mDemodFreq=0;
 		int mDemodBW=0;
+		int mRaster=0;
 		bool mDemodOn=false;
 	
 };

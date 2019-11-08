@@ -158,7 +158,17 @@ void DemodWidget::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,in
 }
 void DemodWidget::setDemodFrequency(int freqHz)
 {
-	int raster=100000;
+	int raster=-1;
+	mMutex.lock();
+	if (mDemodMode!=0)
+	{
+		if (demod_modules[mDemodMode]!=nullptr)
+		{
+			raster=demod_modules[mDemodMode]->getRaster();
+		}
+	}
+	mMutex.unlock();
+	if (raster==-1) return;
 	if (freqHz>=0) freqHz+=raster/2;
 	else freqHz-=raster/2;
 	freqHz-=(freqHz%raster);

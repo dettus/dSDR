@@ -37,6 +37,8 @@ WSpectrum::WSpectrum(QWidget* parent): QWidget(parent)
 
 	waterfallPainter1.fillRect(0,0,mFftSize,WATERFALLHEIGHT,mPalette[0]);
 	waterfallPainter2.fillRect(0,0,mFftSize,WATERFALLHEIGHT,mPalette[0]);
+
+	this->setMouseTracking(true);
 }
 void WSpectrum::setFFTsize(int fftSize)
 {
@@ -378,7 +380,11 @@ void WSpectrum::mouseReleaseEvent(QMouseEvent *event)
 	
 	
 }
-void WSpectrum::mouseMoveEvent(QMouseEvent *event) {}
+void WSpectrum::mouseMoveEvent(QMouseEvent *event) 
+{
+	QPoint curPoint = event->pos();
+	//printf("move:%d %d\n",curPoint.x(),curPoint.y());
+}
 void WSpectrum::wheelEvent(QWheelEvent *event) 
 {
 	QPoint curPoint = event->pos();
