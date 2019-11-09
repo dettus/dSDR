@@ -15,6 +15,7 @@ class AudioIODevice: public QIODevice
 	public:
 		AudioIODevice(QObject *parent=nullptr);
 		void newSamples(signed short* pcm,int numSamples);
+		void setVolume(double volume) {if (volume>=0 && volume<=1) {mVolume=volume;}};
 
 		void start();
 		void stop();

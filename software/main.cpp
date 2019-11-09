@@ -13,7 +13,7 @@ int main(int argc,char** argv)
 	TunerMain	*tunerMain=new TunerMain();
 	AudioMain	*audioMain=new AudioMain();
 	DemodMain	*demodMain=new DemodMain(demodWidget,audioMain);
-	CentralMain	*centralMain=new CentralMain(tunerMain,demodMain);
+	CentralMain	*centralMain=new CentralMain(tunerMain,demodMain,audioMain);
 #if 0
 	{
 		QAudioFormat            mFormat;

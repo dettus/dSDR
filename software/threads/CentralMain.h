@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QMutex>
+#include "WVolume.h"
 #include "WSpectrum2.h"
 #include "Downsampler.h"
 #include "SimpleShifter.h"
@@ -17,7 +18,7 @@ class CentralMain: public QThread
 	Q_OBJECT
 
 	public:
-		CentralMain(TunerMain *tunerMain,DemodMain *demodMain);
+		CentralMain(TunerMain *tunerMain,DemodMain *demodMain,AudioMain *audioMain);
 		void stop();
 		
 	protected:
@@ -29,8 +30,10 @@ class CentralMain: public QThread
 
 		TunerMain *mTunerMain;
 		DemodMain *mDemodMain;
+		AudioMain *mAudioMain;
 		QVBoxLayout *mV1Layout;
-		QHBoxLayout *mHLayout;
+		QHBoxLayout *mH1Layout;
+		QHBoxLayout *mH2Layout;
 		QVBoxLayout *mV2Layout;
 		QWidget *mainWin=nullptr;
 		QPushButton *mRecordButton=nullptr;
@@ -40,6 +43,7 @@ class CentralMain: public QThread
 		bool mRecord=false;
 
 		WSpectrum *mWSpectrum;
+		WVolume *mWVolume;
 
 
 // testing

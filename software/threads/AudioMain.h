@@ -17,6 +17,7 @@ class AudioMain: public QThread
 		void stop();
 		void setAudioFormat(QAudioFormat format);
 		void onNewPcmSamples(signed short* pcmBuf,int num);
+		void setVolume(double volume) {if (mAudioIODevice!=nullptr) mAudioIODevice->setVolume(volume);};
 
 
 

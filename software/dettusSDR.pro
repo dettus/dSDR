@@ -53,6 +53,7 @@ HEADERS +=	threads/TunerMain.h	\
 		demod/Demod.h	\
 		demod/am/DemodAM.h	\
 		demod/fm/DemodFM.h	\
+		gui/WVolume.h		\
 		gui/WSpectrum2.h		\
 		shared/DataTypes.h
 
@@ -66,6 +67,7 @@ SOURCES +=	main.cpp \
 		tuners/dummy/TDummy.cpp	\
 		tuners/rtltcp/TRtlTcp.cpp	\
 		tuners/mirics/TMirics.cpp	\
+		gui/WVolume.cpp		\
 		gui/WSpectrum2.cpp		\
 		signalprocessing/Downsampler.cpp	\
 		signalprocessing/Upsampler.cpp	\

@@ -20,6 +20,7 @@ qint64 AudioIODevice::readData(char* data,qint64 maxlen)
 {
 	int outlen=0;
 	int i;
+	signed short *ptri,*ptro;	// PCM samples are 16 bit signed integer
 
 	
 	if (maxlen<2) 
@@ -27,7 +28,20 @@ qint64 AudioIODevice::readData(char* data,qint64 maxlen)
 	mMutex.lock();
 	outlen=mBuffer.length();
 	if (outlen>maxlen) outlen=maxlen;
-	memcpy(data,mBuffer.data(),outlen);
+
+	// apply the volume here
+	ptri=(signed short*)mBuffer.data();
+	ptro=(signed short*)data;
+	for (i=0;i<outlen/sizeof(short);i++)
+	{
+		double o;
+		o=ptri[i];
+		o*=mVolume;
+		if (o>32768) o=32767;
+		if (o<-32767) o=-32767;
+		
+		ptro[i]=(signed short)o;
+	}	
 	mBuffer.remove(0,outlen);	
 	mMutex.unlock();
 

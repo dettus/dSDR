@@ -4,14 +4,17 @@
 
 
 
-CentralMain::CentralMain(TunerMain* tunerMain,DemodMain* demodMain)
+CentralMain::CentralMain(TunerMain* tunerMain,DemodMain* demodMain,AudioMain* audioMain)
 {
 	mTunerMain=tunerMain;
 	mDemodMain=demodMain;
+	mAudioMain=audioMain;
 	mV1Layout=new QVBoxLayout;
-	mHLayout=new QHBoxLayout;
+	mH1Layout=new QHBoxLayout;
+	mH2Layout=new QHBoxLayout;
 	mV2Layout=new QVBoxLayout;
 	mainWin=new QWidget(nullptr);
+	mWVolume=new WVolume(nullptr);
 	mWSpectrum=new WSpectrum(nullptr);
 	mRecordButton=new QPushButton("Record");
 	mDemodWidget=nullptr;
@@ -39,14 +42,21 @@ void CentralMain::run()
 //	mWSpectrum->setFFTsize(32768);
 //	mWSpectrum->setFFTsize(8192);
 	mWSpectrum->setFFTsize(4096);
+
+	mH2Layout->addWidget(mWVolume);
+	mH2Layout->addWidget(mDemodWidget);
+	mH1Layout->setStretch(0,5);
+	mH1Layout->setStretch(1,30);
+	mV1Layout->addLayout(mH2Layout);
+
 	mV2Layout->addWidget(tuner);
 	mV2Layout->addWidget(mRecordButton);
-	mHLayout->addLayout(mV2Layout);
-	mHLayout->addWidget(mWSpectrum);
-	mHLayout->setStretch(0,10);
-	mHLayout->setStretch(1,30);
-	mV1Layout->addWidget(mDemodWidget);
-	mV1Layout->addLayout(mHLayout);
+	mH1Layout->addLayout(mV2Layout);
+	mH1Layout->addWidget(mWSpectrum);
+	mH1Layout->setStretch(0,10);
+	mH1Layout->setStretch(1,30);
+	mV1Layout->addLayout(mH1Layout);
+
 	mV1Layout->setStretch(0,5);
 	mV1Layout->setStretch(1,50);
 	mainWin->setLayout(mV1Layout);
@@ -69,8 +79,8 @@ void CentralMain::run()
 			mWSpectrum->onNewSamples(&iqSamples);
 			mWSpectrum->setDemodParams(demodFreq,demodBw,raster,demodOn);
 
-			
 		}
+		mAudioMain->setVolume((double)mWVolume->getVolume()/255.0f);
 		mLock.lock();
 		if (mRecord && mFptr!=nullptr)
 		{
