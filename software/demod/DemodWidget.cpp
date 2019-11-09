@@ -66,7 +66,6 @@ void DemodWidget::handleToggled()
 	}
 	if (demodmode!=mDemodMode)
 	{
-		printf("new demod mode:%d\n",demodmode);
 	}
 	mDemodMode=demodmode;
 	mStackedLayout->setCurrentIndex(mDemodMode);
@@ -119,7 +118,6 @@ void DemodWidget::onNewSamples(tIQSamplesBlock *pSamples,signed short* pcmBuf,in
 				mShiftFreq=shiftfreq;
 				if (mSimpleShifter!=nullptr)
 					delete(mSimpleShifter);
-				printf("\x1b[1;32mSHIFTFREQ:%d \x1b[0m\n",mShiftFreq);
 				mSimpleShifter=new SimpleShifter(mInSamplerate,mShiftFreq);
 			}
 		}
@@ -175,6 +173,5 @@ void DemodWidget::setDemodFrequency(int freqHz)
 	if (freqHz!=mDemodFreq)
 	{
 		mDemodFreq=freqHz;	
-		printf("new demodfreq!i %dHz\n",mDemodFreq);
 	}
 }
