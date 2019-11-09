@@ -40,8 +40,8 @@ void CentralMain::run()
 	}
 	tuner->initialize();
 //	mWSpectrum->setFFTsize(32768);
-//	mWSpectrum->setFFTsize(8192);
-	mWSpectrum->setFFTsize(4096);
+	mWSpectrum->setFFTsize(8192);
+//	mWSpectrum->setFFTsize(4096);
 
 	mH2Layout->addWidget(mWVolume);
 	mH2Layout->addWidget(mDemodWidget);
