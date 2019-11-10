@@ -6,13 +6,18 @@
 
 CentralMain::CentralMain(TunerMain* tunerMain,DemodMain* demodMain,AudioMain* audioMain)
 {
+	int i;
+	int fftsize;
+	char tmp[32];
 	mTunerMain=tunerMain;
 	mDemodMain=demodMain;
 	mAudioMain=audioMain;
 	mV1Layout=new QVBoxLayout;
+	mV2Layout=new QVBoxLayout;
+	mV3Layout=new QVBoxLayout;
 	mH1Layout=new QHBoxLayout;
 	mH2Layout=new QHBoxLayout;
-	mV2Layout=new QVBoxLayout;
+	mH3Layout=new QHBoxLayout;
 	mainWin=new QWidget(nullptr);
 	mWVolume=new WVolume(nullptr);
 	mWSpectrum=new WSpectrum(nullptr);
@@ -23,6 +28,22 @@ CentralMain::CentralMain(TunerMain* tunerMain,DemodMain* demodMain,AudioMain* au
 	mainWin->hide();
 	mDemodWidget=demodMain->getDemodWidget();
 
+	mH3Layout->setAlignment(Qt::AlignLeft);
+	mH3Layout->addWidget(new QLabel("FFT size:"));
+
+	fftsize=256;
+	for (i=0;i<8;i++)
+	{
+		snprintf(tmp,32,"%d",fftsize);
+		bFFT[i]=new QPushButton(tmp);
+		bFFT[i]->setFlat(false);
+		connect(bFFT[i]   ,SIGNAL(clicked()),this,SLOT(handleFFTclicked()));
+		mH3Layout->addWidget(bFFT[i]);
+		fftsize*=2;
+	}	
+
+	mV3Layout->setStretch(0,1000);
+	mV3Layout->setStretch(1,100);	
 
 }
 void CentralMain::stop()
@@ -41,6 +62,7 @@ void CentralMain::run()
 	tuner->initialize();
 //	mWSpectrum->setFFTsize(32768);
 	mWSpectrum->setFFTsize(8192);
+	bFFT[5]->setFlat(true);
 //	mWSpectrum->setFFTsize(4096);
 
 	mH2Layout->addWidget(mWVolume);
@@ -52,7 +74,9 @@ void CentralMain::run()
 	mV2Layout->addWidget(tuner);
 	mV2Layout->addWidget(mRecordButton);
 	mH1Layout->addLayout(mV2Layout);
-	mH1Layout->addWidget(mWSpectrum);
+	mV3Layout->addWidget(mWSpectrum);
+	mV3Layout->addLayout(mH3Layout);
+	mH1Layout->addLayout(mV3Layout);
 	mH1Layout->setStretch(0,10);
 	mH1Layout->setStretch(1,30);
 	mV1Layout->addLayout(mH1Layout);
@@ -120,4 +144,20 @@ void CentralMain::handleRecord()
 		mLock.unlock();
 	}
 }
+void CentralMain::handleFFTclicked()
+{
+	int i;
+	int fftsize;
+	QPushButton *sender = (QPushButton*)QObject::sender();
 
+	fftsize=256;
+	for (i=0;i<8;i++)
+	{
+		if (sender==bFFT[i]) 
+		{
+			mWSpectrum->setFFTsize(fftsize);
+			bFFT[i]->setFlat(true);
+		} else bFFT[i]->setFlat(false);
+		fftsize*=2;
+	}	
+}

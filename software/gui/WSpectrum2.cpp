@@ -53,7 +53,7 @@ void WSpectrum::setFFTsize(int fftSize)
 				fftSize==32768||
 				fftSize==65536)
 	   )
-	{
+		mMutex.lock();{
 		mFftSize=fftSize;
 		mFftCnt=mFftAvg;
 		if (mFft!=nullptr) delete(mFft);
@@ -78,12 +78,15 @@ void WSpectrum::setFFTsize(int fftSize)
 		mSpectrumPlot=new double[mFftSize];
 		mLeft=0;
 		mRight=mFftSize;
+		mMutex.unlock();
+		update();
 	}
 }
 void WSpectrum::onNewSamples(tIQSamplesBlock *pIqSamples)
 {
 	int i,j;
 	int samplenum=pIqSamples->sampleNum;
+	mMutex.lock();
 	mSampleRate=pIqSamples->sampleRate;
 	mCenterFreq=pIqSamples->centerFreq;
 	mGain=pIqSamples->gain;
@@ -113,6 +116,7 @@ void WSpectrum::onNewSamples(tIQSamplesBlock *pIqSamples)
 			mSampleBufLevel=0;
 		}
 	}
+	mMutex.unlock();
 	update();
 }
 

@@ -4,6 +4,7 @@
 #include "SimpleFft.h"
 #include "DataTypes.h"
 #include <QImage>
+#include <QMutex>
 
 // the purpose of this class is to draw the nice spectrum
 // and waterfall diagram people are used to from other SDR
@@ -58,6 +59,8 @@ class WSpectrum: public QWidget
 		int mDemodBW=0;
 		int mRaster=0;
 		bool mDemodOn=false;
+
+		QMutex mMutex;
 	
 };
 

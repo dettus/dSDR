@@ -34,13 +34,17 @@ class CentralMain: public QThread
 		QVBoxLayout *mV1Layout;
 		QHBoxLayout *mH1Layout;
 		QHBoxLayout *mH2Layout;
+		QHBoxLayout *mH3Layout;
 		QVBoxLayout *mV2Layout;
+		QVBoxLayout *mV3Layout;
 		QWidget *mainWin=nullptr;
 		QPushButton *mRecordButton=nullptr;
 		QWidget *mDemodWidget=nullptr;
 		QMutex	mLock;
 		FILE *mFptr=nullptr;
 		bool mRecord=false;
+
+		QPushButton *bFFT[8]; // 8 buttons for 256, 512... 32768
 
 		WSpectrum *mWSpectrum;
 		WVolume *mWVolume;
@@ -50,6 +54,7 @@ class CentralMain: public QThread
 
 	public slots:
 		void handleRecord();
+		void handleFFTclicked();
 
 };
 #endif
