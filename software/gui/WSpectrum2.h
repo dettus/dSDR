@@ -34,6 +34,7 @@ class WSpectrum: public QWidget
 
 	private:
 		tSComplex *mSampleBuf=nullptr;
+		tSComplex *mSampleBufAccu=nullptr;
 		double	*mSpectrum=nullptr;
 		double	*mSpectrumPlot=nullptr;
 		int mSampleBufLevel=0;

@@ -30,6 +30,7 @@ WSpectrum::WSpectrum(QWidget* parent): QWidget(parent)
 #endif
 	mSampleBufLevel=0;
 	mSampleBuf=new tSComplex[mFftSize];
+	mSampleBufAccu=new tSComplex[mFftSize];
 	mSpectrum=new double[mFftSize];
 	mSpectrumPlot=new double[mFftSize];
 	QPainter waterfallPainter1(mWaterfallImage1);
@@ -39,6 +40,7 @@ WSpectrum::WSpectrum(QWidget* parent): QWidget(parent)
 	waterfallPainter2.fillRect(0,0,mFftSize,WATERFALLHEIGHT,mPalette[0]);
 
 	this->setMouseTracking(true);
+	for (i=0;i<mFftSize;i++) mSampleBufAccu[i].real=mSampleBufAccu[i].imag=0;
 }
 void WSpectrum::setFFTsize(int fftSize)
 {
@@ -53,7 +55,10 @@ void WSpectrum::setFFTsize(int fftSize)
 				fftSize==32768||
 				fftSize==65536)
 	   )
-		mMutex.lock();{
+	{
+		int i;
+		mMutex.lock();
+
 		mFftSize=fftSize;
 		mFftCnt=mFftAvg;
 		if (mFft!=nullptr) delete(mFft);
@@ -72,8 +77,11 @@ void WSpectrum::setFFTsize(int fftSize)
 		if (mSpectrum!=nullptr) delete(mSpectrum);
 		if (mSpectrumPlot!=nullptr) delete(mSpectrumPlot);
 		if (mSampleBuf!=nullptr) delete(mSampleBuf);
+		if (mSampleBufAccu!=nullptr) delete(mSampleBufAccu);
 		mSampleBufLevel=0;
 		mSampleBuf=new tSComplex[mFftSize];
+		mSampleBufAccu=new tSComplex[mFftSize];
+		for (i=0;i<mFftSize;i++) mSampleBufAccu[i].real=mSampleBufAccu[i].imag=0;
 		mSpectrum=new double[mFftSize];
 		mSpectrumPlot=new double[mFftSize];
 		mLeft=0;
@@ -96,11 +104,23 @@ void WSpectrum::onNewSamples(tIQSamplesBlock *pIqSamples)
 		mSampleBufLevel++;
 		if (mSampleBufLevel==mFftSize)
 		{
+		#if 1
 			mFft->process(mSampleBuf);
 			mFft->addSpectrum(mSpectrum);
+
+		#endif	
+			for (j=0;j<mFftSize;j++)
+			{
+				mSampleBufAccu[j].real+=mSampleBuf[j].real;
+				mSampleBufAccu[j].imag+=mSampleBuf[j].imag;
+			}
 			mFftCnt--;
 			if (mFftCnt<=0)
 			{
+#if 0
+				mFft->process(mSampleBufAccu);
+				mFft->addSpectrum(mSpectrum);
+#endif
 				for (j=0;j<mFftSize;j++)
 				{
 //					mSpectrum[j]=1000*log(sqrt(mSpectrum[j]))/log(10);
@@ -111,6 +131,8 @@ void WSpectrum::onNewSamples(tIQSamplesBlock *pIqSamples)
 				for (j=0;j<mFftSize;j++)
 				{
 					mSpectrum[j]=0;
+					mSampleBufAccu[j].real=0;
+					mSampleBufAccu[j].imag=0;
 				}
 			}
 			mSampleBufLevel=0;
